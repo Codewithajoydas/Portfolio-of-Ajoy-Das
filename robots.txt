@@ -1,6 +1,0 @@
-User-agent: *
-Disallow: /node_modules
-
-Allow: /
-
-Sitemap: https://codewithajoydas.live/sitemap.xml

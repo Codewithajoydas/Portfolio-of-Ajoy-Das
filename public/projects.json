@@ -1,0 +1,67 @@
+{
+  "projects": [
+    {
+      "id": "01",
+      "title": "Kodhra",
+      "category": "Developer Tool",
+      "description": "A code snippet management application designed to organize, store, and manage reusable code snippets in one place.",
+      "image": "/images/projects/Kodhra.png",
+      "technologies": [
+        "Node.js",
+        "Express.js",
+        "MongoDB",
+        "Mongoose",
+        "EJS"
+      ],
+      "github": "https://github.com/Code-Snippet-Manager/Kodhra",
+      "live": "",
+      "slug": "kodhra"
+    },
+    {
+      "id": "02",
+      "title": "WiggleNote",
+      "category": "Application",
+      "description": "A software project focused on building a practical note-taking experience with a simple and focused interface.",
+      "image": "/images/projects/WiggleNote.png",
+      "technologies": [],
+      "github": "https://github.com/Codewithajoydas/WiggleNote",
+      "live": "",
+      "slug": "wigglenote"
+    },
+    {
+      "id": "03",
+      "title": "Assign Meter",
+      "category": "Full-stack Platform",
+      "description": "A multi-platform assignment management system consisting of web, mobile, and backend applications.",
+      "image": "/images/projects/Assign-Meter.png",
+      "technologies": [
+        "Next.js",
+        "React",
+        "React Native",
+        "Node.js",
+        "Express.js",
+        "MongoDB"
+      ],
+      "github": "https://github.com/Assign-Meter/Assign-Meter",
+      "live": "",
+      "slug": "Assign-Meter"
+    },
+    {
+      "id": "04",
+      "title": "CWAD Lab Scaffolder",
+      "category": "Developer Tool",
+      "description": "A CLI project generator that helps developers quickly create structured projects using reusable templates.",
+      "image": "/images/projects/CWAD-Lab-Scaffolder.png",
+      "technologies": [
+        "TypeScript",
+        "Node.js",
+        "Commander",
+        "Inquirer",
+        "Zod"
+      ],
+      "github": "https://github.com/Codewithajoydas/cwad-lab-scaffolder",
+      "live": "",
+      "slug": "cwad-lab-scaffolder"
+    }
+  ]
+}
