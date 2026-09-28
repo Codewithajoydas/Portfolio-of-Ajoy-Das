@@ -880,16 +880,7 @@ export default function AboutPage() {
             </div>
           </div>
 
-          <div className="mt-16 grid gap-4 border-t border-gray-200 pt-8 text-sm text-gray-500 sm:grid-cols-3">
-            <a
-              href="mailto:ajoydas0572@gmail.com"
-              className="transition-colors hover:text-gray-900"
-            >
-              ajoydas0572@gmail.com
-            </a>
-            <span>codewithajoydas.live</span>
-            <span>Nagaon, Assam, India</span>
-          </div>
+          
         </div>
       </section>
 

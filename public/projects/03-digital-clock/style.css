@@ -1,0 +1,22 @@
+body{
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    margin: 0;
+    background: #000;
+    color: #ffffff;
+}
+.clock{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 25vh;
+}
+p{
+     filter:drop-shadow(10px 1px 5px #1a1a1a);
+
+}

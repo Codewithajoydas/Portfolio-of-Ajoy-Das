@@ -6,15 +6,17 @@ export default function ProjectCard({
   title,
   link,
   image,
+  type,
 }: {
   title: string;
+  type: string;
   link: string;
   image: string;
 }) {
   return (
     <article
       className="
-        group relative m-4 w-[45%]
+        group relative m-4 w-[45%] min-w-2xs
         cursor-pointer
         overflow-hidden
         border border-gray-200
@@ -66,7 +68,7 @@ export default function ProjectCard({
             {title}
           </h3>
 
-          <p className="mt-1 text-xs text-white/70">Codewithajoydas</p>
+          <p className="mt-1 text-xs text-white/70">{type}</p>
 
           <div className="mt-4 flex items-center gap-2">
             {/* Github */}

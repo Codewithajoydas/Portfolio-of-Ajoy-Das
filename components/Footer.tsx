@@ -126,7 +126,7 @@ export default function Footer() {
                 </a>
 
                 <a
-                  href="mailto:hello@codewithajoydas.live"
+                  href="mailto:codewithajoydas@gmail.com"
                   aria-label="Email"
                   className="flex size-9 items-center justify-center border border-gray-200 text-gray-600 transition-all hover:border-gray-900 hover:bg-gray-900 hover:text-white"
                 >

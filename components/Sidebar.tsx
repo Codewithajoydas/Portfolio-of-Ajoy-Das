@@ -3,6 +3,7 @@
 import { SidebarContext } from "@/store/components/Sidebar";
 import { X } from "lucide-react";
 import { Pacifico } from "next/font/google";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useContext } from "react";
@@ -18,6 +19,7 @@ const navLinks = [
   { name: "About", href: "/about" },
   { name: "Skills", href: "/skills" },
   { name: "Projects", href: "/projects" },
+  { name: "Lab", href: "/lab" },
   { name: "Experience", href: "/experience" },
   { name: "Contact", href: "/contact" },
 ];
@@ -71,15 +73,19 @@ export default function SidebarComponent() {
         aria-hidden={!sidebarOpen}
       >
         <div className="flex h-full flex-col">
-
           {/* Sidebar Header */}
           <div className="flex h-20 items-center justify-between border-b border-gray-100 px-6">
-
             <Link
               href="/"
               onClick={toggleSidebar}
-              className={`${pacifico.className} text-lg font-semibold tracking-tight text-gray-900`}
+              className={`${pacifico.className} text-lg font-semibold tracking-tight text-gray-900 flex gap-0.5 items-center`}
             >
+              <Image
+                src={"/icons/favicon-32x32.png"}
+                alt="Codewithajoydas Logo"
+                width={35}
+                height={35}
+              />
               Codewithajoydas
               <span className="text-blue-800">.</span>
             </Link>

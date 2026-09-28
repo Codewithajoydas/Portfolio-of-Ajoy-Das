@@ -257,6 +257,7 @@ export default function Home() {
               title="Kodhra"
               link="https://github.com/Code-Snippet-Manager/Kodhra"
               image="/images/projects/Kodhra.png"
+              type="Code Snippet Manager"
             />
 
             <ProjectCard
@@ -264,6 +265,7 @@ export default function Home() {
               title="WiggleNote"
               link="https://github.com/Codewithajoydas/WiggleNote"
               image="/images/projects/WiggleNote.png"
+              type="Note Taking Application"
             />
 
             <ProjectCard
@@ -271,6 +273,7 @@ export default function Home() {
               title="Assign Meter"
               link="https://github.com/Assign-Meter"
               image="/images/projects/Assign-Meter.png"
+              type="Smart Meter Assignment Management System"
             />
 
             <ProjectCard
@@ -278,6 +281,7 @@ export default function Home() {
               title="CWAD Lab Scaffolder"
               link="https://github.com/Codewithajoydas/cwad-lab-scaffolder"
               image="/images/projects/CWAD-Lab-Scaffolder.png"
+              type="CLI Project Generator"
             />
           </div>
         </div>

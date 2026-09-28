@@ -1,0 +1,19 @@
+body{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    flex-direction: column;
+    row-gap: 10px;
+    height: calc(100vh - 20px);
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+input{
+    outline: none;
+    padding: 10px 20px;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+button{
+    outline: none;
+    padding: 10px 20px;
+}

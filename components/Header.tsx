@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useContext } from "react";
 import { usePathname } from "next/navigation";
 import { Menu } from "lucide-react";
+import Image from "next/image";
 
 const pacifico = Pacifico({
   variable: "--font-pacifico",
@@ -18,6 +19,7 @@ const navLinks = [
   { name: "About", href: "/about" },
   { name: "Skills", href: "/skills" },
   { name: "Projects", href: "/projects" },
+  { name: "Lab", href: "/lab" },
   { name: "Experience", href: "/experience" },
   { name: "Contact", href: "/contact" },
 ];
@@ -38,13 +40,13 @@ export default function HeaderComponent() {
     <header className="fixed inset-x-0 top-0 z-50 px-4 sm:px-8 lg:px-12">
       <div className="mx-auto max-w-7xl">
         <div className="flex h-16 items-center justify-between px-4 backdrop-blur-xl sm:px-6">
-
           {/* Logo */}
           <Link
             href="/"
             aria-label="Codewithajoydas home"
             className="group flex items-center gap-0.5"
           >
+            <Image src={"/icons/favicon-32x32.png"} alt="Codewithajoydas Logo" width={35} height={35}/>
             <span
               className={`
                 ${pacifico.className}
@@ -60,16 +62,11 @@ export default function HeaderComponent() {
               Codewithajoydas
             </span>
 
-            <span className="text-xl font-bold text-blue-800">
-              .
-            </span>
+            <span className="text-xl font-bold text-blue-800">.</span>
           </Link>
 
           {/* Desktop Navigation */}
-          <nav
-            className="hidden md:block"
-            aria-label="Main navigation"
-          >
+          <nav className="hidden md:block" aria-label="Main navigation">
             <ul className="flex items-center gap-1">
               {navLinks.map((link) => {
                 const active = isActive(link.href);
@@ -111,11 +108,7 @@ export default function HeaderComponent() {
                           transition-all
                           duration-300
 
-                          ${
-                            active
-                              ? "w-5 opacity-100"
-                              : "w-0 opacity-0"
-                          }
+                          ${active ? "w-5 opacity-100" : "w-0 opacity-0"}
                         `}
                       />
                     </Link>
@@ -147,12 +140,8 @@ export default function HeaderComponent() {
               md:hidden
             "
           >
-            <Menu
-              size={21}
-              strokeWidth={1.8}
-            />
+            <Menu size={21} strokeWidth={1.8} />
           </button>
-
         </div>
       </div>
     </header>

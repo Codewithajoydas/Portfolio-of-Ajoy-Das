@@ -1,36 +1,182 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Ajoy Das — Developer Portfolio
 
-## Getting Started
+> A personal portfolio showcasing my software projects, engineering experiments, developer tools, technical journey, and the way I approach building software.
 
-First, run the development server:
+![Portfolio Preview](./public/portfolio-preview.png)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Overview
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+This repository contains the source code for my personal developer portfolio.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+The portfolio is designed to be more than a collection of links. It documents the things I have built, the technologies I work with, the engineering problems I explore, and the process behind my projects.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Rather than focusing heavily on visual effects, the portfolio focuses on:
 
-## Learn More
+- Real projects
+- Engineering experiments
+- Developer tools
+- Technical learning
+- Problem-solving
+- Clean interfaces
+- Practical software development
 
-To learn more about Next.js, take a look at the following resources:
+The goal is simple:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+> **Build software, understand how it works, and document the journey.**
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## Live Portfolio
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+**Website:**  
+https://codewithajoydas.live
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## What You'll Find
+
+### Selected Work
+
+A collection of applications, developer tools, experiments, and other software projects that I have built.
+
+Each project can include:
+
+- Project overview
+- Problem being solved
+- Features
+- Technology stack
+- Screenshots
+- GitHub repository
+- Live application
+- Engineering decisions
+- Challenges and solutions
+
+### Engineering Journey
+
+A timeline of the technologies, concepts, and engineering areas I have explored while developing software.
+
+### Engineering Lab
+
+A collection of smaller experiments and technical explorations.
+
+Examples include:
+
+- JavaScript experiments
+- Node.js experiments
+- Developer utilities
+- CLI tools
+- Performance experiments
+- Programming language experiments
+- Web platform experiments
+
+### How I Think
+
+A look into the principles I follow while building software.
+
+Some of the principles include:
+
+- Understand the problem first
+- Build to learn
+- Understand fundamentals
+- Keep improving
+- Prefer practical solutions
+- Learn from implementation problems
+
+### Currently Building
+
+Projects and experiments that are actively being developed.
+
+---
+
+# Tech Stack
+
+The portfolio is built using modern web technologies.
+
+## Frontend
+
+- Next.js
+- React
+- TypeScript
+- Tailwind CSS
+- HTML
+- CSS
+- JavaScript
+
+## UI & Design
+
+- Responsive design
+- Component-based architecture
+- Custom typography
+- Lucide Icons
+- CSS animations
+- Accessible UI patterns
+
+## Content & Project Data
+
+- TypeScript / JSON-based project data
+- GitHub API
+- Dynamic project routes
+- Markdown / MDX where appropriate
+
+## Development
+
+- ESLint
+- Prettier
+- Git
+- GitHub
+- npm
+
+## Deployment
+
+- Vercel
+
+---
+
+# Project Architecture
+
+The portfolio follows a component-oriented Next.js architecture.
+
+```text
+portfolio/
+│
+├── app/
+│   ├── page.tsx
+│   ├── about/
+│   ├── projects/
+│   │   └── [slug]/
+│   ├── skills/
+│   ├── experience/
+│   ├── contact/
+│   └── ...
+│
+├── components/
+│   ├── Header/
+│   ├── Footer/
+│   ├── Hero/
+│   ├── Projects/
+│   ├── About/
+│   ├── Skills/
+│   └── ...
+│
+├── data/
+│   └── projects/
+│
+├── public/
+│   ├── images/
+│   ├── projects/
+│   └── ...
+│
+├── lib/
+│   └── ...
+│
+├── store/
+│   └── ...
+│
+├── styles/
+│   └── ...
+│
+├── package.json
+├── tsconfig.json
+├── next.config.ts
+├── eslint.config.mjs
+└── README.md

@@ -15,8 +15,8 @@ const contactMethods = [
   {
     title: "Email",
     description: "For project ideas, collaboration, or just a conversation.",
-    value: "hello@codewithajoydas.live",
-    href: "mailto:hello@codewithajoydas.live",
+    value: "codewithajoydas@gmail.com",
+    href: "mailto:codewithajoydas@gmail.com",
     icon: Mail,
   },
   {
@@ -73,7 +73,7 @@ export default function ContactPage() {
 
           <div className="mt-10 flex flex-wrap gap-4">
             <a
-              href="mailto:hello@codewithajoydas.live"
+              href="mailto:codewithajoydas@gmail.com"
               className="inline-flex items-center gap-2 bg-gray-900 px-6 py-3 text-sm font-medium text-white transition-all hover:-translate-y-0.5 hover:bg-blue-800"
             >
               Send me an email
@@ -225,7 +225,7 @@ export default function ContactPage() {
               </div>
 
               <a
-                href="mailto:hello@codewithajoydas.live"
+                href="mailto:codewithajoydas@gmail.com"
                 className="
                   inline-flex
                   shrink-0
