@@ -1,9 +1,10 @@
+import { logger } from "@/utils/logger";
 import mongoose from "mongoose";
 export const connectDB = async () => {
   try {
     await mongoose.connect(process.env.MONGODB_URL!);
-    console.log("MongoDB connected");
+    logger.info("Connected to MongoDB");
   } catch (error) {
-    console.log(error);
+    logger.error(`Failed to connect to MongoDB ${error}`);
   }
 };
