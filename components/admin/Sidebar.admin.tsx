@@ -10,6 +10,12 @@ import {
   Settings,
   LogOut,
 } from "lucide-react";
+import { Pacifico } from "next/font/google";
+const pacifico = Pacifico({
+  variable: "--font-pacifico",
+  subsets: ["latin"],
+  weight: "400",
+});
 
 const navigation = [
   {
@@ -38,9 +44,9 @@ export default function AdminSidebar() {
       <div className="flex h-16 items-center border-b px-6">
         <Link
           href="/admin"
-          className="text-xl font-bold tracking-tight"
+          className="text-xl font-bold tracking-tight flex item-center"
         >
-          Admin
+          <span className={`${pacifico.className} text-blue-800`}>Codewithajoydas</span>  <span className="text-xs text-gray-500">Admin</span>
         </Link>
       </div>
 

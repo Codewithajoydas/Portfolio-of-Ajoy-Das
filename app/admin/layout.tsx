@@ -2,6 +2,7 @@ import AdminSidebar from "@/components/admin/Sidebar.admin";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { verifyToken } from "@/lib/auth";
+import { Toaster } from "@/components/ui/toast";
 
 export default async function AdminLayout({
   children,
@@ -25,10 +26,8 @@ export default async function AdminLayout({
   return (
     <div className="min-h-screen">
       <AdminSidebar />
-
-      <main className="ml-64 min-h-screen">
-        {children}
-      </main>
+      <main className="ml-64 min-h-screen">{children}</main>
+      <Toaster />
     </div>
   );
 }
