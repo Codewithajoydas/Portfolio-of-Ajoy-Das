@@ -6,6 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import {  getProjects } from "@/lib/content-api";
+import { Project } from "@/types/content";
 
 const pacifico = Pacifico({
   variable: "--font-pacifico",
@@ -123,8 +124,8 @@ export default async function Home() {
             </div>
           </div>
 
-          <div className="relative flex w-full flex-1 justify-center lg:min-h-[600px] lg:justify-end">
-            <div className="relative h-[400px] w-[85%] sm:h-[500px] sm:w-[75%] lg:h-[600px] lg:w-[80%]">
+          <div className="relative flex w-full flex-1 justify-center lg:min-h-150 lg:justify-end">
+            <div className="relative h-10085%] sm:h-125 sm:w-[75%] lg:h-150 lg:w-[80%]">
               <Image
                 src="/images/Codewithajoydas_Hero-page.png"
                 alt="Ajoy Das — Software Developer"
@@ -134,12 +135,12 @@ export default async function Home() {
                 className="object-contain object-bottom"
               />
 
-              <div className="absolute bottom-0 h-25 w-full bg-gradient-to-t from-gray-50 to-transparent" />
+              <div className="absolute bottom-0 h-25 w-full bg-linear-to-t from-gray-50 to-transparent" />
             </div>
           </div>
         </div>
 
-        <div className="pointer-events-none absolute -right-32 top-1/2 h-[500px] w-[500px] -translate-y-1/2 rounded-full bg-blue-100/30 blur-3xl" />
+        <div className="pointer-events-none absolute -right-32 top-1/2 h-125 w-125 -translate-y-1/2 rounded-full bg-blue-100/30 blur-3xl" />
       </section>
 
       <section
@@ -243,9 +244,9 @@ export default async function Home() {
 
           {featuredProjects.length > 0 ? (
             <div className="mt-14 flex flex-wrap items-center justify-center">
-              {featuredProjects.map((project) => (
+              {featuredProjects.map((project:Project) => (
                 <ProjectCard
-                  key={project._id.toString()}
+                  key={(project._id)!.toString()}
                   title={project.name}
                   link={`/projects/${project.slug}`}
                   image={
@@ -329,9 +330,9 @@ export default async function Home() {
         id="contact-cta"
         className="relative overflow-hidden bg-blue-900 px-6 py-24 text-white sm:px-10 lg:px-16 lg:py-32"
       >
-        <div className="pointer-events-none absolute -right-32 -top-32 h-[400px] w-[400px] rounded-full bg-blue-700/40 blur-3xl" />
+        <div className="pointer-events-none absolute -right-32 -top-32 h-100 w-100 rounded-full bg-blue-700/40 blur-3xl" />
 
-        <div className="pointer-events-none absolute -bottom-40 -left-40 h-[450px] w-[450px] rounded-full bg-blue-800/50 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-40 -left-40 h-112.5 w-[450px] rounded-full bg-blue-800/50 blur-3xl" />
 
         <div className="relative z-10 mx-auto max-w-7xl">
           <p className="text-sm font-medium uppercase tracking-[0.25em] text-blue-200">
