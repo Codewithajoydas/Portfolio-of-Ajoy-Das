@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard,
   FolderKanban,
@@ -11,6 +11,7 @@ import {
   LogOut,
 } from "lucide-react";
 import { Pacifico } from "next/font/google";
+import { toast } from "../ui/toast";
 const pacifico = Pacifico({
   variable: "--font-pacifico",
   subsets: ["latin"],
@@ -36,8 +37,17 @@ const navigation = [
 ];
 
 export default function AdminSidebar() {
+  const router = useRouter();
   const pathname = usePathname();
-
+  const removeCookie = async () => {
+    const res = await fetch("/api/logout", { method: "POST" });
+    if (res.ok) {
+      toast.add({ type: "success", title: "Logout successful" });
+      router.push("/signin");
+    } else {
+      toast.add({ type: "error", title: "Logout failed" });
+    }
+  };
   return (
     <aside className="fixed inset-y-0 left-0 z-50 flex w-64 flex-col border-r bg-background">
       {/* Logo / Brand */}
@@ -46,7 +56,10 @@ export default function AdminSidebar() {
           href="/admin"
           className="text-xl font-bold tracking-tight flex item-center"
         >
-          <span className={`${pacifico.className} text-blue-800`}>Codewithajoydas</span>  <span className="text-xs text-gray-500">Admin</span>
+          <span className={`${pacifico.className} text-blue-800`}>
+            Codewithajoydas
+          </span>{" "}
+          <span className="text-xs text-gray-500">Admin</span>
         </Link>
       </div>
 
@@ -61,8 +74,7 @@ export default function AdminSidebar() {
 
           const isActive =
             pathname === item.href ||
-            (item.href !== "/admin" &&
-              pathname.startsWith(`${item.href}/`));
+            (item.href !== "/admin" && pathname.startsWith(`${item.href}/`));
 
           return (
             <Link
@@ -102,6 +114,7 @@ export default function AdminSidebar() {
           </Link>
 
           <button
+            onClick={() => removeCookie()}
             type="button"
             className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
           >

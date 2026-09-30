@@ -1,9 +1,11 @@
 import Footer from "@/components/Footer";
 import ProjectCard from "@/components/ProjectCard";
-import { ArrowUpRight, Mail, Code2 } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import { Pacifico } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
+
+import {  getProjects } from "@/lib/content-api";
 
 const pacifico = Pacifico({
   variable: "--font-pacifico",
@@ -65,15 +67,17 @@ const howIThink = [
   },
 ];
 
-export default function Home() {
+export default async function Home() {
+    const projects = await getProjects();
+
+  const featuredProjects = projects.filter(
+    (project) => project.featured && project.published,
+  );
+
   return (
     <main className="min-h-screen bg-white text-gray-900">
-      {/* =========================================================
-          HERO
-      ========================================================= */}
       <section className="relative flex min-h-screen items-center overflow-hidden bg-gradient-to-br from-blue-50 via-white to-white px-6 py-24 sm:px-10 lg:px-16">
         <div className="relative z-10 mx-auto flex w-full max-w-7xl flex-col-reverse items-center gap-12 lg:flex-row lg:gap-8">
-          {/* Hero Content */}
           <div className="w-full flex-1 lg:max-w-3xl">
             <p className="mb-5 text-sm font-medium uppercase tracking-[0.25em] text-gray-600">
               Software Developer
@@ -98,7 +102,6 @@ export default function Home() {
               becoming a better developer.
             </p>
 
-            {/* Actions */}
             <div className="mt-8 flex flex-wrap gap-4">
               <a
                 href="#projects"
@@ -120,7 +123,6 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Hero Image */}
           <div className="relative flex w-full flex-1 justify-center lg:min-h-[600px] lg:justify-end">
             <div className="relative h-[400px] w-[85%] sm:h-[500px] sm:w-[75%] lg:h-[600px] lg:w-[80%]">
               <Image
@@ -137,20 +139,15 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Background Decoration */}
         <div className="pointer-events-none absolute -right-32 top-1/2 h-[500px] w-[500px] -translate-y-1/2 rounded-full bg-blue-100/30 blur-3xl" />
       </section>
 
-      {/* =========================================================
-          WHAT I BUILD
-      ========================================================= */}
       <section
         id="what-i-build"
         className="bg-white px-6 py-24 sm:px-10 lg:px-16 lg:py-32"
       >
         <div className="mx-auto w-full max-w-7xl">
           <div className="grid items-center gap-16 lg:grid-cols-[0.8fr_1.2fr] lg:gap-24">
-            {/* Image */}
             <div className="relative flex justify-center lg:justify-start">
               <div className="relative w-full">
                 <Image
@@ -163,7 +160,6 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Content */}
             <div>
               <p className="mb-5 text-sm font-medium uppercase tracking-[0.25em] text-gray-500">
                 What I Build
@@ -183,7 +179,6 @@ export default function Home() {
                 understanding of how things work.
               </p>
 
-              {/* Build Categories */}
               <div className="mt-12 grid gap-x-8 gap-y-10 sm:grid-cols-2">
                 {thingsIBuild.map((item) => (
                   <div
@@ -209,19 +204,15 @@ export default function Home() {
         </div>
       </section>
 
-      {/* =========================================================
-          SELECTED WORK
-      ========================================================= */}
       <section
         id="projects"
         className="bg-gray-50 px-6 py-24 sm:px-10 lg:px-16 lg:py-32"
       >
         <div className="mx-auto w-full max-w-7xl">
-          {/* Header */}
           <div className="flex flex-col justify-between gap-8 lg:flex-row lg:items-end">
             <div>
               <p className="text-sm font-medium uppercase tracking-[0.25em] text-gray-500">
-                Selected Work
+                Featured Work
               </p>
 
               <h2 className="mt-5 max-w-3xl text-4xl font-semibold tracking-tight text-gray-900 sm:text-5xl">
@@ -233,8 +224,8 @@ export default function Home() {
               </h2>
 
               <p className="mt-5 max-w-2xl text-lg leading-8 text-gray-600">
-                Real applications, developer tools, and experiments from my
-                journey of learning and building software.
+                A selection of featured applications, developer tools, and
+                experiments from my journey of learning and building software.
               </p>
             </div>
 
@@ -250,53 +241,37 @@ export default function Home() {
             </Link>
           </div>
 
-          {/* Projects */}
-          <div className="mt-14 flex flex-wrap items-center justify-center">
-            <ProjectCard
-              key="kodhra"
-              title="Kodhra"
-              link="https://github.com/Code-Snippet-Manager/Kodhra"
-              image="/images/projects/Kodhra.png"
-              type="Code Snippet Manager"
-            />
-
-            <ProjectCard
-              key="wiggle-note"
-              title="WiggleNote"
-              link="https://github.com/Codewithajoydas/WiggleNote"
-              image="/images/projects/WiggleNote.png"
-              type="Note Taking Application"
-            />
-
-            <ProjectCard
-              key="assign-meter"
-              title="Assign Meter"
-              link="https://github.com/Assign-Meter"
-              image="/images/projects/Assign-Meter.png"
-              type="Smart Meter Assignment Management System"
-            />
-
-            <ProjectCard
-              key="cwad-lab-scaffolder"
-              title="CWAD Lab Scaffolder"
-              link="https://github.com/Codewithajoydas/cwad-lab-scaffolder"
-              image="/images/projects/CWAD-Lab-Scaffolder.png"
-              type="CLI Project Generator"
-            />
-          </div>
+          {featuredProjects.length > 0 ? (
+            <div className="mt-14 flex flex-wrap items-center justify-center">
+              {featuredProjects.map((project) => (
+                <ProjectCard
+                  key={project._id.toString()}
+                  title={project.name}
+                  link={`/projects/${project.slug}`}
+                  image={
+                    project.thumbnail ||
+                    "/images/projects/project-placeholder.png"
+                  }
+                  type={project.type}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="mt-14 flex min-h-40 items-center justify-center border border-dashed border-gray-300">
+              <p className="text-sm text-gray-500">
+                No featured projects available.
+              </p>
+            </div>
+          )}
         </div>
       </section>
 
-      {/* =========================================================
-          HOW I THINK
-      ========================================================= */}
       <section
         id="how-i-think"
         className="bg-white px-6 py-24 sm:px-10 lg:px-16 lg:py-32"
       >
         <div className="mx-auto w-full max-w-7xl">
           <div className="grid gap-16 lg:grid-cols-[0.8fr_1.2fr] lg:gap-24">
-            {/* Left */}
             <div>
               <p className="text-sm font-medium uppercase tracking-[0.25em] text-gray-500">
                 How I Think
@@ -326,7 +301,6 @@ export default function Home() {
               </Link>
             </div>
 
-            {/* Principles */}
             <div className="border-t border-gray-200">
               {howIThink.map((item) => (
                 <div
@@ -351,14 +325,10 @@ export default function Home() {
         </div>
       </section>
 
-      {/* =========================================================
-          LET'S BUILD
-      ========================================================= */}
       <section
         id="contact-cta"
         className="relative overflow-hidden bg-blue-900 px-6 py-24 text-white sm:px-10 lg:px-16 lg:py-32"
       >
-        {/* Background Decoration */}
         <div className="pointer-events-none absolute -right-32 -top-32 h-[400px] w-[400px] rounded-full bg-blue-700/40 blur-3xl" />
 
         <div className="pointer-events-none absolute -bottom-40 -left-40 h-[450px] w-[450px] rounded-full bg-blue-800/50 blur-3xl" />
