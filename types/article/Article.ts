@@ -1,0 +1,24 @@
+export type Article = {
+  id?: string;
+  _id?: string;
+  title?: unknown;
+  slug?: unknown;
+  excerpt?: unknown;
+  content?: unknown;
+  coverImage?: unknown;
+  thumbnail?: unknown;
+  category?: unknown;
+  readingTime?: unknown;
+  tags?: unknown;
+  published?: unknown;
+  featured?: unknown;
+  comments?: unknown;
+  sourceUrl?: unknown;
+  githubUrl?: unknown;
+  demoUrl?: unknown;
+  seoTitle?: unknown;
+  seoDescription?: unknown;
+  canonicalUrl?: unknown;
+  createdAt?: unknown;
+  updatedAt?: unknown;
+};
