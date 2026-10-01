@@ -26,105 +26,167 @@ type PageProps = {
   }>;
 };
 
+/**
+ * Generate static project routes.
+ *
+ * Defensive handling is used here so a malformed API response
+ * does not cause the entire build to crash.
+ */
 export async function generateStaticParams() {
-  const projects = await getProjects();
+  try {
+    const projects = await getProjects();
 
-  return projects
-    .filter((project) => project.published)
-    .map((project) => ({
-      slug: project.slug,
-    }));
+    if (!Array.isArray(projects)) {
+      return [];
+    }
+
+    return projects
+      .filter(
+        (project) =>
+          project &&
+          typeof project.slug === "string" &&
+          project.slug.trim().length > 0 &&
+          project.published === true
+      )
+      .map((project) => ({
+        slug: project.slug,
+      }));
+  } catch (error) {
+    console.error(
+      "Failed to generate project static params:",
+      error
+    );
+
+    return [];
+  }
 }
 
+/**
+ * Generate SEO metadata for a project.
+ */
 export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
   const { slug } = await params;
 
-  const project = await getProjectBySlug(slug);
+  try {
+    const project = await getProjectBySlug(slug);
 
-  if (!project) {
+    if (!project) {
+      return {
+        title: "Project Not Found",
+        robots: {
+          index: false,
+          follow: false,
+        },
+      };
+    }
+
+    const projectName =
+      typeof project.name === "string" && project.name.trim()
+        ? project.name
+        : "Project";
+
+    const projectSlug =
+      typeof project.slug === "string" && project.slug.trim()
+        ? project.slug
+        : slug;
+
+    const title =
+      typeof project.seoTitle === "string" &&
+      project.seoTitle.trim()
+        ? project.seoTitle
+        : `${projectName} — Project`;
+
+    const description =
+      typeof project.seoDescription === "string" &&
+      project.seoDescription.trim()
+        ? project.seoDescription
+        : typeof project.shortDescription === "string"
+          ? project.shortDescription
+          : `Learn more about ${projectName}.`;
+
+    const image =
+      typeof project.banner === "string" &&
+      project.banner.trim()
+        ? project.banner
+        : typeof project.thumbnail === "string" &&
+            project.thumbnail.trim()
+          ? project.thumbnail
+          : undefined;
+
     return {
-      title: "Project Not Found",
+      title,
+      description,
 
+      alternates: {
+        canonical: absoluteUrl(
+          `/projects/${projectSlug}`
+        ),
+      },
+
+      robots: {
+        index: true,
+        follow: true,
+
+        googleBot: {
+          index: true,
+          follow: true,
+          "max-image-preview": "large",
+          "max-snippet": -1,
+          "max-video-preview": -1,
+        },
+      },
+
+      openGraph: {
+        type: "website",
+
+        title,
+
+        description,
+
+        url: absoluteUrl(
+          `/projects/${projectSlug}`
+        ),
+
+        siteName: "Ajoy Das",
+
+        images: image
+          ? [
+              {
+                url: image,
+                width: 1200,
+                height: 630,
+                alt: projectName,
+              },
+            ]
+          : undefined,
+      },
+
+      twitter: {
+        card: "summary_large_image",
+
+        title,
+
+        description,
+
+        images: image ? [image] : undefined,
+      },
+    };
+  } catch (error) {
+    console.error(
+      `Failed to generate metadata for project "${slug}":`,
+      error
+    );
+
+    return {
+      title: "Project",
       robots: {
         index: false,
         follow: false,
       },
     };
   }
-
-  const title =
-    project.seoTitle ||
-    `${project.name} — Project`;
-
-  const description =
-    project.seoDescription ||
-    project.shortDescription;
-
-  const image =
-    project.banner ||
-    project.thumbnail;
-
-  return {
-    title,
-
-    description,
-
-    alternates: {
-      canonical: absoluteUrl(
-        `/projects/${project.slug}`,
-      ),
-    },
-
-    robots: {
-      index: true,
-      follow: true,
-
-      googleBot: {
-        index: true,
-        follow: true,
-        "max-image-preview": "large",
-        "max-snippet": -1,
-        "max-video-preview": -1,
-      },
-    },
-
-    openGraph: {
-      type: "website",
-
-      title,
-
-      description,
-
-      url: absoluteUrl(
-        `/projects/${project.slug}`,
-      ),
-
-      siteName: "Ajoy Das",
-
-      images: image
-        ? [
-            {
-              url: image,
-              width: 1200,
-              height: 630,
-              alt: project.name,
-            },
-          ]
-        : undefined,
-    },
-
-    twitter: {
-      card: "summary_large_image",
-
-      title,
-
-      description,
-
-      images: image ? [image] : undefined,
-    },
-  };
 }
 
 export default async function ProjectDetailsPage({
@@ -132,20 +194,136 @@ export default async function ProjectDetailsPage({
 }: PageProps) {
   const { slug } = await params;
 
-  const project = await getProjectBySlug(slug);
+  let project;
+
+  try {
+    project = await getProjectBySlug(slug);
+  } catch (error) {
+    console.error(
+      `Failed to load project "${slug}":`,
+      error
+    );
+
+    notFound();
+  }
 
   if (!project) {
     notFound();
   }
 
-  const projectUrl = absoluteUrl(
-    `/projects/${project.slug}`,
-  );
+  /*
+   * Defensive values.
+   *
+   * These prevent `.length` and `.map()` from crashing
+   * when the API/database contains null or malformed values.
+   */
+
+  const projectName =
+    typeof project.name === "string" &&
+    project.name.trim()
+      ? project.name
+      : "Untitled Project";
+
+  const projectSlug =
+    typeof project.slug === "string" &&
+    project.slug.trim()
+      ? project.slug
+      : slug;
+
+  const category =
+    typeof project.category === "string" &&
+    project.category.trim()
+      ? project.category
+      : "Project";
+
+  const description =
+    typeof project.description === "string" &&
+    project.description.trim()
+      ? project.description
+      : typeof project.shortDescription === "string" &&
+          project.shortDescription.trim()
+        ? project.shortDescription
+        : "No description available.";
+
+  const shortDescription =
+    typeof project.shortDescription === "string"
+      ? project.shortDescription
+      : "";
+
+  const seoDescription =
+    typeof project.seoDescription === "string"
+      ? project.seoDescription
+      : "";
+
+  const seoTitle =
+    typeof project.seoTitle === "string"
+      ? project.seoTitle
+      : "";
+
+  const githubUrl =
+    typeof project.githubUrl === "string" &&
+    project.githubUrl.trim()
+      ? project.githubUrl
+      : null;
+
+  const liveUrl =
+    typeof project.liveUrl === "string" &&
+    project.liveUrl.trim()
+      ? project.liveUrl
+      : null;
 
   const image =
-    project.banner ||
-    project.thumbnail;
+    typeof project.banner === "string" &&
+    project.banner.trim()
+      ? project.banner
+      : typeof project.thumbnail === "string" &&
+          project.thumbnail.trim()
+        ? project.thumbnail
+        : null;
 
+  const techStack = Array.isArray(project.techStack)
+    ? project.techStack.filter(
+        (technology): technology is string =>
+          typeof technology === "string" &&
+          technology.trim().length > 0
+      )
+    : [];
+
+  const features = Array.isArray(project.features)
+    ? project.features.filter(
+        (feature): feature is string =>
+          typeof feature === "string" &&
+          feature.trim().length > 0
+      )
+    : [];
+
+  const screenshots = Array.isArray(project.screenshots)
+    ? project.screenshots.filter(
+        (screenshot): screenshot is string =>
+          typeof screenshot === "string" &&
+          screenshot.trim().length > 0
+      )
+    : [];
+
+  const challenges =
+    typeof project.challenges === "string" &&
+    project.challenges.trim()
+      ? project.challenges
+      : null;
+
+  const learnings =
+    typeof project.learnings === "string" &&
+    project.learnings.trim()
+      ? project.learnings
+      : null;
+
+  const projectUrl = absoluteUrl(
+    `/projects/${projectSlug}`
+  );
+
+  /**
+   * Safe structured data.
+   */
   const structuredData = {
     "@context": "https://schema.org",
 
@@ -155,11 +333,9 @@ export default async function ProjectDetailsPage({
 
         "@id": `${projectUrl}#project`,
 
-        name: project.name,
+        name: projectName,
 
-        description:
-          project.description ||
-          project.shortDescription,
+        description,
 
         url: projectUrl,
 
@@ -171,9 +347,17 @@ export default async function ProjectDetailsPage({
           url: absoluteUrl("/"),
         },
 
-        dateCreated: project.createdAt,
+        ...(project.createdAt
+          ? {
+              dateCreated: project.createdAt,
+            }
+          : {}),
 
-        dateModified: project.updatedAt,
+        ...(project.updatedAt
+          ? {
+              dateModified: project.updatedAt,
+            }
+          : {}),
 
         ...(image
           ? {
@@ -181,29 +365,30 @@ export default async function ProjectDetailsPage({
             }
           : {}),
 
-        ...(project.techStack.length > 0
+        ...(techStack.length > 0
           ? {
-              keywords:
-                project.techStack.join(", "),
+              keywords: techStack.join(", "),
             }
           : {}),
 
-        about: {
-          "@type": "Thing",
-
-          name: project.category,
-        },
-
-        ...(project.githubUrl
+        ...(category
           ? {
-              codeRepository:
-                project.githubUrl,
+              about: {
+                "@type": "Thing",
+                name: category,
+              },
             }
           : {}),
 
-        ...(project.liveUrl
+        ...(githubUrl
           ? {
-              sameAs: project.liveUrl,
+              codeRepository: githubUrl,
+            }
+          : {}),
+
+        ...(liveUrl
+          ? {
+              sameAs: liveUrl,
             }
           : {}),
       },
@@ -237,7 +422,7 @@ export default async function ProjectDetailsPage({
 
             position: 3,
 
-            name: project.name,
+            name: projectName,
 
             item: projectUrl,
           },
@@ -248,13 +433,15 @@ export default async function ProjectDetailsPage({
 
   return (
     <main className="min-h-screen bg-white text-gray-900">
+      {/* Structured Data */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={safeJsonLd(
-          structuredData,
+          structuredData
         )}
       />
 
+      {/* Header */}
       <header className="border-b border-gray-200 px-6 py-5 sm:px-10 lg:px-16">
         <div className="mx-auto flex max-w-6xl items-center justify-between">
           <Link
@@ -267,86 +454,85 @@ export default async function ProjectDetailsPage({
           </Link>
 
           <span className="font-mono text-xs text-gray-400">
-            PROJECT / {project.slug}
+            PROJECT / {projectSlug}
           </span>
         </div>
       </header>
 
+      {/* Hero */}
       <section className="border-b border-gray-200 px-6 py-16 sm:px-10 lg:px-16 lg:py-24">
         <div className="mx-auto max-w-6xl">
           <div className="grid gap-12 lg:grid-cols-[1fr_0.85fr] lg:items-center">
+            {/* Project Information */}
             <div>
               <p className="text-sm font-medium uppercase tracking-[0.2em] text-blue-800">
-                {project.category}
+                {category}
               </p>
 
               <h1 className="mt-5 text-6xl font-semibold leading-[0.95] tracking-tight sm:text-7xl lg:text-8xl">
-                {project.name}
+                {projectName}
               </h1>
 
               <p className="mt-8 max-w-2xl text-lg leading-8 text-gray-600">
-                {project.description ||
-                  project.shortDescription}
+                {description}
               </p>
 
-              {project.techStack.length >
-                0 && (
+              {/* Tech Stack */}
+              {techStack.length > 0 && (
                 <div className="mt-8 flex flex-wrap gap-2">
-                  {project.techStack.map(
-                    (technology) => (
+                  {techStack.map(
+                    (technology, index) => (
                       <span
-                        key={technology}
+                        key={`${technology}-${index}`}
                         className="border border-gray-200 bg-gray-50 px-3 py-1.5 text-xs font-medium text-gray-600"
                       >
                         {technology}
                       </span>
-                    ),
+                    )
                   )}
                 </div>
               )}
 
-              <div className="mt-10 flex flex-wrap gap-3">
-                {project.githubUrl && (
-                  <a
-                    href={project.githubUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 bg-gray-900 px-5 py-3 text-sm font-medium text-white hover:bg-blue-800"
-                  >
-                    <FaGithub
-                      size={17}
-                    />
+              {/* Links */}
+              {(githubUrl || liveUrl) && (
+                <div className="mt-10 flex flex-wrap gap-3">
+                  {githubUrl && (
+                    <a
+                      href={githubUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 bg-gray-900 px-5 py-3 text-sm font-medium text-white hover:bg-blue-800"
+                    >
+                      <FaGithub size={17} />
 
-                    View on GitHub
+                      View on GitHub
 
-                    <ArrowUpRight
-                      size={15}
-                    />
-                  </a>
-                )}
+                      <ArrowUpRight size={15} />
+                    </a>
+                  )}
 
-                {project.liveUrl && (
-                  <a
-                    href={project.liveUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 border border-gray-300 px-5 py-3 text-sm font-medium text-gray-900 hover:border-gray-900"
-                  >
-                    Live Demo
+                  {liveUrl && (
+                    <a
+                      href={liveUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 border border-gray-300 px-5 py-3 text-sm font-medium text-gray-900 hover:border-gray-900"
+                    >
+                      Live Demo
 
-                    <ExternalLink
-                      size={16}
-                    />
-                  </a>
-                )}
-              </div>
+                      <ExternalLink size={16} />
+                    </a>
+                  )}
+                </div>
+              )}
             </div>
 
+            {/* Project Image */}
             <div className="overflow-hidden border border-gray-200 bg-gray-100">
               {image ? (
                 <img
                   src={image}
-                  alt={project.name}
+                  alt={projectName}
                   className="aspect-video w-full object-cover"
                 />
               ) : (
@@ -359,9 +545,11 @@ export default async function ProjectDetailsPage({
         </div>
       </section>
 
+      {/* Content */}
       <section className="px-6 py-20 sm:px-10 lg:px-16">
         <div className="mx-auto max-w-6xl">
-          {project.features.length > 0 && (
+          {/* Features */}
+          {features.length > 0 && (
             <section>
               <p className="font-mono text-xs uppercase tracking-[0.2em] text-blue-800">
                 Features
@@ -372,61 +560,66 @@ export default async function ProjectDetailsPage({
               </h2>
 
               <ul className="mt-8 grid gap-4 sm:grid-cols-2">
-                {project.features.map(
-                  (feature) => (
+                {features.map(
+                  (feature, index) => (
                     <li
-                      key={feature}
+                      key={`${feature}-${index}`}
                       className="border border-gray-200 p-5 text-gray-600"
                     >
                       {feature}
                     </li>
-                  ),
+                  )
                 )}
               </ul>
             </section>
           )}
 
-          {project.challenges && (
+          {/* Challenges */}
+          {challenges && (
             <section className="mt-20">
               <h2 className="text-4xl font-semibold">
                 Challenges
               </h2>
 
               <p className="mt-6 max-w-4xl whitespace-pre-line text-lg leading-8 text-gray-600">
-                {project.challenges}
+                {challenges}
               </p>
             </section>
           )}
 
-          {project.learnings && (
+          {/* Learnings */}
+          {learnings && (
             <section className="mt-20">
               <h2 className="text-4xl font-semibold">
                 Learnings
               </h2>
 
               <p className="mt-6 max-w-4xl whitespace-pre-line text-lg leading-8 text-gray-600">
-                {project.learnings}
+                {learnings}
               </p>
             </section>
           )}
 
-          {project.screenshots.length > 0 && (
+          {/* Screenshots */}
+          {screenshots.length > 0 && (
             <section className="mt-20">
               <h2 className="text-4xl font-semibold">
                 Screenshots
               </h2>
 
               <div className="mt-8 grid gap-6">
-                {project.screenshots.map(
+                {screenshots.map(
                   (screenshot, index) => (
                     <img
                       key={`${screenshot}-${index}`}
                       src={screenshot}
-                      alt={`${project.name} screenshot ${index + 1}`}
+                      alt={`${projectName} screenshot ${
+                        index + 1
+                      }`}
                       loading="lazy"
                       className="w-full border border-gray-200"
                     />
-                  ),
+                  )
                 )}
               </div>
             </section>
