@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import ReactMarkdown from "react-markdown";
@@ -7,25 +6,41 @@ import {
   ArrowLeft,
   ExternalLink,
 } from "lucide-react";
+import { FaGithub } from "react-icons/fa";
 
 import Footer from "@/components/Footer";
-
-import {
-  getArticleBySlug,
-  getArticles,
-} from "@/lib/content-api";
 
 import {
   absoluteUrl,
   safeJsonLd,
 } from "@/lib/seo";
 
-import { FaGithub } from "react-icons/fa";
+import { connectDB } from "@/lib/connectDb";
+import ArticleModel from "@/models/article.model";
 
-type PageProps = {
-  params: Promise<{
-    slug: string;
-  }>;
+type Article = {
+  id?: string;
+  _id?: string;
+  title?: string;
+  slug?: string;
+  excerpt?: string;
+  content?: string;
+  coverImage?: string;
+  thumbnail?: string;
+  category?: string;
+  readingTime?: number;
+  tags?: string;
+  published?: boolean;
+  featured?: boolean;
+  comments?: boolean;
+  sourceUrl?: string;
+  githubUrl?: string;
+  demoUrl?: string;
+  seoTitle?: string;
+  seoDescription?: string;
+  canonicalUrl?: string;
+  createdAt?: string | Date;
+  updatedAt?: string | Date;
 };
 
 /**
@@ -33,7 +48,7 @@ type PageProps = {
  */
 function safeString(
   value: unknown,
-  fallback = ""
+  fallback = "",
 ): string {
   return typeof value === "string" &&
     value.trim().length > 0
@@ -44,7 +59,9 @@ function safeString(
 /**
  * Safely validate an external URL.
  */
-function safeUrl(value: unknown): string | null {
+function safeUrl(
+  value: unknown,
+): string | null {
   if (
     typeof value !== "string" ||
     !value.trim()
@@ -73,16 +90,15 @@ function safeUrl(value: unknown): string | null {
  */
 function safeDate(
   value: unknown,
-  fallback = "Unknown date"
+  fallback = "",
 ): string {
-  if (
-    typeof value !== "string" ||
-    !value.trim()
-  ) {
+  if (!value) {
     return fallback;
   }
 
-  const date = new Date(value);
+  const date = new Date(
+    value as string | number | Date,
+  );
 
   if (Number.isNaN(date.getTime())) {
     return fallback;
@@ -99,16 +115,15 @@ function safeDate(
  * Safely return an ISO-compatible date string.
  */
 function safeDateTime(
-  value: unknown
+  value: unknown,
 ): string | undefined {
-  if (
-    typeof value !== "string" ||
-    !value.trim()
-  ) {
+  if (!value) {
     return undefined;
   }
 
-  const date = new Date(value);
+  const date = new Date(
+    value as string | number | Date,
+  );
 
   if (Number.isNaN(date.getTime())) {
     return undefined;
@@ -121,7 +136,7 @@ function safeDateTime(
  * Safely parse comma-separated tags.
  */
 function parseTags(
-  value: unknown
+  value: unknown,
 ): string[] {
   if (
     typeof value !== "string" ||
@@ -136,262 +151,88 @@ function parseTags(
     .filter(Boolean);
 }
 
-/**
- * Generate static article routes.
- *
- * A failed/malformed API response will not crash
- * this function.
- */
-export async function generateStaticParams() {
-  try {
-    const articles = await getArticles();
-
-    if (!Array.isArray(articles)) {
-      return [];
-    }
-
-    return articles
-      .filter(
-        (article) =>
-          article &&
-          article.published === true &&
-          typeof article.slug === "string" &&
-          article.slug.trim().length > 0
-      )
-      .map((article) => ({
-        slug: article.slug,
-      }));
-  } catch (error) {
-    console.error(
-      "Failed to generate article static params:",
-      error
-    );
-
-    return [];
-  }
-}
-
-/**
- * Generate SEO metadata.
- */
-export async function generateMetadata({
-  params,
-}: PageProps): Promise<Metadata> {
-  const { slug } = await params;
-
-  try {
-    const article =
-      await getArticleBySlug(slug);
-
-    if (!article) {
-      return {
-        title: "Article Not Found",
-
-        robots: {
-          index: false,
-          follow: false,
-        },
-      };
-    }
-
-    const title =
-      safeString(article.seoTitle) ||
-      safeString(article.title, "Article");
-
-    const description =
-      safeString(article.seoDescription) ||
-      safeString(
-        article.excerpt,
-        "Read this article by Ajoy Das."
-      );
-
-    const image =
-      safeUrl(article.coverImage) ||
-      safeUrl(article.thumbnail);
-
-    const articleSlug =
-      safeString(article.slug, slug);
-
-    const canonicalFromArticle =
-      safeUrl(article.canonicalUrl);
-
-    const canonical =
-      canonicalFromArticle ||
-      absoluteUrl(
-        `/articles/${articleSlug}`
-      );
-
-    const category =
-      safeString(
-        article.category,
-        "Technology"
-      );
-
-    const tags = parseTags(article.tags);
-
-    const publishedTime =
-      safeDateTime(article.createdAt);
-
-    const modifiedTime =
-      safeDateTime(article.updatedAt);
-
-    return {
-      title,
-
-      description,
-
-      keywords:
-        tags.length > 0
-          ? tags
-          : undefined,
-
-      alternates: {
-        canonical,
-      },
-
-      robots: {
-        index: true,
-        follow: true,
-
-        googleBot: {
-          index: true,
-          follow: true,
-          "max-image-preview": "large",
-          "max-snippet": -1,
-          "max-video-preview": -1,
-        },
-      },
-
-      openGraph: {
-        type: "article",
-
-        title,
-
-        description,
-
-        url: canonical,
-
-        siteName: "Ajoy Das",
-
-        ...(publishedTime
-          ? {
-              publishedTime,
-            }
-          : {}),
-
-        ...(modifiedTime
-          ? {
-              modifiedTime,
-            }
-          : {}),
-
-        authors: ["Ajoy Das"],
-
-        section: category,
-
-        ...(tags.length > 0
-          ? {
-              tags,
-            }
-          : {}),
-
-        images: image
-          ? [
-              {
-                url: image,
-                width: 1200,
-                height: 630,
-                alt: title,
-              },
-            ]
-          : undefined,
-      },
-
-      twitter: {
-        card: "summary_large_image",
-
-        title,
-
-        description,
-
-        images: image
-          ? [image]
-          : undefined,
-      },
-    };
-  } catch (error) {
-    console.error(
-      `Failed to generate metadata for article "${slug}":`,
-      error
-    );
-
-    return {
-      title: "Article",
-
-      robots: {
-        index: false,
-        follow: false,
-      },
-    };
-  }
-}
+type PageProps = {
+  params: Promise<{
+    slug: string;
+  }>;
+};
 
 export default async function ArticleDetailsPage({
   params,
 }: PageProps) {
+  /*
+   * Get slug directly from the server-side route.
+   *
+   * Example:
+   * /articles/my-first-article
+   *
+   * slug = "my-first-article"
+   */
   const { slug } = await params;
 
-  let article;
+  const articleSlug = safeString(slug);
 
-  try {
-    article =
-      await getArticleBySlug(slug);
-  } catch (error) {
-    console.error(
-      `Failed to load article "${slug}":`,
-      error
-    );
-
-    notFound();
-  }
-
-  if (!article) {
+  if (!articleSlug) {
     notFound();
   }
 
   /*
+   * Connect directly to MongoDB.
+   */
+  await connectDB();
+
+  /*
+   * Fetch ONLY the requested published article.
+   *
+   * No API request.
+   * No useEffect.
+   * No client-side filtering.
+   */
+  const articleDocument = await ArticleModel.findOne({
+    slug: articleSlug,
+    published: true,
+  }).lean();
+
+  /*
+   * If article doesn't exist, show Next.js 404 page.
+   */
+  if (!articleDocument) {
+    notFound();
+  }
+
+  /*
+   * Convert the MongoDB document into the shape
+   * used by the component.
+   */
+  const article = articleDocument as unknown as Article;
+
+  /*
    * Defensive article values.
    */
+  const articleTitle = safeString(
+    article.title,
+    "Untitled Article",
+  );
 
-  const articleTitle =
-    safeString(
-      article.title,
-      "Untitled Article"
-    );
+  const finalSlug = safeString(
+    article.slug,
+    articleSlug,
+  );
 
-  const articleSlug =
-    safeString(
-      article.slug,
-      slug
-    );
+  const category = safeString(
+    article.category,
+    "Technology",
+  );
 
-  const category =
-    safeString(
-      article.category,
-      "Technology"
-    );
+  const excerpt = safeString(
+    article.excerpt,
+    "No description available.",
+  );
 
-  const excerpt =
-    safeString(
-      article.excerpt,
-      "No description available."
-    );
-
-  const content =
-    safeString(
-      article.content,
-      "Content is not available."
-    );
+  const content = safeString(
+    article.content,
+    "Content is not available.",
+  );
 
   const image =
     safeUrl(article.coverImage) ||
@@ -406,14 +247,13 @@ export default async function ArticleDetailsPage({
   const demoUrl =
     safeUrl(article.demoUrl);
 
-  const tags =
-    parseTags(article.tags);
+  const tags = parseTags(article.tags);
 
   const createdAt =
-    safeString(article.createdAt);
+    article.createdAt;
 
   const updatedAt =
-    safeString(article.updatedAt);
+    article.updatedAt;
 
   const readingTime =
     typeof article.readingTime === "number" &&
@@ -423,7 +263,7 @@ export default async function ArticleDetailsPage({
       : null;
 
   const articleUrl = absoluteUrl(
-    `/articles/${articleSlug}`
+    `/articles/${finalSlug}`,
   );
 
   const publishedTime =
@@ -531,7 +371,7 @@ export default async function ArticleDetailsPage({
             name: "Articles",
 
             item: absoluteUrl(
-              "/articles"
+              "/articles",
             ),
           },
 
@@ -549,23 +389,21 @@ export default async function ArticleDetailsPage({
     ],
   };
 
-  const createdDate =
-    safeDate(
-      createdAt,
-      ""
-    );
+  const createdDate = safeDate(
+    createdAt,
+    "",
+  );
 
-  const updatedDate =
-    safeDate(
-      updatedAt,
-      ""
-    );
+  const updatedDate = safeDate(
+    updatedAt,
+    "",
+  );
 
   const hasUpdatedDate =
     Boolean(
       updatedDate &&
         createdDate &&
-        updatedDate !== createdDate
+        updatedDate !== createdDate,
     );
 
   return (
@@ -574,7 +412,7 @@ export default async function ArticleDetailsPage({
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={safeJsonLd(
-          structuredData
+          structuredData,
         )}
       />
 
@@ -655,7 +493,7 @@ export default async function ArticleDetailsPage({
                     >
                       {tag}
                     </span>
-                  )
+                  ),
                 )}
               </div>
             )}
@@ -788,7 +626,7 @@ export default async function ArticleDetailsPage({
                   }) => {
                     const isBlock =
                       className?.includes(
-                        "language-"
+                        "language-",
                       );
 
                     if (!isBlock) {

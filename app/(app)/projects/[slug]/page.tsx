@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
+
 import Link from "next/link";
 import { notFound } from "next/navigation";
+
 import {
   ArrowLeft,
   ArrowUpRight,
@@ -8,12 +10,11 @@ import {
 } from "lucide-react";
 
 import { FaGithub } from "react-icons/fa";
+
 import Footer from "@/components/Footer";
 
-import {
-  getProjectBySlug,
-  getProjects,
-} from "@/lib/content-api";
+import { connectDB } from "@/lib/connectDb";
+import ProjectModel from "@/models/project.model";
 
 import {
   absoluteUrl,
@@ -29,24 +30,32 @@ type PageProps = {
 /**
  * Generate static project routes.
  *
- * Defensive handling is used here so a malformed API response
- * does not cause the entire build to crash.
+ * Projects are loaded directly from MongoDB.
+ *
+ * No API request.
+ * No content-api helper.
  */
 export async function generateStaticParams() {
   try {
-    const projects = await getProjects();
+    await connectDB();
+
+    const projects = await ProjectModel.find({
+      published: true,
+    })
+      .select("slug published")
+      .lean()
+      .exec();
 
     if (!Array.isArray(projects)) {
       return [];
     }
-
     return projects
       .filter(
         (project) =>
           project &&
           typeof project.slug === "string" &&
           project.slug.trim().length > 0 &&
-          project.published === true
+          project.published === true,
       )
       .map((project) => ({
         slug: project.slug,
@@ -54,7 +63,7 @@ export async function generateStaticParams() {
   } catch (error) {
     console.error(
       "Failed to generate project static params:",
-      error
+      error,
     );
 
     return [];
@@ -63,6 +72,8 @@ export async function generateStaticParams() {
 
 /**
  * Generate SEO metadata for a project.
+ *
+ * Project data comes directly from MongoDB.
  */
 export async function generateMetadata({
   params,
@@ -70,11 +81,19 @@ export async function generateMetadata({
   const { slug } = await params;
 
   try {
-    const project = await getProjectBySlug(slug);
+    await connectDB();
+
+    const project = await ProjectModel.findOne({
+      slug,
+      published: true,
+    })
+      .lean()
+      .exec();
 
     if (!project) {
       return {
         title: "Project Not Found",
+
         robots: {
           index: false,
           follow: false,
@@ -83,12 +102,14 @@ export async function generateMetadata({
     }
 
     const projectName =
-      typeof project.name === "string" && project.name.trim()
+      typeof project.name === "string" &&
+      project.name.trim()
         ? project.name
         : "Project";
 
     const projectSlug =
-      typeof project.slug === "string" && project.slug.trim()
+      typeof project.slug === "string" &&
+      project.slug.trim()
         ? project.slug
         : slug;
 
@@ -102,7 +123,9 @@ export async function generateMetadata({
       typeof project.seoDescription === "string" &&
       project.seoDescription.trim()
         ? project.seoDescription
-        : typeof project.shortDescription === "string"
+        : typeof project.shortDescription ===
+              "string" &&
+            project.shortDescription.trim()
           ? project.shortDescription
           : `Learn more about ${projectName}.`;
 
@@ -117,11 +140,12 @@ export async function generateMetadata({
 
     return {
       title,
+
       description,
 
       alternates: {
         canonical: absoluteUrl(
-          `/projects/${projectSlug}`
+          `/projects/${projectSlug}`,
         ),
       },
 
@@ -146,7 +170,7 @@ export async function generateMetadata({
         description,
 
         url: absoluteUrl(
-          `/projects/${projectSlug}`
+          `/projects/${projectSlug}`,
         ),
 
         siteName: "Ajoy Das",
@@ -170,17 +194,20 @@ export async function generateMetadata({
 
         description,
 
-        images: image ? [image] : undefined,
+        images: image
+          ? [image]
+          : undefined,
       },
     };
   } catch (error) {
     console.error(
       `Failed to generate metadata for project "${slug}":`,
-      error
+      error,
     );
 
     return {
       title: "Project",
+
       robots: {
         index: false,
         follow: false,
@@ -197,11 +224,24 @@ export default async function ProjectDetailsPage({
   let project;
 
   try {
-    project = await getProjectBySlug(slug);
+    /*
+     * Direct server-side MongoDB query.
+     *
+     * No API.
+     * No getProjectBySlug().
+     */
+    await connectDB();
+
+    project = await ProjectModel.findOne({
+      slug,
+      published: true,
+    })
+      .lean()
+      .exec();
   } catch (error) {
     console.error(
       `Failed to load project "${slug}":`,
-      error
+      error,
     );
 
     notFound();
@@ -214,8 +254,8 @@ export default async function ProjectDetailsPage({
   /*
    * Defensive values.
    *
-   * These prevent `.length` and `.map()` from crashing
-   * when the API/database contains null or malformed values.
+   * These prevent .length and .map() from crashing
+   * when the database contains null or malformed values.
    */
 
   const projectName =
@@ -240,7 +280,8 @@ export default async function ProjectDetailsPage({
     typeof project.description === "string" &&
     project.description.trim()
       ? project.description
-      : typeof project.shortDescription === "string" &&
+      : typeof project.shortDescription ===
+            "string" &&
           project.shortDescription.trim()
         ? project.shortDescription
         : "No description available.";
@@ -281,27 +322,31 @@ export default async function ProjectDetailsPage({
         ? project.thumbnail
         : null;
 
-  const techStack = Array.isArray(project.techStack)
-    ? project.techStack.filter(
-        (technology): technology is string =>
-          typeof technology === "string" &&
-          technology.trim().length > 0
-      )
-    : [];
+const techStack = Array.isArray(project.techStack)
+  ? project.techStack.filter(
+      (technology: unknown): technology is string =>
+        typeof technology === "string" &&
+        technology.trim().length > 0,
+    )
+  : [];
 
-  const features = Array.isArray(project.features)
+  const features = Array.isArray(
+    project.features,
+  )
     ? project.features.filter(
-        (feature): feature is string =>
+        (feature:unknown): feature is string =>
           typeof feature === "string" &&
-          feature.trim().length > 0
+          feature.trim().length > 0,
       )
     : [];
 
-  const screenshots = Array.isArray(project.screenshots)
+  const screenshots = Array.isArray(
+    project.screenshots,
+  )
     ? project.screenshots.filter(
-        (screenshot): screenshot is string =>
+        (screenshot: unknown): screenshot is string =>
           typeof screenshot === "string" &&
-          screenshot.trim().length > 0
+          screenshot.trim().length > 0,
       )
     : [];
 
@@ -318,10 +363,10 @@ export default async function ProjectDetailsPage({
       : null;
 
   const projectUrl = absoluteUrl(
-    `/projects/${projectSlug}`
+    `/projects/${projectSlug}`,
   );
 
-  /**
+  /*
    * Safe structured data.
    */
   const structuredData = {
@@ -349,13 +394,15 @@ export default async function ProjectDetailsPage({
 
         ...(project.createdAt
           ? {
-              dateCreated: project.createdAt,
+              dateCreated:
+                project.createdAt,
             }
           : {}),
 
         ...(project.updatedAt
           ? {
-              dateModified: project.updatedAt,
+              dateModified:
+                project.updatedAt,
             }
           : {}),
 
@@ -367,7 +414,8 @@ export default async function ProjectDetailsPage({
 
         ...(techStack.length > 0
           ? {
-              keywords: techStack.join(", "),
+              keywords:
+                techStack.join(", "),
             }
           : {}),
 
@@ -382,7 +430,8 @@ export default async function ProjectDetailsPage({
 
         ...(githubUrl
           ? {
-              codeRepository: githubUrl,
+              codeRepository:
+                githubUrl,
             }
           : {}),
 
@@ -437,7 +486,7 @@ export default async function ProjectDetailsPage({
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={safeJsonLd(
-          structuredData
+          structuredData,
         )}
       />
 
@@ -480,15 +529,15 @@ export default async function ProjectDetailsPage({
               {/* Tech Stack */}
               {techStack.length > 0 && (
                 <div className="mt-8 flex flex-wrap gap-2">
-                  {techStack.map(
-                    (technology, index) => (
+                  {(techStack as string[]).map(
+                    (technology : string, index : number) => (
                       <span
                         key={`${technology}-${index}`}
                         className="border border-gray-200 bg-gray-50 px-3 py-1.5 text-xs font-medium text-gray-600"
                       >
                         {technology}
                       </span>
-                    )
+                    ),
                   )}
                 </div>
               )}
@@ -561,14 +610,14 @@ export default async function ProjectDetailsPage({
 
               <ul className="mt-8 grid gap-4 sm:grid-cols-2">
                 {features.map(
-                  (feature, index) => (
+                  (feature : string, index: number) => (
                     <li
                       key={`${feature}-${index}`}
                       className="border border-gray-200 p-5 text-gray-600"
                     >
                       {feature}
                     </li>
-                  )
+                  ),
                 )}
               </ul>
             </section>
@@ -609,7 +658,7 @@ export default async function ProjectDetailsPage({
 
               <div className="mt-8 grid gap-6">
                 {screenshots.map(
-                  (screenshot, index) => (
+                  (screenshot: string, index: number) => (
                     <img
                       key={`${screenshot}-${index}`}
                       src={screenshot}
@@ -619,7 +668,7 @@ export default async function ProjectDetailsPage({
                       loading="lazy"
                       className="w-full border border-gray-200"
                     />
-                  )
+                  ),
                 )}
               </div>
             </section>

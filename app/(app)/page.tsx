@@ -5,7 +5,8 @@ import { Pacifico } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
 
-import {  getProjects } from "@/lib/content-api";
+import { connectDB } from "@/lib/connectDb";
+import ProjectModel from "@/models/project.model";
 import { Project } from "@/types/content";
 
 const pacifico = Pacifico({
@@ -69,10 +70,49 @@ const howIThink = [
 ];
 
 export default async function Home() {
-    const projects = await getProjects();
+  let projects: Project[] = [];
+
+  try {
+    /*
+     * Connect directly to MongoDB.
+     *
+     * No API request.
+     * No getProjects() helper.
+     */
+    await connectDB();
+
+    /*
+     * Fetch published projects directly from MongoDB.
+     *
+     * Only the fields needed by the homepage are returned.
+     */
+    const projectDocuments = await ProjectModel.find({
+      published: true,
+    })
+      .lean()
+      .exec();
+
+    /*
+     * Convert MongoDB documents to the Project type.
+     */
+    projects = projectDocuments as unknown as Project[];
+  } catch (error) {
+    console.error(
+      "Failed to load projects for homepage:",
+      error,
+    );
+
+    /*
+     * Keep the homepage alive even if MongoDB
+     * temporarily fails.
+     */
+    projects = [];
+  }
 
   const featuredProjects = projects.filter(
-    (project) => project.featured && project.published,
+    (project) =>
+      project.featured === true &&
+      project.published === true,
   );
 
   return (
@@ -86,21 +126,26 @@ export default async function Home() {
 
             <h1 className="text-5xl font-bold leading-[1.05] tracking-tight sm:text-6xl lg:text-7xl">
               Hi, I&apos;m{" "}
-              <span className={`${pacifico.className} text-blue-800`}>
+              <span
+                className={`${pacifico.className} text-blue-800`}
+              >
                 Codewithajoydas
               </span>
             </h1>
 
             <p className="mt-7 max-w-2xl text-lg leading-8 text-gray-600 sm:text-xl">
-              I&apos;m a software developer who enjoys turning ideas into real,
-              scalable products. I build, experiment, and learn across the full
-              stack — from interfaces and APIs to the systems behind them.
+              I&apos;m a software developer who enjoys turning
+              ideas into real, scalable products. I build,
+              experiment, and learn across the full stack —
+              from interfaces and APIs to the systems behind
+              them.
             </p>
 
             <p className="mt-4 max-w-xl text-base leading-7 text-gray-500">
-              This portfolio is my engineering playground — a collection of
-              projects, experiments, tools, and things I&apos;ve built while
-              becoming a better developer.
+              This portfolio is my engineering playground — a
+              collection of projects, experiments, tools, and
+              things I&apos;ve built while becoming a better
+              developer.
             </p>
 
             <div className="mt-8 flex flex-wrap gap-4">
@@ -109,6 +154,7 @@ export default async function Home() {
                 className="group inline-flex items-center gap-2 bg-blue-800 px-6 py-3 text-sm font-semibold text-white transition-all duration-300 hover:scale-[1.01] hover:bg-blue-700 hover:shadow-lg"
               >
                 Explore my work
+
                 <ArrowUpRight
                   size={18}
                   className="transition-transform duration-300 group-hover:rotate-45"
@@ -125,7 +171,7 @@ export default async function Home() {
           </div>
 
           <div className="relative flex w-full flex-1 justify-center lg:min-h-150 lg:justify-end">
-            <div className="relative h-10085%] sm:h-125 sm:w-[75%] lg:h-150 lg:w-[80%]">
+            <div className="relative h-[85%] w-[70%] sm:h-125 sm:w-[75%] lg:h-150 lg:w-[80%]">
               <Image
                 src="/images/Codewithajoydas_Hero-page.png"
                 alt="Ajoy Das — Software Developer"
@@ -168,15 +214,18 @@ export default async function Home() {
 
               <h2 className="max-w-4xl text-4xl font-semibold leading-[1.1] tracking-tight text-gray-900 sm:text-5xl lg:text-6xl">
                 From small experiments to{" "}
-                <span className={`${pacifico.className} text-blue-800`}>
+                <span
+                  className={`${pacifico.className} text-blue-800`}
+                >
                   complete software systems.
                 </span>
               </h2>
 
               <p className="mt-6 max-w-2xl text-lg leading-8 text-gray-600">
-                I build full-stack applications, developer tools, automation
-                workflows, and JavaScript experiments — turning ideas into
-                software that is useful, maintainable, and built with a deep
+                I build full-stack applications, developer
+                tools, automation workflows, and JavaScript
+                experiments — turning ideas into software that
+                is useful, maintainable, and built with a deep
                 understanding of how things work.
               </p>
 
@@ -218,15 +267,18 @@ export default async function Home() {
 
               <h2 className="mt-5 max-w-3xl text-4xl font-semibold tracking-tight text-gray-900 sm:text-5xl">
                 Things I&apos;ve{" "}
-                <span className={`${pacifico.className} text-blue-800`}>
+                <span
+                  className={`${pacifico.className} text-blue-800`}
+                >
                   actually built
                 </span>
                 .
               </h2>
 
               <p className="mt-5 max-w-2xl text-lg leading-8 text-gray-600">
-                A selection of featured applications, developer tools, and
-                experiments from my journey of learning and building software.
+                A selection of featured applications,
+                developer tools, and experiments from my
+                journey of learning and building software.
               </p>
             </div>
 
@@ -235,6 +287,7 @@ export default async function Home() {
               className="group inline-flex w-fit items-center gap-2 border-b border-gray-900 pb-1 text-sm font-semibold text-gray-900"
             >
               View all projects
+
               <ArrowUpRight
                 size={17}
                 className="transition-transform duration-300 group-hover:-translate-y-1 group-hover:translate-x-1"
@@ -244,18 +297,20 @@ export default async function Home() {
 
           {featuredProjects.length > 0 ? (
             <div className="mt-14 flex flex-wrap items-center justify-center">
-              {featuredProjects.map((project:Project) => (
-                <ProjectCard
-                  key={(project._id)!.toString()}
-                  title={project.name}
-                  link={`/projects/${project.slug}`}
-                  image={
-                    project.thumbnail ||
-                    "/images/projects/project-placeholder.png"
-                  }
-                  type={project.type}
-                />
-              ))}
+              {featuredProjects.map(
+                (project: Project) => (
+                  <ProjectCard
+                    key={String(project._id)}
+                    title={project.name}
+                    link={`/projects/${project.slug}`}
+                    image={
+                      project.thumbnail ||
+                      "/images/projects/project-placeholder.png"
+                    }
+                    type={project.type}
+                  />
+                ),
+              )}
             </div>
           ) : (
             <div className="mt-14 flex min-h-40 items-center justify-center border border-dashed border-gray-300">
@@ -280,14 +335,16 @@ export default async function Home() {
 
               <h2 className="mt-5 text-4xl font-semibold leading-[1.1] tracking-tight text-gray-900 sm:text-5xl lg:text-6xl">
                 I don&apos;t just want to{" "}
-                <span className={`${pacifico.className} text-blue-800`}>
+                <span
+                  className={`${pacifico.className} text-blue-800`}
+                >
                   build things.
                 </span>
               </h2>
 
               <p className="mt-6 max-w-lg text-lg leading-8 text-gray-600">
-                I want to understand how they work, why they work, and how they
-                can be made better.
+                I want to understand how they work, why they
+                work, and how they can be made better.
               </p>
 
               <Link
@@ -295,6 +352,7 @@ export default async function Home() {
                 className="group mt-8 inline-flex items-center gap-2 border-b border-gray-900 pb-1 text-sm font-semibold text-gray-900"
               >
                 More about me
+
                 <ArrowUpRight
                   size={17}
                   className="transition-transform duration-300 group-hover:-translate-y-1 group-hover:translate-x-1"
@@ -342,15 +400,18 @@ export default async function Home() {
           <h2 className="mt-6 max-w-4xl text-5xl font-semibold leading-[1.05] tracking-tight sm:text-6xl lg:text-8xl">
             Have an idea?
             <br />
-            <span className={`${pacifico.className} text-blue-200`}>
+            <span
+              className={`${pacifico.className} text-blue-200`}
+            >
               Let&apos;s make it real.
             </span>
           </h2>
 
           <div className="mt-10 flex flex-col gap-8 sm:flex-row sm:items-center sm:justify-between">
             <p className="max-w-xl text-base leading-7 text-blue-100 sm:text-lg">
-              Whether it&apos;s a product, an interesting technical problem, or
-              something worth experimenting with, I&apos;m always interested in
+              Whether it&apos;s a product, an interesting
+              technical problem, or something worth
+              experimenting with, I&apos;m always interested in
               building useful software.
             </p>
 
@@ -359,6 +420,7 @@ export default async function Home() {
               className="group inline-flex w-fit shrink-0 items-center gap-3 bg-white px-7 py-4 text-sm font-semibold text-blue-900 transition-all duration-300 hover:bg-blue-50 hover:shadow-xl"
             >
               Get in touch
+
               <ArrowUpRight
                 size={19}
                 className="transition-transform duration-300 group-hover:rotate-45"
