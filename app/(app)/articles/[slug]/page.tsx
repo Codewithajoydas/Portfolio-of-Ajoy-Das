@@ -1,13 +1,8 @@
 import type { Metadata } from "next";
-
 import Link from "next/link";
-
 import { notFound } from "next/navigation";
-
 import ReactMarkdown from "react-markdown";
-
 import remarkGfm from "remark-gfm";
-
 import {
   ArrowLeft,
   ExternalLink,
@@ -24,6 +19,7 @@ import {
   absoluteUrl,
   safeJsonLd,
 } from "@/lib/seo";
+
 import { FaGithub } from "react-icons/fa";
 
 type PageProps = {
@@ -32,27 +28,305 @@ type PageProps = {
   }>;
 };
 
-export async function generateStaticParams() {
-  const articles = await getArticles();
-
-  return articles
-    .filter((article) => article.published)
-    .map((article) => ({
-      slug: article.slug,
-    }));
+/**
+ * Safely convert a value to a non-empty string.
+ */
+function safeString(
+  value: unknown,
+  fallback = ""
+): string {
+  return typeof value === "string" &&
+    value.trim().length > 0
+    ? value
+    : fallback;
 }
 
+/**
+ * Safely validate an external URL.
+ */
+function safeUrl(value: unknown): string | null {
+  if (
+    typeof value !== "string" ||
+    !value.trim()
+  ) {
+    return null;
+  }
+
+  try {
+    const url = new URL(value);
+
+    if (
+      url.protocol !== "http:" &&
+      url.protocol !== "https:"
+    ) {
+      return null;
+    }
+
+    return url.toString();
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Safely format dates.
+ */
+function safeDate(
+  value: unknown,
+  fallback = "Unknown date"
+): string {
+  if (
+    typeof value !== "string" ||
+    !value.trim()
+  ) {
+    return fallback;
+  }
+
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return fallback;
+  }
+
+  return date.toLocaleDateString("en-IN", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+}
+
+/**
+ * Safely return an ISO-compatible date string.
+ */
+function safeDateTime(
+  value: unknown
+): string | undefined {
+  if (
+    typeof value !== "string" ||
+    !value.trim()
+  ) {
+    return undefined;
+  }
+
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return undefined;
+  }
+
+  return date.toISOString();
+}
+
+/**
+ * Safely parse comma-separated tags.
+ */
+function parseTags(
+  value: unknown
+): string[] {
+  if (
+    typeof value !== "string" ||
+    !value.trim()
+  ) {
+    return [];
+  }
+
+  return value
+    .split(",")
+    .map((tag) => tag.trim())
+    .filter(Boolean);
+}
+
+/**
+ * Generate static article routes.
+ *
+ * A failed/malformed API response will not crash
+ * this function.
+ */
+export async function generateStaticParams() {
+  try {
+    const articles = await getArticles();
+
+    if (!Array.isArray(articles)) {
+      return [];
+    }
+
+    return articles
+      .filter(
+        (article) =>
+          article &&
+          article.published === true &&
+          typeof article.slug === "string" &&
+          article.slug.trim().length > 0
+      )
+      .map((article) => ({
+        slug: article.slug,
+      }));
+  } catch (error) {
+    console.error(
+      "Failed to generate article static params:",
+      error
+    );
+
+    return [];
+  }
+}
+
+/**
+ * Generate SEO metadata.
+ */
 export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
   const { slug } = await params;
 
-  const article =
-    await getArticleBySlug(slug);
+  try {
+    const article =
+      await getArticleBySlug(slug);
 
-  if (!article) {
+    if (!article) {
+      return {
+        title: "Article Not Found",
+
+        robots: {
+          index: false,
+          follow: false,
+        },
+      };
+    }
+
+    const title =
+      safeString(article.seoTitle) ||
+      safeString(article.title, "Article");
+
+    const description =
+      safeString(article.seoDescription) ||
+      safeString(
+        article.excerpt,
+        "Read this article by Ajoy Das."
+      );
+
+    const image =
+      safeUrl(article.coverImage) ||
+      safeUrl(article.thumbnail);
+
+    const articleSlug =
+      safeString(article.slug, slug);
+
+    const canonicalFromArticle =
+      safeUrl(article.canonicalUrl);
+
+    const canonical =
+      canonicalFromArticle ||
+      absoluteUrl(
+        `/articles/${articleSlug}`
+      );
+
+    const category =
+      safeString(
+        article.category,
+        "Technology"
+      );
+
+    const tags = parseTags(article.tags);
+
+    const publishedTime =
+      safeDateTime(article.createdAt);
+
+    const modifiedTime =
+      safeDateTime(article.updatedAt);
+
     return {
-      title: "Article Not Found",
+      title,
+
+      description,
+
+      keywords:
+        tags.length > 0
+          ? tags
+          : undefined,
+
+      alternates: {
+        canonical,
+      },
+
+      robots: {
+        index: true,
+        follow: true,
+
+        googleBot: {
+          index: true,
+          follow: true,
+          "max-image-preview": "large",
+          "max-snippet": -1,
+          "max-video-preview": -1,
+        },
+      },
+
+      openGraph: {
+        type: "article",
+
+        title,
+
+        description,
+
+        url: canonical,
+
+        siteName: "Ajoy Das",
+
+        ...(publishedTime
+          ? {
+              publishedTime,
+            }
+          : {}),
+
+        ...(modifiedTime
+          ? {
+              modifiedTime,
+            }
+          : {}),
+
+        authors: ["Ajoy Das"],
+
+        section: category,
+
+        ...(tags.length > 0
+          ? {
+              tags,
+            }
+          : {}),
+
+        images: image
+          ? [
+              {
+                url: image,
+                width: 1200,
+                height: 630,
+                alt: title,
+              },
+            ]
+          : undefined,
+      },
+
+      twitter: {
+        card: "summary_large_image",
+
+        title,
+
+        description,
+
+        images: image
+          ? [image]
+          : undefined,
+      },
+    };
+  } catch (error) {
+    console.error(
+      `Failed to generate metadata for article "${slug}":`,
+      error
+    );
+
+    return {
+      title: "Article",
 
       robots: {
         index: false,
@@ -60,103 +334,6 @@ export async function generateMetadata({
       },
     };
   }
-
-  const title =
-    article.seoTitle ||
-    `${article.title}`;
-
-  const description =
-    article.seoDescription ||
-    article.excerpt;
-
-  const image =
-    article.coverImage ||
-    article.thumbnail;
-
-  const canonical =
-    article.canonicalUrl ||
-    absoluteUrl(
-      `/articles/${article.slug}`,
-    );
-
-  const tags = article.tags
-    ? article.tags
-        .split(",")
-        .map((tag) => tag.trim())
-        .filter(Boolean)
-    : undefined;
-
-  return {
-    title,
-
-    description,
-
-    keywords: tags,
-
-    alternates: {
-      canonical,
-    },
-
-    robots: {
-      index: true,
-      follow: true,
-
-      googleBot: {
-        index: true,
-        follow: true,
-        "max-image-preview": "large",
-        "max-snippet": -1,
-        "max-video-preview": -1,
-      },
-    },
-
-    openGraph: {
-      type: "article",
-
-      title,
-
-      description,
-
-      url: canonical,
-
-      siteName: "Ajoy Das",
-
-      publishedTime:
-        article.createdAt,
-
-      modifiedTime:
-        article.updatedAt,
-
-      authors: ["Ajoy Das"],
-
-      section: article.category,
-
-      tags,
-
-      images: image
-        ? [
-            {
-              url: image,
-              width: 1200,
-              height: 630,
-              alt: article.title,
-            },
-          ]
-        : undefined,
-    },
-
-    twitter: {
-      card: "summary_large_image",
-
-      title,
-
-      description,
-
-      images: image
-        ? [image]
-        : undefined,
-    },
-  };
 }
 
 export default async function ArticleDetailsPage({
@@ -164,28 +341,100 @@ export default async function ArticleDetailsPage({
 }: PageProps) {
   const { slug } = await params;
 
-  const article =
-    await getArticleBySlug(slug);
+  let article;
+
+  try {
+    article =
+      await getArticleBySlug(slug);
+  } catch (error) {
+    console.error(
+      `Failed to load article "${slug}":`,
+      error
+    );
+
+    notFound();
+  }
 
   if (!article) {
     notFound();
   }
 
-  const articleUrl = absoluteUrl(
-    `/articles/${article.slug}`,
-  );
+  /*
+   * Defensive article values.
+   */
+
+  const articleTitle =
+    safeString(
+      article.title,
+      "Untitled Article"
+    );
+
+  const articleSlug =
+    safeString(
+      article.slug,
+      slug
+    );
+
+  const category =
+    safeString(
+      article.category,
+      "Technology"
+    );
+
+  const excerpt =
+    safeString(
+      article.excerpt,
+      "No description available."
+    );
+
+  const content =
+    safeString(
+      article.content,
+      "Content is not available."
+    );
 
   const image =
-    article.coverImage ||
-    article.thumbnail;
+    safeUrl(article.coverImage) ||
+    safeUrl(article.thumbnail);
 
-  const tags = article.tags
-    ? article.tags
-        .split(",")
-        .map((tag) => tag.trim())
-        .filter(Boolean)
-    : [];
+  const githubUrl =
+    safeUrl(article.githubUrl);
 
+  const sourceUrl =
+    safeUrl(article.sourceUrl);
+
+  const demoUrl =
+    safeUrl(article.demoUrl);
+
+  const tags =
+    parseTags(article.tags);
+
+  const createdAt =
+    safeString(article.createdAt);
+
+  const updatedAt =
+    safeString(article.updatedAt);
+
+  const readingTime =
+    typeof article.readingTime === "number" &&
+    Number.isFinite(article.readingTime) &&
+    article.readingTime > 0
+      ? Math.floor(article.readingTime)
+      : null;
+
+  const articleUrl = absoluteUrl(
+    `/articles/${articleSlug}`
+  );
+
+  const publishedTime =
+    safeDateTime(createdAt);
+
+  const modifiedTime =
+    safeDateTime(updatedAt);
+
+  /*
+   * Structured data.
+   */
   const structuredData = {
     "@context": "https://schema.org",
 
@@ -195,17 +444,25 @@ export default async function ArticleDetailsPage({
 
         "@id": `${articleUrl}#article`,
 
-        headline: article.title,
+        headline: articleTitle,
 
-        description: article.excerpt,
+        description: excerpt,
 
         url: articleUrl,
 
-        datePublished:
-          article.createdAt,
+        ...(publishedTime
+          ? {
+              datePublished:
+                publishedTime,
+            }
+          : {}),
 
-        dateModified:
-          article.updatedAt,
+        ...(modifiedTime
+          ? {
+              dateModified:
+                modifiedTime,
+            }
+          : {}),
 
         author: {
           "@type": "Person",
@@ -235,8 +492,7 @@ export default async function ArticleDetailsPage({
             }
           : {}),
 
-        articleSection:
-          article.category,
+        articleSection: category,
 
         ...(tags.length > 0
           ? {
@@ -245,9 +501,10 @@ export default async function ArticleDetailsPage({
             }
           : {}),
 
-        ...(article.readingTime
+        ...(readingTime
           ? {
-              timeRequired: `PT${article.readingTime}M`,
+              timeRequired:
+                `PT${readingTime}M`,
             }
           : {}),
       },
@@ -273,7 +530,9 @@ export default async function ArticleDetailsPage({
 
             name: "Articles",
 
-            item: absoluteUrl("/articles"),
+            item: absoluteUrl(
+              "/articles"
+            ),
           },
 
           {
@@ -281,7 +540,7 @@ export default async function ArticleDetailsPage({
 
             position: 3,
 
-            name: article.title,
+            name: articleTitle,
 
             item: articleUrl,
           },
@@ -290,15 +549,36 @@ export default async function ArticleDetailsPage({
     ],
   };
 
+  const createdDate =
+    safeDate(
+      createdAt,
+      ""
+    );
+
+  const updatedDate =
+    safeDate(
+      updatedAt,
+      ""
+    );
+
+  const hasUpdatedDate =
+    Boolean(
+      updatedDate &&
+        createdDate &&
+        updatedDate !== createdDate
+    );
+
   return (
     <main className="min-h-screen bg-white text-gray-900">
+      {/* Structured Data */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={safeJsonLd(
-          structuredData,
+          structuredData
         )}
       />
 
+      {/* Header */}
       <header className="border-b border-gray-200 px-6 py-5 sm:px-10 lg:px-16">
         <div className="mx-auto max-w-4xl">
           <Link
@@ -313,84 +593,79 @@ export default async function ArticleDetailsPage({
       </header>
 
       <article>
+        {/* Article Header */}
         <header className="border-b border-gray-200 px-6 py-16 sm:px-10 lg:px-16 lg:py-24">
           <div className="mx-auto max-w-4xl">
+            {/* Category / Reading Time */}
             <div className="flex flex-wrap items-center gap-4 text-xs font-medium uppercase tracking-[0.15em] text-blue-800">
               <span>
-                {article.category}
+                {category}
               </span>
 
-              {article.readingTime && (
+              {readingTime && (
                 <span className="text-gray-400">
-                  {article.readingTime} min read
+                  {readingTime} min read
                 </span>
               )}
             </div>
 
+            {/* Title */}
             <h1 className="mt-6 text-5xl font-semibold leading-[1.05] tracking-tight sm:text-6xl lg:text-7xl">
-              {article.title}
+              {articleTitle}
             </h1>
 
+            {/* Excerpt */}
             <p className="mt-8 max-w-3xl text-xl leading-8 text-gray-600">
-              {article.excerpt}
+              {excerpt}
             </p>
 
+            {/* Dates */}
             <div className="mt-8 flex flex-wrap items-center gap-4 text-sm text-gray-500">
-              <time
-                dateTime={article.createdAt}
-              >
-                {new Date(
-                  article.createdAt,
-                ).toLocaleDateString(
-                  "en-IN",
-                  {
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                  },
-                )}
-              </time>
+              {createdDate && (
+                <time
+                  dateTime={
+                    publishedTime ||
+                    undefined
+                  }
+                >
+                  {createdDate}
+                </time>
+              )}
 
-              {article.updatedAt !==
-                article.createdAt && (
+              {hasUpdatedDate && (
                 <>
                   <span>·</span>
 
                   <span>
                     Updated{" "}
-                    {new Date(
-                      article.updatedAt,
-                    ).toLocaleDateString(
-                      "en-IN",
-                      {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                      },
-                    )}
+                    {updatedDate}
                   </span>
                 </>
               )}
             </div>
 
+            {/* Tags */}
             {tags.length > 0 && (
               <div className="mt-6 flex flex-wrap gap-2">
-                {tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="border border-gray-200 bg-gray-50 px-3 py-1.5 text-xs text-gray-600"
-                  >
-                    {tag}
-                  </span>
-                ))}
+                {tags.map(
+                  (tag, index) => (
+                    <span
+                      key={`${tag}-${index}`}
+                      className="border border-gray-200 bg-gray-50 px-3 py-1.5 text-xs text-gray-600"
+                    >
+                      {tag}
+                    </span>
+                  )
+                )}
               </div>
             )}
 
+            {/* Cover Image */}
             {image && (
               <div className="mt-12 overflow-hidden border border-gray-200">
                 <img
                   src={image}
-                  alt={article.title}
+                  alt={articleTitle}
                   className="w-full object-cover"
                   fetchPriority="high"
                 />
@@ -399,6 +674,7 @@ export default async function ArticleDetailsPage({
           </div>
         </header>
 
+        {/* Article Content */}
         <section className="px-6 py-16 sm:px-10 lg:px-16">
           <div className="mx-auto max-w-4xl">
             <div className="prose prose-lg max-w-none">
@@ -407,31 +683,41 @@ export default async function ArticleDetailsPage({
                   remarkGfm,
                 ]}
                 components={{
-                  h1: ({ children }) => (
+                  h1: ({
+                    children,
+                  }) => (
                     <h2 className="mb-6 mt-12 text-4xl font-semibold tracking-tight">
                       {children}
                     </h2>
                   ),
 
-                  h2: ({ children }) => (
+                  h2: ({
+                    children,
+                  }) => (
                     <h2 className="mb-5 mt-12 text-3xl font-semibold tracking-tight">
                       {children}
                     </h2>
                   ),
 
-                  h3: ({ children }) => (
+                  h3: ({
+                    children,
+                  }) => (
                     <h3 className="mb-4 mt-10 text-2xl font-semibold tracking-tight">
                       {children}
                     </h3>
                   ),
 
-                  h4: ({ children }) => (
+                  h4: ({
+                    children,
+                  }) => (
                     <h4 className="mb-3 mt-8 text-xl font-semibold">
                       {children}
                     </h4>
                   ),
 
-                  p: ({ children }) => (
+                  p: ({
+                    children,
+                  }) => (
                     <p className="mb-6 text-lg leading-8 text-gray-700">
                       {children}
                     </p>
@@ -440,30 +726,49 @@ export default async function ArticleDetailsPage({
                   a: ({
                     href,
                     children,
-                  }) => (
-                    <a
-                      href={href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="font-medium text-blue-800 underline underline-offset-4"
-                    >
-                      {children}
-                    </a>
-                  ),
+                  }) => {
+                    const validHref =
+                      safeUrl(href);
 
-                  ul: ({ children }) => (
+                    if (!validHref) {
+                      return (
+                        <span className="font-medium text-blue-800">
+                          {children}
+                        </span>
+                      );
+                    }
+
+                    return (
+                      <a
+                        href={validHref}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="font-medium text-blue-800 underline underline-offset-4"
+                      >
+                        {children}
+                      </a>
+                    );
+                  },
+
+                  ul: ({
+                    children,
+                  }) => (
                     <ul className="mb-6 ml-6 list-disc space-y-2 text-gray-700">
                       {children}
                     </ul>
                   ),
 
-                  ol: ({ children }) => (
+                  ol: ({
+                    children,
+                  }) => (
                     <ol className="mb-6 ml-6 list-decimal space-y-2 text-gray-700">
                       {children}
                     </ol>
                   ),
 
-                  li: ({ children }) => (
+                  li: ({
+                    children,
+                  }) => (
                     <li className="pl-1 leading-8">
                       {children}
                     </li>
@@ -483,7 +788,7 @@ export default async function ArticleDetailsPage({
                   }) => {
                     const isBlock =
                       className?.includes(
-                        "language-",
+                        "language-"
                       );
 
                     if (!isBlock) {
@@ -512,14 +817,23 @@ export default async function ArticleDetailsPage({
                   img: ({
                     src,
                     alt,
-                  }) => (
-                    <img
-                      src={src}
-                      alt={alt || ""}
-                      loading="lazy"
-                      className="my-8 max-w-full border border-gray-200"
-                    />
-                  ),
+                  }) => {
+                    const validSrc =
+                      safeUrl(src);
+
+                    if (!validSrc) {
+                      return null;
+                    }
+
+                    return (
+                      <img
+                        src={validSrc}
+                        alt={alt || ""}
+                        loading="lazy"
+                        className="my-8 max-w-full border border-gray-200"
+                      />
+                    );
+                  },
 
                   table: ({
                     children,
@@ -560,17 +874,18 @@ export default async function ArticleDetailsPage({
                   ),
                 }}
               >
-                {article.content}
+                {content}
               </ReactMarkdown>
             </div>
 
-            {(article.githubUrl ||
-              article.sourceUrl ||
-              article.demoUrl) && (
+            {/* External Links */}
+            {(githubUrl ||
+              sourceUrl ||
+              demoUrl) && (
               <div className="mt-16 flex flex-wrap gap-3 border-t border-gray-200 pt-8">
-                {article.githubUrl && (
+                {githubUrl && (
                   <a
-                    href={article.githubUrl}
+                    href={githubUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 bg-gray-900 px-5 py-3 text-sm font-medium text-white"
@@ -583,9 +898,9 @@ export default async function ArticleDetailsPage({
                   </a>
                 )}
 
-                {article.sourceUrl && (
+                {sourceUrl && (
                   <a
-                    href={article.sourceUrl}
+                    href={sourceUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 border border-gray-300 px-5 py-3 text-sm font-medium"
@@ -598,9 +913,9 @@ export default async function ArticleDetailsPage({
                   </a>
                 )}
 
-                {article.demoUrl && (
+                {demoUrl && (
                   <a
-                    href={article.demoUrl}
+                    href={demoUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 border border-gray-300 px-5 py-3 text-sm font-medium"
