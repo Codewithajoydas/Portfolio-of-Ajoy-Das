@@ -77,7 +77,7 @@ export default async function Home() {
 
   return (
     <main className="min-h-screen bg-white text-gray-900">
-      <section className="relative flex min-h-screen items-center overflow-hidden bg-gradient-to-br from-blue-50 via-white to-white px-6 py-24 sm:px-10 lg:px-16">
+      <section className="relative flex min-h-screen items-center overflow-hidden bg-linear-to-br from-blue-50 via-white to-white px-6 py-24 sm:px-10 lg:px-16">
         <div className="relative z-10 mx-auto flex w-full max-w-7xl flex-col-reverse items-center gap-12 lg:flex-row lg:gap-8">
           <div className="w-full flex-1 lg:max-w-3xl">
             <p className="mb-5 text-sm font-medium uppercase tracking-[0.25em] text-gray-600">
@@ -332,7 +332,7 @@ export default async function Home() {
       >
         <div className="pointer-events-none absolute -right-32 -top-32 h-100 w-100 rounded-full bg-blue-700/40 blur-3xl" />
 
-        <div className="pointer-events-none absolute -bottom-40 -left-40 h-112.5 w-[450px] rounded-full bg-blue-800/50 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-40 -left-40 h-112.5 w-112.5 rounded-full bg-blue-800/50 blur-3xl" />
 
         <div className="relative z-10 mx-auto max-w-7xl">
           <p className="text-sm font-medium uppercase tracking-[0.25em] text-blue-200">

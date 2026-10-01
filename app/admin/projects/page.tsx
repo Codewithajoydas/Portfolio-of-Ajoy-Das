@@ -57,7 +57,7 @@ import {
   Loader2,
 } from "lucide-react";
 
-type ProjectInput = z.infer<typeof projectSchema>;
+type ProjectInput = z.input<typeof projectSchema>;
 
 type Project = ProjectInput & {
   id?: string;
@@ -118,6 +118,7 @@ export default function ProjectPage() {
     },
   });
 
+  // eslint-disable-next-line react-hooks/incompatible-library
   const featured = watch("featured");
   const published = watch("published");
   const type = watch("type");
