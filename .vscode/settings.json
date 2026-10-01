@@ -1,5 +1,41 @@
 {
     "cSpell.words": [
         "Codewithajoydas"
+    ],
+    "editor.fontFamily": "curiour",
+  "editor.fontLigatures": true,
+
+  "editor.tokenColorCustomizations": {
+    "textMateRules": [
+      {
+        "scope": [
+          "comment",
+          "keyword",
+          "storage",
+          "variable",
+          "variable.parameter",
+          "variable.language",
+          "entity.name",
+          "entity.name.function",
+          "entity.name.type",
+          "entity.other.attribute-name",
+          "meta.function",
+          "meta.class",
+          "meta.interface",
+          "meta.tag",
+          "constant",
+          "string",
+          "markup",
+          "markup.inline",
+          "markup.bold",
+          "markup.italic",
+          "markup.heading"
+        ],
+        "settings": {
+          "fontStyle": "italic"
+        }
+      }
     ]
+  },
+  "editor.fontSize": 17
 }

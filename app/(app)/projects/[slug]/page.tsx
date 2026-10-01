@@ -1,9 +1,6 @@
 import type { Metadata } from "next";
-
 import Link from "next/link";
-
 import { notFound } from "next/navigation";
-
 import {
   ArrowLeft,
   ArrowUpRight,
@@ -11,7 +8,6 @@ import {
 } from "lucide-react";
 
 import { FaGithub } from "react-icons/fa";
-
 import Footer from "@/components/Footer";
 
 import {
