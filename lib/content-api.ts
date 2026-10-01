@@ -1,8 +1,5 @@
 import type { Article, Project } from "@/types/content";
 
-const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
-
 type ProjectsResponse =
   | Project[]
   | {
@@ -16,7 +13,7 @@ type ArticlesResponse =
     };
 
 async function fetchApi<T>(endpoint: string): Promise<T> {
-  const response = await fetch(`${SITE_URL}${endpoint}`, {
+  const response = await fetch(`${endpoint}`, {
     next: {
       revalidate: 60,
     },
