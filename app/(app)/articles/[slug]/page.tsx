@@ -21,26 +21,26 @@ import ArticleModel from "@/models/article.model";
 type Article = {
   id?: string;
   _id?: string;
-  title?: string;
-  slug?: string;
-  excerpt?: string;
-  content?: string;
-  coverImage?: string;
-  thumbnail?: string;
-  category?: string;
-  readingTime?: number;
-  tags?: string;
-  published?: boolean;
-  featured?: boolean;
-  comments?: boolean;
-  sourceUrl?: string;
-  githubUrl?: string;
-  demoUrl?: string;
-  seoTitle?: string;
-  seoDescription?: string;
-  canonicalUrl?: string;
-  createdAt?: string | Date;
-  updatedAt?: string | Date;
+  title?: unknown;
+  slug?: unknown;
+  excerpt?: unknown;
+  content?: unknown;
+  coverImage?: unknown;
+  thumbnail?: unknown;
+  category?: unknown;
+  readingTime?: unknown;
+  tags?: unknown;
+  published?: unknown;
+  featured?: unknown;
+  comments?: unknown;
+  sourceUrl?: unknown;
+  githubUrl?: unknown;
+  demoUrl?: unknown;
+  seoTitle?: unknown;
+  seoDescription?: unknown;
+  canonicalUrl?: unknown;
+  createdAt?: unknown;
+  updatedAt?: unknown;
 };
 
 /**
@@ -50,10 +50,14 @@ function safeString(
   value: unknown,
   fallback = "",
 ): string {
-  return typeof value === "string" &&
-    value.trim().length > 0
-    ? value
-    : fallback;
+  if (
+    typeof value !== "string" ||
+    value.trim().length === 0
+  ) {
+    return fallback;
+  }
+
+  return value.trim();
 }
 
 /**
@@ -64,13 +68,13 @@ function safeUrl(
 ): string | null {
   if (
     typeof value !== "string" ||
-    !value.trim()
+    value.trim().length === 0
   ) {
     return null;
   }
 
   try {
-    const url = new URL(value);
+    const url = new URL(value.trim());
 
     if (
       url.protocol !== "http:" &&
@@ -96,19 +100,23 @@ function safeDate(
     return fallback;
   }
 
-  const date = new Date(
-    value as string | number | Date,
-  );
+  try {
+    const date = new Date(
+      value as string | number | Date,
+    );
 
-  if (Number.isNaN(date.getTime())) {
+    if (Number.isNaN(date.getTime())) {
+      return fallback;
+    }
+
+    return date.toLocaleDateString("en-IN", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  } catch {
     return fallback;
   }
-
-  return date.toLocaleDateString("en-IN", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
 }
 
 /**
@@ -121,15 +129,19 @@ function safeDateTime(
     return undefined;
   }
 
-  const date = new Date(
-    value as string | number | Date,
-  );
+  try {
+    const date = new Date(
+      value as string | number | Date,
+    );
 
-  if (Number.isNaN(date.getTime())) {
+    if (Number.isNaN(date.getTime())) {
+      return undefined;
+    }
+
+    return date.toISOString();
+  } catch {
     return undefined;
   }
-
-  return date.toISOString();
 }
 
 /**
@@ -140,7 +152,7 @@ function parseTags(
 ): string[] {
   if (
     typeof value !== "string" ||
-    !value.trim()
+    value.trim().length === 0
   ) {
     return [];
   }
@@ -148,7 +160,9 @@ function parseTags(
   return value
     .split(",")
     .map((tag) => tag.trim())
-    .filter(Boolean);
+    .filter(
+      (tag) => tag.length > 0,
+    );
 }
 
 type PageProps = {
@@ -162,49 +176,61 @@ export default async function ArticleDetailsPage({
 }: PageProps) {
   /*
    * Get slug directly from the server-side route.
-   *
-   * Example:
-   * /articles/my-first-article
-   *
-   * slug = "my-first-article"
    */
   const { slug } = await params;
 
   const articleSlug = safeString(slug);
 
+  /*
+   * Invalid route parameter.
+   */
   if (!articleSlug) {
     notFound();
   }
 
-  /*
-   * Connect directly to MongoDB.
-   */
-  await connectDB();
+  let articleDocument: unknown = null;
 
   /*
-   * Fetch ONLY the requested published article.
-   *
-   * No API request.
-   * No useEffect.
-   * No client-side filtering.
+   * Database operations are protected so that
+   * a temporary MongoDB failure does not create
+   * an unhandled promise rejection.
    */
-  const articleDocument = await ArticleModel.findOne({
-    slug: articleSlug,
-    published: true,
-  }).lean();
+  try {
+    await connectDB();
+
+    articleDocument = await ArticleModel.findOne({
+      slug: articleSlug,
+      published: true,
+    })
+      .lean()
+      .exec();
+  } catch (error) {
+    console.error(
+      "Failed to load article:",
+      error,
+    );
+
+    /*
+     * Do not expose database details to the client.
+     *
+     * Treat the unavailable article as not found
+     * instead of allowing the server component to crash.
+     */
+    notFound();
+  }
 
   /*
-   * If article doesn't exist, show Next.js 404 page.
+   * Article does not exist.
    */
   if (!articleDocument) {
     notFound();
   }
 
   /*
-   * Convert the MongoDB document into the shape
-   * used by the component.
+   * Convert MongoDB document into a defensive shape.
    */
-  const article = articleDocument as unknown as Article;
+  const article =
+    articleDocument as Article;
 
   /*
    * Defensive article values.
@@ -408,7 +434,6 @@ export default async function ArticleDetailsPage({
 
   return (
     <main className="min-h-screen bg-white text-gray-900">
-      {/* Structured Data */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={safeJsonLd(
@@ -416,7 +441,6 @@ export default async function ArticleDetailsPage({
         )}
       />
 
-      {/* Header */}
       <header className="border-b border-gray-200 px-6 py-5 sm:px-10 lg:px-16">
         <div className="mx-auto max-w-4xl">
           <Link
@@ -424,40 +448,32 @@ export default async function ArticleDetailsPage({
             className="inline-flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-gray-900"
           >
             <ArrowLeft size={16} />
-
             All articles
           </Link>
         </div>
       </header>
 
       <article>
-        {/* Article Header */}
         <header className="border-b border-gray-200 px-6 py-16 sm:px-10 lg:px-16 lg:py-24">
           <div className="mx-auto max-w-4xl">
-            {/* Category / Reading Time */}
             <div className="flex flex-wrap items-center gap-4 text-xs font-medium uppercase tracking-[0.15em] text-blue-800">
-              <span>
-                {category}
-              </span>
+              <span>{category}</span>
 
-              {readingTime && (
+              {readingTime !== null && (
                 <span className="text-gray-400">
                   {readingTime} min read
                 </span>
               )}
             </div>
 
-            {/* Title */}
             <h1 className="mt-6 text-5xl font-semibold leading-[1.05] tracking-tight sm:text-6xl lg:text-7xl">
               {articleTitle}
             </h1>
 
-            {/* Excerpt */}
             <p className="mt-8 max-w-3xl text-xl leading-8 text-gray-600">
               {excerpt}
             </p>
 
-            {/* Dates */}
             <div className="mt-8 flex flex-wrap items-center gap-4 text-sm text-gray-500">
               {createdDate && (
                 <time
@@ -482,7 +498,6 @@ export default async function ArticleDetailsPage({
               )}
             </div>
 
-            {/* Tags */}
             {tags.length > 0 && (
               <div className="mt-6 flex flex-wrap gap-2">
                 {tags.map(
@@ -498,7 +513,6 @@ export default async function ArticleDetailsPage({
               </div>
             )}
 
-            {/* Cover Image */}
             {image && (
               <div className="mt-12 overflow-hidden border border-gray-200">
                 <img
@@ -512,14 +526,11 @@ export default async function ArticleDetailsPage({
           </div>
         </header>
 
-        {/* Article Content */}
         <section className="px-6 py-16 sm:px-10 lg:px-16">
           <div className="mx-auto max-w-4xl">
             <div className="prose prose-lg max-w-none">
               <ReactMarkdown
-                remarkPlugins={[
-                  remarkGfm,
-                ]}
+                remarkPlugins={[remarkGfm]}
                 components={{
                   h1: ({
                     children,
@@ -716,7 +727,6 @@ export default async function ArticleDetailsPage({
               </ReactMarkdown>
             </div>
 
-            {/* External Links */}
             {(githubUrl ||
               sourceUrl ||
               demoUrl) && (
@@ -728,10 +738,7 @@ export default async function ArticleDetailsPage({
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 bg-gray-900 px-5 py-3 text-sm font-medium text-white"
                   >
-                    <FaGithub
-                      size={16}
-                    />
-
+                    <FaGithub size={16} />
                     GitHub
                   </a>
                 )}
@@ -744,10 +751,7 @@ export default async function ArticleDetailsPage({
                     className="inline-flex items-center gap-2 border border-gray-300 px-5 py-3 text-sm font-medium"
                   >
                     Source
-
-                    <ExternalLink
-                      size={15}
-                    />
+                    <ExternalLink size={15} />
                   </a>
                 )}
 
@@ -759,10 +763,7 @@ export default async function ArticleDetailsPage({
                     className="inline-flex items-center gap-2 border border-gray-300 px-5 py-3 text-sm font-medium"
                   >
                     Demo
-
-                    <ExternalLink
-                      size={15}
-                    />
+                    <ExternalLink size={15} />
                   </a>
                 )}
               </div>
