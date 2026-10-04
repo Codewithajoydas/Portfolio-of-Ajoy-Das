@@ -5,6 +5,8 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { ArrowLeft, ExternalLink } from "lucide-react";
 import { FaGithub } from "react-icons/fa";
+export const revalidate = 0;
+export const dynamic = "force-dynamic";
 
 import Footer from "@/components/Footer";
 import {

@@ -10,6 +10,8 @@ import ArticleModel from "@/models/article.model";
 import { absoluteUrl, safeJsonLd } from "@/lib/seo";
 
 import type { Article } from "@/types/content";
+export const revalidate = 0;
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Articles",

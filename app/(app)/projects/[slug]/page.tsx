@@ -35,6 +35,9 @@ type PageProps = {
  * No API request.
  * No content-api helper.
  */
+export const revalidate = 0;
+export const dynamic = "force-dynamic";
+
 export async function generateStaticParams() {
   try {
     await connectDB();
