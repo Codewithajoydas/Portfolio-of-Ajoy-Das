@@ -1,8 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
+
 import { useForm } from "react-hook-form";
+
 import { zodResolver } from "@hookform/resolvers/zod";
+
 import type { z } from "zod";
 
 import {
@@ -16,10 +19,15 @@ import {
   FieldSet,
   FieldTitle,
 } from "@/components/ui/field";
+
 import { Input } from "@/components/ui/input";
+
 import { Textarea } from "@/components/ui/textarea";
+
 import { Switch } from "@/components/ui/switch";
+
 import { Button } from "@/components/ui/button";
+
 import {
   Select,
   SelectContent,
@@ -27,6 +35,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+
 import {
   Table,
   TableBody,
@@ -35,6 +44,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -45,6 +55,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+
 import { toast } from "@/components/ui/toast";
 
 import { projectSchema } from "@/validators/projects.validator";
@@ -55,6 +66,7 @@ import {
   X,
   Plus,
   Loader2,
+  FileJson,
 } from "lucide-react";
 
 type ProjectInput = z.input<typeof projectSchema>;
@@ -82,12 +94,15 @@ export default function ProjectPage() {
   const [projectToDelete, setProjectToDelete] =
     useState<Project | null>(null);
 
+  const [importingJson, setImportingJson] = useState(false);
+
   const {
     register,
     handleSubmit,
     setValue,
     watch,
     reset,
+    getValues,
     formState: { errors, isSubmitting },
   } = useForm<ProjectInput>({
     resolver: zodResolver(projectSchema),
@@ -360,6 +375,118 @@ export default function ProjectPage() {
     setOpenProjectCreationForm(true);
   }
 
+  async function handleJsonImport(file: File) {
+    if (
+      !file.name.toLowerCase().endsWith(".json") &&
+      file.type !== "application/json"
+    ) {
+      toast.add({
+        type: "error",
+        title: "Invalid file",
+        description: "Please drop a valid JSON file.",
+      });
+
+      return;
+    }
+
+    try {
+      setImportingJson(true);
+
+      const text = await file.text();
+      const parsed = JSON.parse(text);
+
+      const jsonData =
+        parsed &&
+        typeof parsed === "object" &&
+        parsed.project &&
+        typeof parsed.project === "object"
+          ? parsed.project
+          : parsed;
+
+      if (
+        !jsonData ||
+        typeof jsonData !== "object" ||
+        Array.isArray(jsonData)
+      ) {
+        throw new Error(
+          "The JSON file must contain a project object."
+        );
+      }
+
+      const allowedFields: (keyof ProjectInput)[] = [
+        "name",
+        "slug",
+        "type",
+        "role",
+        "shortDescription",
+        "description",
+        "githubUrl",
+        "liveUrl",
+        "documentationUrl",
+        "thumbnail",
+        "banner",
+        "screenshots",
+        "techStack",
+        "category",
+        "status",
+        "year",
+        "featured",
+        "published",
+        "features",
+        "challenges",
+        "learnings",
+        "seoTitle",
+        "seoDescription",
+      ];
+
+      const currentValues = getValues();
+
+      const importedValues = Object.fromEntries(
+        allowedFields
+          .filter((field) =>
+            Object.prototype.hasOwnProperty.call(
+              jsonData,
+              field
+            )
+          )
+          .map((field) => [
+            field,
+            jsonData[field],
+          ])
+      ) as Partial<ProjectInput>;
+
+      reset(
+        {
+          ...currentValues,
+          ...importedValues,
+        },
+        {
+          keepDirtyValues: true,
+        }
+      );
+
+      toast.add({
+        type: "success",
+        title: "JSON imported",
+        description:
+          "JSON data has been added to the form. Existing form values have priority.",
+      });
+    } catch (error) {
+      console.error("JSON import error:", error);
+
+      toast.add({
+        type: "error",
+        title: "Failed to import JSON",
+        description:
+          error instanceof Error
+            ? error.message
+            : "The JSON file could not be imported.",
+      });
+    } finally {
+      setImportingJson(false);
+    }
+  }
+
   return (
     <div className="relative min-h-screen w-full px-6 py-12">
       <AlertDialog
@@ -386,7 +513,9 @@ export default function ProjectPage() {
           </AlertDialogHeader>
 
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={Boolean(deletingProjectId)}>
+            <AlertDialogCancel
+              disabled={Boolean(deletingProjectId)}
+            >
               Cancel
             </AlertDialogCancel>
 
@@ -419,6 +548,60 @@ export default function ProjectPage() {
             <X />
           </Button>
 
+          <div
+            className="mb-8 rounded-lg border-2 border-dashed p-6 text-center"
+            onDragOver={(event) => {
+              event.preventDefault();
+            }}
+            onDrop={(event) => {
+              event.preventDefault();
+
+              const file =
+                event.dataTransfer.files?.[0];
+
+              if (file) {
+                void handleJsonImport(file);
+              }
+            }}
+          >
+            <FileJson className="mx-auto mb-3 h-8 w-8" />
+
+            <p className="font-medium">
+              Drop project JSON here
+            </p>
+
+            <p className="mt-1 text-sm text-muted-foreground">
+              JSON values will fill the form, while existing
+              form values stay higher priority.
+            </p>
+<a href="/templates/project.json" target="_blank" rel="noopener noreferrer" className="block text-blue-600 text-sm">
+              View template
+            </a>
+            <Input
+              type="file"
+              accept=".json,application/json"
+              disabled={importingJson}
+              className="mx-auto mt-4 max-w-sm cursor-pointer"
+              onChange={(event) => {
+                const file =
+                  event.target.files?.[0];
+
+                if (file) {
+                  void handleJsonImport(file);
+                }
+
+                event.target.value = "";
+              }}
+            />
+
+            {importingJson && (
+              <div className="mt-3 flex items-center justify-center gap-2 text-sm text-muted-foreground">
+                <Loader2 className="h-4 w-4 animate-spin" />
+                Importing JSON...
+              </div>
+            )}
+          </div>
+
           <form onSubmit={handleSubmit(onSubmit)}>
             <FieldSet>
               <FieldLegend>
@@ -434,7 +617,9 @@ export default function ProjectPage() {
               </FieldDescription>
 
               <FieldGroup>
-                <FieldLegend>Basic information</FieldLegend>
+                <FieldLegend>
+                  Basic information
+                </FieldLegend>
 
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   <Field>
@@ -482,7 +667,9 @@ export default function ProjectPage() {
 
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   <Field>
-                    <FieldLabel>Project type</FieldLabel>
+                    <FieldLabel>
+                      Project type
+                    </FieldLabel>
 
                     <Select
                       value={type}
@@ -492,6 +679,7 @@ export default function ProjectPage() {
                           value as ProjectInput["type"],
                           {
                             shouldValidate: true,
+                            shouldDirty: true,
                           }
                         )
                       }
@@ -504,24 +692,31 @@ export default function ProjectPage() {
                         <SelectItem value="web-app">
                           Web Application
                         </SelectItem>
+
                         <SelectItem value="mobile-app">
                           Mobile Application
                         </SelectItem>
+
                         <SelectItem value="desktop-app">
                           Desktop Application
                         </SelectItem>
+
                         <SelectItem value="cli">
                           CLI Tool
                         </SelectItem>
+
                         <SelectItem value="library">
                           Library / Package
                         </SelectItem>
+
                         <SelectItem value="website">
                           Website
                         </SelectItem>
+
                         <SelectItem value="experiment">
                           Experiment
                         </SelectItem>
+
                         <SelectItem value="open-source">
                           Open Source
                         </SelectItem>
@@ -602,7 +797,9 @@ export default function ProjectPage() {
               <FieldSeparator />
 
               <FieldGroup>
-                <FieldLegend>Project links</FieldLegend>
+                <FieldLegend>
+                  Project links
+                </FieldLegend>
 
                 <FieldDescription>
                   Add the external resources associated with this
@@ -675,7 +872,9 @@ export default function ProjectPage() {
               <FieldSeparator />
 
               <FieldGroup>
-                <FieldLegend>Project media</FieldLegend>
+                <FieldLegend>
+                  Project media
+                </FieldLegend>
 
                 <FieldDescription>
                   Images used to showcase the project.
@@ -741,9 +940,14 @@ https://example.com/screenshot-3.png`}
                         .map((url) => url.trim())
                         .filter(Boolean);
 
-                      setValue("screenshots", values, {
-                        shouldValidate: true,
-                      });
+                      setValue(
+                        "screenshots",
+                        values,
+                        {
+                          shouldValidate: true,
+                          shouldDirty: true,
+                        }
+                      );
                     }}
                   />
 
@@ -762,7 +966,9 @@ https://example.com/screenshot-3.png`}
               <FieldSeparator />
 
               <FieldGroup>
-                <FieldLegend>Technology</FieldLegend>
+                <FieldLegend>
+                  Technology
+                </FieldLegend>
 
                 <FieldDescription>
                   Technologies and tools used to build this project.
@@ -780,12 +986,19 @@ https://example.com/screenshot-3.png`}
                     onChange={(event) => {
                       const values = event.target.value
                         .split(",")
-                        .map((technology) => technology.trim())
+                        .map((technology) =>
+                          technology.trim()
+                        )
                         .filter(Boolean);
 
-                      setValue("techStack", values, {
-                        shouldValidate: true,
-                      });
+                      setValue(
+                        "techStack",
+                        values,
+                        {
+                          shouldValidate: true,
+                          shouldDirty: true,
+                        }
+                      );
                     }}
                   />
 
@@ -813,6 +1026,7 @@ https://example.com/screenshot-3.png`}
                         value as ProjectInput["category"],
                         {
                           shouldValidate: true,
+                          shouldDirty: true,
                         }
                       )
                     }
@@ -825,21 +1039,27 @@ https://example.com/screenshot-3.png`}
                       <SelectItem value="javascript">
                         JavaScript
                       </SelectItem>
+
                       <SelectItem value="typescript">
                         TypeScript
                       </SelectItem>
+
                       <SelectItem value="react">
                         React
                       </SelectItem>
+
                       <SelectItem value="nextjs">
                         Next.js
                       </SelectItem>
+
                       <SelectItem value="nodejs">
                         Node.js
                       </SelectItem>
+
                       <SelectItem value="electron">
                         Electron
                       </SelectItem>
+
                       <SelectItem value="other">
                         Other
                       </SelectItem>
@@ -857,11 +1077,15 @@ https://example.com/screenshot-3.png`}
               <FieldSeparator />
 
               <FieldGroup>
-                <FieldLegend>Project status</FieldLegend>
+                <FieldLegend>
+                  Project status
+                </FieldLegend>
 
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   <Field>
-                    <FieldLabel>Status</FieldLabel>
+                    <FieldLabel>
+                      Status
+                    </FieldLabel>
 
                     <Select
                       value={status}
@@ -871,6 +1095,7 @@ https://example.com/screenshot-3.png`}
                           value as ProjectInput["status"],
                           {
                             shouldValidate: true,
+                            shouldDirty: true,
                           }
                         )
                       }
@@ -883,15 +1108,19 @@ https://example.com/screenshot-3.png`}
                         <SelectItem value="planning">
                           Planning
                         </SelectItem>
+
                         <SelectItem value="development">
                           In Development
                         </SelectItem>
+
                         <SelectItem value="completed">
                           Completed
                         </SelectItem>
+
                         <SelectItem value="maintenance">
                           Maintained
                         </SelectItem>
+
                         <SelectItem value="archived">
                           Archived
                         </SelectItem>
@@ -933,9 +1162,14 @@ https://example.com/screenshot-3.png`}
                     <Switch
                       checked={featured}
                       onCheckedChange={(checked) =>
-                        setValue("featured", checked, {
-                          shouldValidate: true,
-                        })
+                        setValue(
+                          "featured",
+                          checked,
+                          {
+                            shouldValidate: true,
+                            shouldDirty: true,
+                          }
+                        )
                       }
                     />
 
@@ -955,14 +1189,21 @@ https://example.com/screenshot-3.png`}
                     <Switch
                       checked={published}
                       onCheckedChange={(checked) =>
-                        setValue("published", checked, {
-                          shouldValidate: true,
-                        })
+                        setValue(
+                          "published",
+                          checked,
+                          {
+                            shouldValidate: true,
+                            shouldDirty: true,
+                          }
+                        )
                       }
                     />
 
                     <FieldContent>
-                      <FieldTitle>Published</FieldTitle>
+                      <FieldTitle>
+                        Published
+                      </FieldTitle>
 
                       <FieldDescription>
                         Make this project visible on your portfolio.
@@ -975,7 +1216,9 @@ https://example.com/screenshot-3.png`}
               <FieldSeparator />
 
               <FieldGroup>
-                <FieldLegend>Project information</FieldLegend>
+                <FieldLegend>
+                  Project information
+                </FieldLegend>
 
                 <Field>
                   <FieldLabel htmlFor="features">
@@ -997,9 +1240,14 @@ Responsive design`}
                         .map((feature) => feature.trim())
                         .filter(Boolean);
 
-                      setValue("features", values, {
-                        shouldValidate: true,
-                      });
+                      setValue(
+                        "features",
+                        values,
+                        {
+                          shouldValidate: true,
+                          shouldDirty: true,
+                        }
+                      );
                     }}
                   />
 
@@ -1056,7 +1304,9 @@ Responsive design`}
               <FieldSeparator />
 
               <FieldGroup>
-                <FieldLegend>SEO</FieldLegend>
+                <FieldLegend>
+                  SEO
+                </FieldLegend>
 
                 <FieldDescription>
                   Search-engine metadata for the project page.
@@ -1147,10 +1397,12 @@ Responsive design`}
             </p>
           </div>
 
-          <Button onClick={()=>{
-            reset();
-            handleCreateProject();
-          }}>
+          <Button
+            onClick={() => {
+              reset();
+              handleCreateProject();
+            }}
+          >
             <Plus className="mr-2 h-4 w-4" />
             Add project
           </Button>
@@ -1160,13 +1412,34 @@ Responsive design`}
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Project</TableHead>
-                <TableHead>Type</TableHead>
-                <TableHead>Category</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Year</TableHead>
-                <TableHead>Published</TableHead>
-                <TableHead>Featured</TableHead>
+                <TableHead>
+                  Project
+                </TableHead>
+
+                <TableHead>
+                  Type
+                </TableHead>
+
+                <TableHead>
+                  Category
+                </TableHead>
+
+                <TableHead>
+                  Status
+                </TableHead>
+
+                <TableHead>
+                  Year
+                </TableHead>
+
+                <TableHead>
+                  Published
+                </TableHead>
+
+                <TableHead>
+                  Featured
+                </TableHead>
+
                 <TableHead className="text-right">
                   Actions
                 </TableHead>
@@ -1182,7 +1455,9 @@ Responsive design`}
                   >
                     <div className="flex items-center justify-center gap-2">
                       <Loader2 className="h-5 w-5 animate-spin" />
-                      <span>Loading projects...</span>
+                      <span>
+                        Loading projects...
+                      </span>
                     </div>
                   </TableCell>
                 </TableRow>
@@ -1210,7 +1485,9 @@ Responsive design`}
               ) : (
                 projects.map((project) => {
                   const projectId =
-                    project.id ?? project._id ?? "";
+                    project.id ??
+                    project._id ??
+                    "";
 
                   return (
                     <TableRow key={projectId}>
@@ -1228,7 +1505,10 @@ Responsive design`}
 
                       <TableCell>
                         <span className="capitalize">
-                          {project.type?.replace("-", " ")}
+                          {project.type?.replace(
+                            "-",
+                            " "
+                          )}
                         </span>
                       </TableCell>
 
@@ -1240,11 +1520,16 @@ Responsive design`}
 
                       <TableCell>
                         <span className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium capitalize">
-                          {project.status?.replace("-", " ")}
+                          {project.status?.replace(
+                            "-",
+                            " "
+                          )}
                         </span>
                       </TableCell>
 
-                      <TableCell>{project.year}</TableCell>
+                      <TableCell>
+                        {project.year}
+                      </TableCell>
 
                       <TableCell>
                         <span
@@ -1254,7 +1539,9 @@ Responsive design`}
                               : "text-muted-foreground"
                           }
                         >
-                          {project.published ? "Yes" : "No"}
+                          {project.published
+                            ? "Yes"
+                            : "No"}
                         </span>
                       </TableCell>
 
@@ -1266,7 +1553,9 @@ Responsive design`}
                               : "text-muted-foreground"
                           }
                         >
-                          {project.featured ? "Yes" : "No"}
+                          {project.featured
+                            ? "Yes"
+                            : "No"}
                         </span>
                       </TableCell>
 
@@ -1288,13 +1577,15 @@ Responsive design`}
                             size="icon"
                             title="Delete project"
                             disabled={
-                              deletingProjectId === projectId
+                              deletingProjectId ===
+                              projectId
                             }
                             onClick={() =>
                               handleDeleteProject(project)
                             }
                           >
-                            {deletingProjectId === projectId ? (
+                            {deletingProjectId ===
+                            projectId ? (
                               <Loader2 className="h-4 w-4 animate-spin" />
                             ) : (
                               <Trash2 className="h-4 w-4" />

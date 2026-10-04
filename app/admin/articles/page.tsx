@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
+
 import { Controller, useForm } from "react-hook-form";
+
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import {
@@ -17,8 +19,11 @@ import {
 } from "@/components/ui/field";
 
 import { Input } from "@/components/ui/input";
+
 import { Textarea } from "@/components/ui/textarea";
+
 import { Switch } from "@/components/ui/switch";
+
 import { Button } from "@/components/ui/button";
 
 import {
@@ -57,6 +62,7 @@ import {
   Trash2,
   X,
   Loader2,
+  FileJson,
 } from "lucide-react";
 
 import {
@@ -87,14 +93,18 @@ export default function ArticlePage() {
   const [deletingArticleId, setDeletingArticleId] =
     useState<string | null>(null);
 
+  const [importingJson, setImportingJson] = useState(false);
+
   const {
     register,
     control,
     handleSubmit,
     reset,
+    getValues,
     formState: {
       errors,
       isSubmitting,
+      dirtyFields,
     },
   } = useForm<ArticleFormData>({
     resolver: zodResolver(articleSchema),
@@ -211,6 +221,7 @@ export default function ArticlePage() {
       reset();
 
       setEditingArticleId(null);
+
       setOpenArticleForm(false);
     } catch (error) {
       console.error(
@@ -235,13 +246,144 @@ export default function ArticlePage() {
     reset();
 
     setEditingArticleId(null);
+
     setOpenArticleForm(true);
+  }
+
+  async function handleJsonImport(file: File) {
+    if (
+      !file.name.toLowerCase().endsWith(".json") &&
+      file.type !== "application/json"
+    ) {
+      toast.add({
+        type: "error",
+        title: "Invalid file",
+        description: "Please drop a valid JSON file.",
+      });
+
+      return;
+    }
+
+    try {
+      setImportingJson(true);
+
+      const text = await file.text();
+
+      const parsed = JSON.parse(text);
+
+      const jsonData =
+        parsed &&
+        typeof parsed === "object" &&
+        parsed.article &&
+        typeof parsed.article === "object" &&
+        !Array.isArray(parsed.article)
+          ? parsed.article
+          : parsed;
+
+      if (
+        !jsonData ||
+        typeof jsonData !== "object" ||
+        Array.isArray(jsonData)
+      ) {
+        throw new Error(
+          "The JSON file must contain an article object."
+        );
+      }
+
+      const allowedFields: (keyof ArticleFormData)[] = [
+        "title",
+        "slug",
+        "excerpt",
+        "content",
+        "coverImage",
+        "thumbnail",
+        "category",
+        "readingTime",
+        "tags",
+        "published",
+        "featured",
+        "comments",
+        "sourceUrl",
+        "githubUrl",
+        "demoUrl",
+        "seoTitle",
+        "seoDescription",
+        "canonicalUrl",
+      ];
+
+      const currentValues = getValues();
+
+      const mergedValues = {
+        ...currentValues,
+      };
+
+      let importedCount = 0;
+      let preservedFormCount = 0;
+
+      for (const field of allowedFields) {
+        if (
+          !Object.prototype.hasOwnProperty.call(
+            jsonData,
+            field
+          )
+        ) {
+          continue;
+        }
+
+        const jsonValue = jsonData[field];
+
+        if (
+          jsonValue === undefined ||
+          jsonValue === null
+        ) {
+          continue;
+        }
+
+        if (Boolean(dirtyFields[field])) {
+          preservedFormCount++;
+          continue;
+        }
+
+        Object.assign(mergedValues, {
+          [field]: jsonValue,
+        });
+
+        importedCount++;
+      }
+
+      reset(mergedValues, {
+        keepDirtyValues: true,
+      });
+
+      toast.add({
+        type: "success",
+        title: "JSON imported",
+        description:
+          preservedFormCount > 0
+            ? `${importedCount} JSON fields imported. ${preservedFormCount} form-entered fields were kept because form values have priority.`
+            : `${importedCount} JSON fields imported into the form.`,
+      });
+    } catch (error) {
+      console.error("JSON import error:", error);
+
+      toast.add({
+        type: "error",
+        title: "Failed to import JSON",
+        description:
+          error instanceof Error
+            ? error.message
+            : "The JSON file could not be imported.",
+      });
+    } finally {
+      setImportingJson(false);
+    }
   }
 
   function handleCloseForm() {
     reset();
 
     setEditingArticleId(null);
+
     setOpenArticleForm(false);
   }
 
@@ -347,6 +489,7 @@ export default function ArticlePage() {
         reset();
 
         setEditingArticleId(null);
+
         setOpenArticleForm(false);
       }
 
@@ -434,6 +577,60 @@ export default function ArticlePage() {
           >
             <X />
           </Button>
+
+          <div
+            className="mb-8 rounded-lg border-2 border-dashed p-6 text-center"
+            onDragOver={(event) => {
+              event.preventDefault();
+            }}
+            onDrop={(event) => {
+              event.preventDefault();
+
+              const file =
+                event.dataTransfer.files?.[0];
+
+              if (file) {
+                void handleJsonImport(file);
+              }
+            }}
+          >
+            <FileJson className="mx-auto mb-3 h-8 w-8" />
+
+            <p className="font-medium">
+              Drop article JSON here
+            </p>
+
+            <p className="mt-1 text-sm text-muted-foreground">
+              JSON fills missing fields. Values already entered in
+              the form always have priority.
+            </p>
+            <a href="/templates/article.json" target="_blank" rel="noopener noreferrer" className="block text-blue-600 text-sm">
+              View template
+            </a>
+            <Input
+              type="file"
+              accept=".json,application/json"
+              disabled={importingJson}
+              className="mx-auto mt-4 max-w-sm cursor-pointer"
+              onChange={(event) => {
+                const file =
+                  event.target.files?.[0];
+
+                if (file) {
+                  void handleJsonImport(file);
+                }
+
+                event.target.value = "";
+              }}
+            />
+
+            {importingJson && (
+              <div className="mt-3 flex items-center justify-center gap-2 text-sm text-muted-foreground">
+                <Loader2 className="h-4 w-4 animate-spin" />
+                Importing JSON...
+              </div>
+            )}
+          </div>
 
           <form onSubmit={handleSubmit(onSubmit)}>
             <FieldSet>
@@ -979,6 +1176,7 @@ export default function ArticlePage() {
                   {isSubmitting ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+
                       {editingArticleId
                         ? "Updating..."
                         : "Creating..."}
@@ -1017,12 +1215,30 @@ export default function ArticlePage() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Article</TableHead>
-                <TableHead>Category</TableHead>
-                <TableHead>Reading Time</TableHead>
-                <TableHead>Published</TableHead>
-                <TableHead>Featured</TableHead>
-                <TableHead>Comments</TableHead>
+                <TableHead>
+                  Article
+                </TableHead>
+
+                <TableHead>
+                  Category
+                </TableHead>
+
+                <TableHead>
+                  Reading Time
+                </TableHead>
+
+                <TableHead>
+                  Published
+                </TableHead>
+
+                <TableHead>
+                  Featured
+                </TableHead>
+
+                <TableHead>
+                  Comments
+                </TableHead>
+
                 <TableHead className="text-right">
                   Actions
                 </TableHead>
@@ -1038,6 +1254,7 @@ export default function ArticlePage() {
                   >
                     <div className="flex items-center justify-center gap-2">
                       <Loader2 className="h-5 w-5 animate-spin" />
+
                       <span>
                         Loading articles...
                       </span>
@@ -1060,6 +1277,7 @@ export default function ArticlePage() {
                         onClick={handleCreateArticle}
                       >
                         <Plus className="mr-2 h-4 w-4" />
+
                         Create your first article
                       </Button>
                     </div>

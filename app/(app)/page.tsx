@@ -8,7 +8,8 @@ import Link from "next/link";
 import { connectDB } from "@/lib/connectDb";
 import ProjectModel from "@/models/project.model";
 import { Project } from "@/types/content";
-
+export const revalidate = 0;
+export const dynamic = "force-dynamic";
 const pacifico = Pacifico({
   variable: "--font-pacifico",
   subsets: ["latin"],
