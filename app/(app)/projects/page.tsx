@@ -18,6 +18,11 @@ import ProjectModel from "@/models/project.model";
 import { Pacifico } from "next/font/google";
 import { Project } from "@/types/content";
 
+
+export const revalidate = 0;
+export const dynamic = "force-dynamic";
+
+
 const pacifico = Pacifico({
   variable: "--font-pacifico",
   subsets: ["latin"],
