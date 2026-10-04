@@ -9,10 +9,18 @@ import ArticleModel from "@/models/article.model";
 
 import { absoluteUrl, safeJsonLd } from "@/lib/seo";
 
+
+
 import type { Article } from "@/types/content";
+import { Pacifico } from "next/font/google";
 export const revalidate = 0;
 export const dynamic = "force-dynamic";
 
+const pacifico = Pacifico({
+  variable: "--font-pacifico",
+  subsets: ["latin"],
+  weight: "400",
+});
 export const metadata: Metadata = {
   title: "Articles",
   description:
@@ -81,7 +89,7 @@ export default async function ArticlesPage() {
           <h1 className="mt-5 max-w-4xl text-5xl font-semibold leading-[1.05] tracking-tight sm:text-6xl lg:text-7xl">
             Things I&apos;ve
             <br />
-            <span className="text-blue-800">
+            <span className={`text-blue-800 ${pacifico.className}`}>
               learned and written.
             </span>
           </h1>
