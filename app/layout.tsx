@@ -18,6 +18,10 @@ const SITE_URL =
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
 
+  alternates: {
+    canonical: SITE_URL,
+  },
+
   title: {
     default: "Ajoy Das — Software Developer",
     template: "%s | Ajoy Das",

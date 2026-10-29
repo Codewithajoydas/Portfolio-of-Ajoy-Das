@@ -4,10 +4,8 @@ import { notFound } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { ArrowLeft, ExternalLink } from "lucide-react";
+import type { Metadata } from "next";
 import { FaGithub } from "react-icons/fa";
-export const revalidate = 0;
-export const dynamic = "force-dynamic";
-
 import Footer from "@/components/Footer";
 import {
   buildArticleStructuredData,
@@ -16,7 +14,7 @@ import {
   safeString,
   safeUrl,
 } from "@/lib/article-detail";
-import { safeJsonLd } from "@/lib/seo";
+import { absoluteUrl, safeJsonLd } from "@/lib/seo";
 import type { Article } from "@/types/article/Article";
 
 type PageProps = {
@@ -24,6 +22,68 @@ type PageProps = {
     slug: string;
   }>;
 };
+
+export const revalidate = 0;
+export const dynamic = "force-dynamic";
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const articleSlug = safeString(slug);
+
+  if (!articleSlug) {
+    return {
+      title: "Article",
+      alternates: {
+        canonical: absoluteUrl("/articles"),
+      },
+    };
+  }
+
+  try {
+    const article = await getArticleBySlug(articleSlug);
+
+    if (!article) {
+      return {
+        title: "Article",
+        alternates: {
+          canonical: absoluteUrl(`/articles/${articleSlug}`),
+        },
+      };
+    }
+
+    const meta = getArticlePageMeta(article, articleSlug);
+
+    return {
+      title: meta.articleTitle,
+      description: meta.excerpt,
+      alternates: {
+        canonical: meta.articleUrl,
+      },
+      openGraph: {
+        type: "article",
+        title: meta.articleTitle,
+        description: meta.excerpt,
+        url: meta.articleUrl,
+        images: meta.image ? [{ url: meta.image, width: 1200, height: 630, alt: meta.articleTitle }] : undefined,
+        publishedTime: meta.publishedTime,
+        modifiedTime: meta.modifiedTime,
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: meta.articleTitle,
+        description: meta.excerpt,
+        images: meta.image ? [meta.image] : undefined,
+      },
+    };
+  } catch {
+    return {
+      title: "Article",
+      alternates: {
+        canonical: absoluteUrl(`/articles/${articleSlug}`),
+      },
+    };
+  }
+}
 
 export default async function ArticleDetailsPage({ params }: PageProps) {
   const { slug } = await params;

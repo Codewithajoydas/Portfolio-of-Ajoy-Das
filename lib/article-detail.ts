@@ -131,6 +131,7 @@ export function getArticlePageMeta(article: Article, fallbackSlug: string) {
     tags,
     readingTime,
     articleUrl,
+    canonicalUrl: articleUrl,
     publishedTime,
     modifiedTime,
     createdDate,

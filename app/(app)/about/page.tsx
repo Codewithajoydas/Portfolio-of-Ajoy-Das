@@ -1,4 +1,5 @@
 import Footer from "@/components/Footer";
+import { absoluteUrl } from "@/lib/seo";
 import {
   ArrowDown,
   ArrowUpRight,
@@ -15,6 +16,7 @@ import {
   Terminal,
   Wrench,
 } from "lucide-react";
+import { Metadata } from "next";
 import { Pacifico } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
@@ -207,6 +209,28 @@ const strengths = [
   "Attention to Detail",
 ];
 
+export const metadata: Metadata = {
+  title: "About",
+  description:
+    "Ajoy Das is a software developer building web applications, developer tools, open-source projects, and technical experiments.",
+  alternates: {
+    canonical: absoluteUrl("/about"),
+  },
+  openGraph: {
+    type: "website",
+    title: "About | Ajoy Das",
+    description:
+      "Ajoy Das is a software developer building web applications, developer tools, open-source projects, and technical experiments.",
+    url: absoluteUrl("/about"),
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "About | Ajoy Das",
+    description:
+      "Ajoy Das is a software developer building web applications, developer tools, open-source projects, and technical experiments.",
+  },
+};
+
 export default function AboutPage() {
   return (
     <main className="min-h-screen bg-white text-gray-900">
@@ -276,7 +300,9 @@ export default function AboutPage() {
               ].map(([value, label]) => (
                 <div key={label} className="bg-white p-5">
                   <p className="text-2xl font-bold tracking-tight">{value}</p>
-                  <p className="mt-1 text-xs leading-5 text-gray-500">{label}</p>
+                  <p className="mt-1 text-xs leading-5 text-gray-500">
+                    {label}
+                  </p>
                 </div>
               ))}
             </div>
@@ -327,7 +353,10 @@ export default function AboutPage() {
 
           <div className="grid gap-4 sm:grid-cols-2">
             {[
-              ["Professional role", "MIS Executive — Genus Power Infrastructures"],
+              [
+                "Professional role",
+                "MIS Executive — Genus Power Infrastructures",
+              ],
               ["Core ecosystem", "JavaScript, Node.js, React, React Native"],
               ["Languages", "English, Hindi, Assamese"],
             ].map(([label, value]) => (
@@ -378,16 +407,16 @@ export default function AboutPage() {
 
               <p>
                 Outside day-to-day work, I spend a significant amount of time
-                learning the JavaScript ecosystem and building applications.
-                I have explored frontend development, backend development,
-                mobile development, APIs, databases, testing, performance,
-                tooling, and system design.
+                learning the JavaScript ecosystem and building applications. I
+                have explored frontend development, backend development, mobile
+                development, APIs, databases, testing, performance, tooling, and
+                system design.
               </p>
 
               <p>
                 The direction is simple: become the kind of engineer who can
-                understand a problem, design a solution, build it, debug it,
-                and keep improving it instead of stopping at the first working
+                understand a problem, design a solution, build it, debug it, and
+                keep improving it instead of stopping at the first working
                 version.
               </p>
             </div>
@@ -417,9 +446,7 @@ export default function AboutPage() {
                   <div>
                     <div className="flex items-center gap-3">
                       <BriefcaseBusiness size={20} className="text-blue-800" />
-                      <h3 className="text-2xl font-semibold">
-                        MIS Executive
-                      </h3>
+                      <h3 className="text-2xl font-semibold">MIS Executive</h3>
                     </div>
                     <p className="mt-2 text-gray-600">
                       Genus Power Infrastructures
@@ -444,7 +471,10 @@ export default function AboutPage() {
                       key={item}
                       className="flex gap-3 border border-gray-200 bg-white p-4"
                     >
-                      <Check size={17} className="mt-1 shrink-0 text-blue-800" />
+                      <Check
+                        size={17}
+                        className="mt-1 shrink-0 text-blue-800"
+                      />
                       <span className="text-sm leading-6 text-gray-600">
                         {item}
                       </span>
@@ -555,8 +585,6 @@ export default function AboutPage() {
         </div>
       </section>
 
-      
-
       {/* SKILLS */}
       <section className="px-6 py-24 sm:px-10 lg:px-16 lg:py-36">
         <div className="mx-auto max-w-7xl">
@@ -617,8 +645,8 @@ export default function AboutPage() {
                 </span>
               </h2>
               <p className="mt-7 max-w-lg text-lg leading-8 text-gray-600">
-                The journey has never been about collecting technology names.
-                It has been about progressively understanding more layers of
+                The journey has never been about collecting technology names. It
+                has been about progressively understanding more layers of
                 software.
               </p>
             </div>
@@ -665,8 +693,8 @@ export default function AboutPage() {
               <p className="max-w-2xl text-lg leading-8 text-gray-600">
                 My current learning direction is focused on turning individual
                 JavaScript knowledge into stronger engineering ability:
-                architecture, backend systems, databases, performance,
-                testing, tooling, and system design.
+                architecture, backend systems, databases, performance, testing,
+                tooling, and system design.
               </p>
 
               <div className="mt-10 flex flex-wrap gap-3">
@@ -879,8 +907,6 @@ export default function AboutPage() {
               </Link>
             </div>
           </div>
-
-          
         </div>
       </section>
 
