@@ -16,7 +16,7 @@ Set the following variables in production:
 ```env
 MONGODB_URL=your-production-mongodb-connection-string
 JWT_SECRET=your-production-jwt-secret
-NEXT_PUBLIC_SITE_URL=https://your-production-domain
+NEXT_PUBLIC_SITE_URL=https://codewithajoydas.live
 ```
 
 ## 3. Build and Runtime Requirements
@@ -54,6 +54,7 @@ For Vercel deployment:
 
 - The custom logger is designed to stay silent in production.
 - Metadata and sitemap generation should use the production site URL.
+- Set `NEXT_PUBLIC_SITE_URL` to the canonical public domain before deploying.
 - Admin endpoints should only be available behind valid auth.
 
 ## 8. Post-Deployment Checks

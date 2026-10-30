@@ -11,11 +11,19 @@ import {
 } from "lucide-react";
 import { Pacifico } from "next/font/google";
 import Link from "next/link";
+import { createSeoMetadata } from "@/lib/seo";
 
 const pacifico = Pacifico({
   variable: "--font-pacifico",
   subsets: ["latin"],
   weight: "400",
+});
+
+export const metadata = createSeoMetadata({
+  title: "Skills",
+  description:
+    "Explore Ajoy Das's software development skills across JavaScript, TypeScript, React, Next.js, backend systems, and developer tools.",
+  path: "/skills",
 });
 
 const skillGroups = [
@@ -464,12 +472,12 @@ export default function SkillsPage() {
               Want to see these skills in practice?
             </p>
 
-            <h2 className="mt-5 max-w-3xl text-4xl font-semibold leading-tight sm:text-5xl lg:text-6xl">
+            <h1 className="mt-5 max-w-3xl text-4xl font-semibold leading-tight sm:text-5xl lg:text-6xl">
               Take a look at what I&apos;ve{" "}
               <span className={`${pacifico.className} text-blue-200`}>
                 built.
               </span>
-            </h2>
+            </h1>
           </div>
 
           <div className="flex flex-wrap gap-3">

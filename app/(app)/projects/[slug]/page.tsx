@@ -18,6 +18,7 @@ import ProjectModel from "@/models/project.model";
 
 import {
   absoluteUrl,
+  createSeoMetadata,
   safeJsonLd,
 } from "@/lib/seo";
 
@@ -141,67 +142,12 @@ export async function generateMetadata({
           ? project.thumbnail
           : undefined;
 
-    return {
+    return createSeoMetadata({
       title,
-
       description,
-
-      alternates: {
-        canonical: absoluteUrl(
-          `/projects/${projectSlug}`,
-        ),
-      },
-
-      robots: {
-        index: true,
-        follow: true,
-
-        googleBot: {
-          index: true,
-          follow: true,
-          "max-image-preview": "large",
-          "max-snippet": -1,
-          "max-video-preview": -1,
-        },
-      },
-
-      openGraph: {
-        type: "website",
-
-        title,
-
-        description,
-
-        url: absoluteUrl(
-          `/projects/${projectSlug}`,
-        ),
-
-        siteName: "Ajoy Das",
-
-        images: image
-          ? [
-              {
-                url: image,
-                width: 1200,
-                height: 630,
-                alt: projectName,
-              },
-            ]
-          : undefined,
-      },
-
-      twitter: {
-        card: "summary_large_image",
-
-        title,
-
-        description,
-
-        images: image
-          ? [image]
-          : undefined,
-      },
-    };
+      path: `/projects/${projectSlug}`,
+      image,
+    });
   } catch (error) {
     console.error(
       `Failed to generate metadata for project "${slug}":`,

@@ -1,5 +1,5 @@
 import Footer from "@/components/Footer";
-import { absoluteUrl } from "@/lib/seo";
+import { createSeoMetadata } from "@/lib/seo";
 import {
   ArrowDown,
   ArrowUpRight,
@@ -16,7 +16,6 @@ import {
   Terminal,
   Wrench,
 } from "lucide-react";
-import { Metadata } from "next";
 import { Pacifico } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
@@ -209,27 +208,12 @@ const strengths = [
   "Attention to Detail",
 ];
 
-export const metadata: Metadata = {
+export const metadata = createSeoMetadata({
   title: "About",
   description:
     "Ajoy Das is a software developer building web applications, developer tools, open-source projects, and technical experiments.",
-  alternates: {
-    canonical: absoluteUrl("/about"),
-  },
-  openGraph: {
-    type: "website",
-    title: "About | Ajoy Das",
-    description:
-      "Ajoy Das is a software developer building web applications, developer tools, open-source projects, and technical experiments.",
-    url: absoluteUrl("/about"),
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "About | Ajoy Das",
-    description:
-      "Ajoy Das is a software developer building web applications, developer tools, open-source projects, and technical experiments.",
-  },
-};
+  path: "/about",
+});
 
 export default function AboutPage() {
   return (

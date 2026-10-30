@@ -1,8 +1,7 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowUpRight, ExternalLink, Layers3 } from "lucide-react";
 import Footer from "@/components/Footer";
-import { absoluteUrl, safeJsonLd } from "@/lib/seo";
+import { absoluteUrl, createSeoMetadata, safeJsonLd } from "@/lib/seo";
 import { connectDB } from "@/lib/connectDb";
 import ProjectModel from "@/models/project.model";
 import { Pacifico } from "next/font/google";
@@ -17,27 +16,12 @@ const pacifico = Pacifico({
   weight: "400",
 });
 
-export const metadata: Metadata = {
+export const metadata = createSeoMetadata({
   title: "Projects",
   description:
     "Explore software projects, applications, developer tools, open-source projects, and experiments built by Ajoy Das.",
-  alternates: {
-    canonical: absoluteUrl("/projects"),
-  },
-  openGraph: {
-    type: "website",
-    title: "Projects | Ajoy Das",
-    description:
-      "Explore software projects, applications, developer tools, open-source projects, and experiments built by Ajoy Das.",
-    url: absoluteUrl("/projects"),
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Projects | Ajoy Das",
-    description:
-      "Explore software projects, applications, developer tools, open-source projects, and experiments built by Ajoy Das.",
-  },
-};
+  path: "/projects",
+});
 
 export default async function ProjectsPage() {
   let publishedProjects: Project[] = [];

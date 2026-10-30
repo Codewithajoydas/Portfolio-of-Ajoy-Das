@@ -9,6 +9,58 @@ import ProjectModel from "@/models/project.model";
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   await connectDB();
 
+  const generatedAt = new Date();
+  const staticPages: MetadataRoute.Sitemap = [
+    {
+      url: absoluteUrl("/"),
+      lastModified: generatedAt,
+      changeFrequency: "weekly",
+      priority: 1,
+    },
+    {
+      url: absoluteUrl("/about"),
+      lastModified: generatedAt,
+      changeFrequency: "monthly",
+      priority: 0.6,
+    },
+    {
+      url: absoluteUrl("/experience"),
+      lastModified: generatedAt,
+      changeFrequency: "monthly",
+      priority: 0.6,
+    },
+    {
+      url: absoluteUrl("/skills"),
+      lastModified: generatedAt,
+      changeFrequency: "monthly",
+      priority: 0.6,
+    },
+    {
+      url: absoluteUrl("/lab"),
+      lastModified: generatedAt,
+      changeFrequency: "monthly",
+      priority: 0.7,
+    },
+    {
+      url: absoluteUrl("/contact"),
+      lastModified: generatedAt,
+      changeFrequency: "yearly",
+      priority: 0.5,
+    },
+    {
+      url: absoluteUrl("/projects"),
+      lastModified: generatedAt,
+      changeFrequency: "weekly",
+      priority: 0.8,
+    },
+    {
+      url: absoluteUrl("/articles"),
+      lastModified: generatedAt,
+      changeFrequency: "weekly",
+      priority: 0.9,
+    },
+  ];
+
   const [projects, articles] = await Promise.all([
     ProjectModel.find({ published: true })
       .select("slug updatedAt")
@@ -52,25 +104,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }));
 
   return [
-    {
-      url: absoluteUrl("/"),
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 1,
-    },
-    {
-      url: absoluteUrl("/projects"),
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.8,
-    },
-    {
-      url: absoluteUrl("/articles"),
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.9,
-    },
-
+    ...staticPages,
     ...projectUrls,
     ...articleUrls,
   ];

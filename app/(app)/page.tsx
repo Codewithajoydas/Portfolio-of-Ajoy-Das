@@ -8,6 +8,8 @@ import Link from "next/link";
 import { connectDB } from "@/lib/connectDb";
 import ProjectModel from "@/models/project.model";
 import { Project } from "@/types/content";
+import { absoluteUrl, safeJsonLd } from "@/lib/seo";
+
 export const revalidate = 0;
 export const dynamic = "force-dynamic";
 const pacifico = Pacifico({
@@ -117,7 +119,25 @@ export default async function Home() {
   );
 
   return (
-    <main className="min-h-screen bg-white text-gray-900">
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={safeJsonLd({
+          "@context": "https://schema.org",
+          "@type": "Person",
+          name: "Ajoy Das",
+          url: absoluteUrl("/"),
+          jobTitle: "Software Developer",
+          email: "codewithajoydas@gmail.com",
+          address: {
+            "@type": "PostalAddress",
+            addressRegion: "Assam",
+            addressCountry: "IN",
+          },
+          sameAs: ["https://github.com/Codewithajoydas"],
+        })}
+      />
+      <main className="min-h-screen bg-white text-gray-900">
       <section className="relative flex min-h-screen items-center overflow-hidden bg-linear-to-br from-blue-50 via-white to-white px-6 py-24 sm:px-10 lg:px-16">
         <div className="relative z-10 mx-auto flex w-full max-w-7xl flex-col-reverse items-center gap-12 lg:flex-row lg:gap-8">
           <div className="w-full flex-1 lg:max-w-3xl">
@@ -432,6 +452,7 @@ export default async function Home() {
       </section>
 
       <Footer />
-    </main>
+      </main>
+    </>
   );
 }

@@ -14,7 +14,7 @@ import {
   safeString,
   safeUrl,
 } from "@/lib/article-detail";
-import { absoluteUrl, safeJsonLd } from "@/lib/seo";
+import { createSeoMetadata, safeJsonLd } from "@/lib/seo";
 import type { Article } from "@/types/article/Article";
 
 type PageProps = {
@@ -32,10 +32,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   if (!articleSlug) {
     return {
-      title: "Article",
-      alternates: {
-        canonical: absoluteUrl("/articles"),
-      },
+      ...createSeoMetadata({
+        title: "Article",
+        description: "Read articles and tutorials by Ajoy Das.",
+        path: "/articles",
+      }),
+      robots: { index: false, follow: true },
     };
   }
 
@@ -44,43 +46,34 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
     if (!article) {
       return {
-        title: "Article",
-        alternates: {
-          canonical: absoluteUrl(`/articles/${articleSlug}`),
-        },
+        ...createSeoMetadata({
+          title: "Article",
+          description: "Read articles and tutorials by Ajoy Das.",
+          path: `/articles/${articleSlug}`,
+        }),
+        robots: { index: false, follow: true },
       };
     }
 
     const meta = getArticlePageMeta(article, articleSlug);
 
-    return {
+    return createSeoMetadata({
       title: meta.articleTitle,
       description: meta.excerpt,
-      alternates: {
-        canonical: meta.articleUrl,
-      },
-      openGraph: {
-        type: "article",
-        title: meta.articleTitle,
-        description: meta.excerpt,
-        url: meta.articleUrl,
-        images: meta.image ? [{ url: meta.image, width: 1200, height: 630, alt: meta.articleTitle }] : undefined,
-        publishedTime: meta.publishedTime,
-        modifiedTime: meta.modifiedTime,
-      },
-      twitter: {
-        card: "summary_large_image",
-        title: meta.articleTitle,
-        description: meta.excerpt,
-        images: meta.image ? [meta.image] : undefined,
-      },
-    };
+      path: meta.articleUrl,
+      image: meta.image ?? undefined,
+      type: "article",
+      publishedTime: meta.publishedTime,
+      modifiedTime: meta.modifiedTime,
+    });
   } catch {
     return {
-      title: "Article",
-      alternates: {
-        canonical: absoluteUrl(`/articles/${articleSlug}`),
-      },
+      ...createSeoMetadata({
+        title: "Article",
+        description: "Read articles and tutorials by Ajoy Das.",
+        path: `/articles/${articleSlug}`,
+      }),
+      robots: { index: false, follow: true },
     };
   }
 }

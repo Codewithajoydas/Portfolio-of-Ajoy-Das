@@ -13,11 +13,19 @@ import {
 import Link from "next/link";
 import Footer from "@/components/Footer";
 import { Pacifico } from "next/font/google";
+import { createSeoMetadata } from "@/lib/seo";
 
 const pacifico = Pacifico({
   variable: "--font-pacifico",
   subsets: ["latin"],
   weight: "400",
+});
+
+export const metadata = createSeoMetadata({
+  title: "Experience",
+  description:
+    "Explore Ajoy Das's software development journey, projects, technologies, and engineering experience.",
+  path: "/experience",
 });
 
 const journey = [

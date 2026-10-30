@@ -3,6 +3,7 @@ import "./globals.css";
 import { Open_Sans, Geist } from "next/font/google";
 import { SidebarProvider } from "@/store/components/Sidebar";
 import { cn } from "@/lib/utils";
+import { SITE_URL } from "@/lib/seo";
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
@@ -10,10 +11,6 @@ const OpenSans = Open_Sans({
   subsets: ["latin"],
   variable: "--font-open-sans",
 });
-
-const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL ||
-  "http://localhost:3000";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -31,6 +28,21 @@ export const metadata: Metadata = {
     "Ajoy Das is a software developer building web applications, developer tools, open-source projects, and technical experiments.",
 
   applicationName: "Ajoy Das Portfolio",
+  category: "technology",
+  referrer: "strict-origin-when-cross-origin",
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  icons: {
+    icon: [
+      { url: "/icons/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+      { url: "/icons/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+    ],
+    apple: "/icons/apple-touch-icon.png",
+  },
+  manifest: "/icons/site.webmanifest",
 
   authors: [
     {
@@ -41,6 +53,19 @@ export const metadata: Metadata = {
   creator: "Ajoy Das",
 
   publisher: "Ajoy Das",
+  keywords: [
+    "Ajoy Das",
+    "software developer",
+    "web development",
+    "developer tools",
+    "JavaScript",
+    "TypeScript",
+    "Next.js",
+  ],
+  other: {
+    "geo.region": "IN-AS",
+    "geo.placename": "Assam, India",
+  },
 
   robots: {
     index: true,
@@ -71,10 +96,10 @@ export const metadata: Metadata = {
 
     images: [
       {
-        url: `${SITE_URL}/og-image.jpg`,
+        url: "/opengraph-image",
         width: 1200,
         height: 630,
-        alt: "Ajoy Das Portfolio",
+        alt: "Ajoy Das — Software Developer",
       },
     ],
   },
@@ -87,7 +112,7 @@ export const metadata: Metadata = {
     description:
       "Software development projects, articles, tutorials, and experiments by Ajoy Das.",
 
-    images: [`${SITE_URL}/og-image.jpg`],
+    images: ["/opengraph-image"],
   },
 };
 

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 export const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ||
-  "http://localhost:3000";
+  "https://codewithajoydas.live";
 
 export const SITE_NAME = "Ajoy Das";
 
@@ -18,7 +18,7 @@ export function createImageUrl(
   image?: string,
 ): string {
   if (!image) {
-    return absoluteUrl("/og-image.jpg");
+    return absoluteUrl("/opengraph-image");
   }
 
   return absoluteUrl(image);
@@ -43,6 +43,7 @@ export function createSeoMetadata({
 }): Metadata {
   const canonical = absoluteUrl(path);
   const imageUrl = createImageUrl(image);
+  const socialTitle = `${title} | ${SITE_NAME}`;
 
   return {
     title,
@@ -73,7 +74,7 @@ export function createSeoMetadata({
 
       url: canonical,
 
-      title,
+      title: socialTitle,
 
       description,
 
@@ -99,7 +100,7 @@ export function createSeoMetadata({
     twitter: {
       card: "summary_large_image",
 
-      title,
+      title: socialTitle,
 
       description,
 

@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 
@@ -7,7 +6,7 @@ import Footer from "@/components/Footer";
 import { connectDB } from "@/lib/connectDb";
 import ArticleModel from "@/models/article.model";
 
-import { absoluteUrl, safeJsonLd } from "@/lib/seo";
+import { absoluteUrl, createSeoMetadata, safeJsonLd } from "@/lib/seo";
 
 
 
@@ -21,27 +20,12 @@ const pacifico = Pacifico({
   subsets: ["latin"],
   weight: "400",
 });
-export const metadata: Metadata = {
+export const metadata = createSeoMetadata({
   title: "Articles",
   description:
     "Technical articles, tutorials, guides, and notes about JavaScript, TypeScript, React, Next.js, Node.js, CSS, and web development.",
-  alternates: {
-    canonical: absoluteUrl("/articles"),
-  },
-  openGraph: {
-    type: "website",
-    title: "Articles | Ajoy Das",
-    description:
-      "Technical articles, tutorials, guides, and notes about modern web development.",
-    url: absoluteUrl("/articles"),
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Articles | Ajoy Das",
-    description:
-      "Technical articles, tutorials, guides, and notes about modern web development.",
-  },
-};
+  path: "/articles",
+});
 
 export default async function ArticlesPage() {
   await connectDB();

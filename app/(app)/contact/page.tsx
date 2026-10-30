@@ -4,11 +4,19 @@ import { Pacifico } from "next/font/google";
 import Link from "next/link";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
 import Footer from "@/components/Footer";
+import { createSeoMetadata } from "@/lib/seo";
 
 const pacifico = Pacifico({
   variable: "--font-pacifico",
   subsets: ["latin"],
   weight: "400",
+});
+
+export const metadata = createSeoMetadata({
+  title: "Contact",
+  description:
+    "Get in touch with Ajoy Das in Assam, India about software projects, developer tools, and collaboration.",
+  path: "/contact",
 });
 
 const contactMethods = [
