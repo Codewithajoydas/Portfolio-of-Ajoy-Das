@@ -1,0 +1,10 @@
+Target
+
+Add animation [done]
+Add Dark and light mode [done]
+Add Chips for project filter via project type [done]
+Change the project Layout for better UI [done]
+Make contact form perfect [done]
+Update the Footer [done]
+Change the about page hero image [done]
+Add structured JSON

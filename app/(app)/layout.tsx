@@ -8,7 +8,7 @@ const AppLayout = ({ children }: PropsWithChildren) => {
     <>
       <HeaderComponent />
       <SidebarComponent />
-      {children}
+        {children}
       <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID!}/>
     </>
   );

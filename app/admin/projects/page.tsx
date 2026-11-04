@@ -893,7 +893,7 @@ export default function ProjectPage() {
                   />
 
                   <FieldDescription>
-                    Recommended aspect ratio: 16:9.
+                    Recommended size 1280x720 px
                   </FieldDescription>
 
                   {errors.thumbnail && (

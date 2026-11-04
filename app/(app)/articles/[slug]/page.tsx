@@ -18,15 +18,15 @@ import { createSeoMetadata, safeJsonLd } from "@/lib/seo";
 import type { Article } from "@/types/article/Article";
 
 type PageProps = {
-  params: Promise<{
-    slug: string;
-  }>;
+  params: Promise<{ slug: string }>;
 };
 
 export const revalidate = 0;
 export const dynamic = "force-dynamic";
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
   const { slug } = await params;
   const articleSlug = safeString(slug);
 
@@ -78,13 +78,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 }
 
-export default async function ArticleDetailsPage({ params }: PageProps) {
+export default async function ArticleDetailsPage({
+  params,
+}: PageProps) {
   const { slug } = await params;
   const articleSlug = safeString(slug);
 
-  if (!articleSlug) {
-    notFound();
-  }
+  if (!articleSlug) notFound();
 
   let article: Article | null = null;
 
@@ -95,9 +95,7 @@ export default async function ArticleDetailsPage({ params }: PageProps) {
     notFound();
   }
 
-  if (!article) {
-    notFound();
-  }
+  if (!article) notFound();
 
   const meta = getArticlePageMeta(article, articleSlug);
   const structuredData = buildArticleStructuredData(article, meta);
@@ -120,32 +118,22 @@ export default async function ArticleDetailsPage({ params }: PageProps) {
   } = meta;
 
   return (
-    <main className="min-h-screen bg-white text-gray-900">
+    <main className="min-h-screen bg-white text-gray-900 transition-colors duration-300 dark:bg-zinc-950 dark:text-zinc-100">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={safeJsonLd(structuredData)}
       />
 
-      <header className="border-b border-gray-200 px-6 py-5 sm:px-10 lg:px-16">
-        <div className="mx-auto max-w-4xl">
-          <Link
-            href="/articles"
-            className="inline-flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-gray-900"
-          >
-            <ArrowLeft size={16} />
-            All articles
-          </Link>
-        </div>
-      </header>
 
       <article>
-        <header className="border-b border-gray-200 px-6 py-16 sm:px-10 lg:px-16 lg:py-24">
+        <header className="border-b border-gray-200 bg-gradient-to-br from-blue-50 via-white to-white px-6 py-16 transition-colors duration-300 dark:border-zinc-800 dark:from-blue-950 dark:via-zinc-950 dark:to-zinc-950 sm:px-10 lg:px-16 lg:py-24">
           <div className="mx-auto max-w-4xl">
-            <div className="flex flex-wrap items-center gap-4 text-xs font-medium uppercase tracking-[0.15em] text-blue-800">
+            <div className="flex flex-wrap items-center gap-4 text-xs font-medium uppercase tracking-[0.15em] text-blue-800 dark:text-blue-800">
               <span>{category}</span>
-
               {readingTime !== null && (
-                <span className="text-gray-400">{readingTime} min read</span>
+                <span className="text-gray-400 dark:text-zinc-500">
+                  {readingTime} min read
+                </span>
               )}
             </div>
 
@@ -153,16 +141,19 @@ export default async function ArticleDetailsPage({ params }: PageProps) {
               {articleTitle}
             </h1>
 
-            <p className="mt-8 max-w-3xl text-xl leading-8 text-gray-600">{excerpt}</p>
+            <p className="mt-8 max-w-3xl text-xl leading-8 text-gray-600 dark:text-zinc-400">
+              {excerpt}
+            </p>
 
-            <div className="mt-8 flex flex-wrap items-center gap-4 text-sm text-gray-500">
+            <div className="mt-8 flex flex-wrap items-center gap-4 text-sm text-gray-500 dark:text-zinc-400">
               {createdDate && (
-                <time dateTime={publishedTime || undefined}>{createdDate}</time>
+                <time dateTime={publishedTime || undefined}>
+                  {createdDate}
+                </time>
               )}
-
               {hasUpdatedDate && (
                 <>
-                  <span>·</span>
+                  <span className="text-gray-300 dark:text-zinc-700">·</span>
                   <span>Updated {updatedDate}</span>
                 </>
               )}
@@ -173,7 +164,7 @@ export default async function ArticleDetailsPage({ params }: PageProps) {
                 {tags.map((tag, index) => (
                   <span
                     key={`${tag}-${index}`}
-                    className="border border-gray-200 bg-gray-50 px-3 py-1.5 text-xs text-gray-600"
+                    className="border border-gray-200 bg-white/70 px-3 py-1.5 text-xs text-gray-600 dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-300"
                   >
                     {tag}
                   </span>
@@ -182,7 +173,7 @@ export default async function ArticleDetailsPage({ params }: PageProps) {
             )}
 
             {image && (
-              <div className="mt-12 overflow-hidden border border-gray-200">
+              <div className="mt-12 overflow-hidden border border-gray-200 dark:border-zinc-800">
                 <Image
                   src={image}
                   alt={articleTitle}
@@ -199,82 +190,96 @@ export default async function ArticleDetailsPage({ params }: PageProps) {
 
         <section className="px-6 py-16 sm:px-10 lg:px-16">
           <div className="mx-auto max-w-4xl">
-            <div className="prose prose-lg max-w-none">
+            <div className="prose prose-lg max-w-none dark:prose-invert">
               <ReactMarkdown
                 remarkPlugins={[remarkGfm]}
                 components={{
                   h1: ({ children }) => (
-                    <h2 className="mb-6 mt-12 text-4xl font-semibold tracking-tight">{children}</h2>
+                    <h2 className="mb-6 mt-12 text-4xl font-semibold tracking-tight text-gray-900 dark:text-zinc-100">
+                      {children}
+                    </h2>
                   ),
                   h2: ({ children }) => (
-                    <h2 className="mb-5 mt-12 text-3xl font-semibold tracking-tight">{children}</h2>
+                    <h2 className="mb-5 mt-12 text-3xl font-semibold tracking-tight text-gray-900 dark:text-zinc-100">
+                      {children}
+                    </h2>
                   ),
                   h3: ({ children }) => (
-                    <h3 className="mb-4 mt-10 text-2xl font-semibold tracking-tight">{children}</h3>
+                    <h3 className="mb-4 mt-10 text-2xl font-semibold tracking-tight text-gray-900 dark:text-zinc-100">
+                      {children}
+                    </h3>
                   ),
                   h4: ({ children }) => (
-                    <h4 className="mb-3 mt-8 text-xl font-semibold">{children}</h4>
+                    <h4 className="mb-3 mt-8 text-xl font-semibold text-gray-900 dark:text-zinc-100">
+                      {children}
+                    </h4>
                   ),
                   p: ({ children }) => (
-                    <p className="mb-6 text-lg leading-8 text-gray-700">{children}</p>
+                    <p className="mb-6 text-lg leading-8 text-gray-700 dark:text-zinc-300">
+                      {children}
+                    </p>
                   ),
                   a: ({ href, children }) => {
                     const validHref = safeUrl(href);
-
                     if (!validHref) {
-                      return <span className="font-medium text-blue-800">{children}</span>;
+                      return (
+                        <span className="font-medium text-blue-800 dark:text-blue-800">
+                          {children}
+                        </span>
+                      );
                     }
-
                     return (
                       <a
                         href={validHref}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="font-medium text-blue-800 underline underline-offset-4"
+                        className="font-medium text-blue-800 underline underline-offset-4 dark:text-blue-800"
                       >
                         {children}
                       </a>
                     );
                   },
                   ul: ({ children }) => (
-                    <ul className="mb-6 ml-6 list-disc space-y-2 text-gray-700">{children}</ul>
+                    <ul className="mb-6 ml-6 list-disc space-y-2 text-gray-700 dark:text-zinc-300">
+                      {children}
+                    </ul>
                   ),
                   ol: ({ children }) => (
-                    <ol className="mb-6 ml-6 list-decimal space-y-2 text-gray-700">{children}</ol>
+                    <ol className="mb-6 ml-6 list-decimal space-y-2 text-gray-700 dark:text-zinc-300">
+                      {children}
+                    </ol>
                   ),
-                  li: ({ children }) => <li className="pl-1 leading-8">{children}</li>,
+                  li: ({ children }) => (
+                    <li className="pl-1 leading-8">{children}</li>
+                  ),
                   blockquote: ({ children }) => (
-                    <blockquote className="my-8 border-l-4 border-blue-800 bg-gray-50 px-6 py-5 text-gray-600">
+                    <blockquote className="my-8 border-l-4 border-blue-800 bg-gray-50 px-6 py-5 text-gray-600 dark:border-blue-400 dark:bg-zinc-900/70 dark:text-zinc-300">
                       {children}
                     </blockquote>
                   ),
                   code: ({ children, className }) => {
                     const isBlock = className?.includes("language-");
-
                     if (!isBlock) {
                       return (
-                        <code className="rounded bg-gray-100 px-1.5 py-0.5 font-mono text-sm text-blue-800">
+                        <code className="rounded bg-gray-100 px-1.5 py-0.5 font-mono text-sm text-blue-800 dark:bg-zinc-800 dark:text-blue-800">
                           {children}
                         </code>
                       );
                     }
-
                     return (
-                      <code className="font-mono text-sm leading-7 text-gray-100">{children}</code>
+                      <code className="font-mono text-sm leading-7 text-gray-100">
+                        {children}
+                      </code>
                     );
                   },
                   pre: ({ children }) => (
-                    <pre className="my-8 overflow-x-auto border border-gray-800 bg-gray-950 p-6 shadow-[6px_6px_0px_#193cb8]">
+                    <pre className="my-8 overflow-x-auto border border-gray-800 bg-gray-950 p-6 text-gray-100 shadow-[6px_6px_0px_#193cb8] dark:border-zinc-700 dark:shadow-[6px_6px_0px_#1e40af]">
                       {children}
                     </pre>
                   ),
                   img: ({ src, alt }) => {
                     const validSrc = safeUrl(src);
-
-                    if (!validSrc) {
-                      return null;
-                    }
-
+                    if (!validSrc) return null;
                     return (
                       <div className="my-8">
                         <Image
@@ -284,26 +289,36 @@ export default async function ArticleDetailsPage({ params }: PageProps) {
                           height={800}
                           unoptimized
                           loading="lazy"
-                          className="max-w-full border border-gray-200"
+                          className="max-w-full border border-gray-200 dark:border-zinc-800"
                           sizes="(max-width: 768px) 100vw, 1200px"
                         />
                       </div>
                     );
                   },
                   table: ({ children }) => (
-                    <div className="my-8 overflow-x-auto border border-gray-200">
-                      <table className="w-full border-collapse text-left text-sm">{children}</table>
+                    <div className="my-8 overflow-x-auto border border-gray-200 dark:border-zinc-800">
+                      <table className="w-full border-collapse text-left text-sm">
+                        {children}
+                      </table>
                     </div>
                   ),
                   th: ({ children }) => (
-                    <th className="border-b border-gray-200 bg-gray-50 px-4 py-3 font-semibold">{children}</th>
+                    <th className="border-b border-gray-200 bg-gray-50 px-4 py-3 font-semibold text-gray-900 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100">
+                      {children}
+                    </th>
                   ),
                   td: ({ children }) => (
-                    <td className="border-b border-gray-100 px-4 py-3 text-gray-600">{children}</td>
+                    <td className="border-b border-gray-100 px-4 py-3 text-gray-600 dark:border-zinc-800 dark:text-zinc-300">
+                      {children}
+                    </td>
                   ),
-                  hr: () => <hr className="my-12 border-gray-200" />,
+                  hr: () => (
+                    <hr className="my-12 border-gray-200 dark:border-zinc-800" />
+                  ),
                   strong: ({ children }) => (
-                    <strong className="font-semibold text-gray-900">{children}</strong>
+                    <strong className="font-semibold text-gray-900 dark:text-zinc-100">
+                      {children}
+                    </strong>
                   ),
                 }}
               >
@@ -312,37 +327,35 @@ export default async function ArticleDetailsPage({ params }: PageProps) {
             </div>
 
             {(githubUrl || sourceUrl || demoUrl) && (
-              <div className="mt-16 flex flex-wrap gap-3 border-t border-gray-200 pt-8">
+              <div className="mt-16 flex flex-wrap gap-3 border-t border-gray-200 pt-8 dark:border-zinc-800">
                 {githubUrl && (
                   <a
                     href={githubUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 bg-gray-900 px-5 py-3 text-sm font-medium text-white"
+                    className="inline-flex items-center gap-2 bg-gray-900 px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-blue-800 dark:bg-blue-600 dark:hover:bg-blue-500"
                   >
                     <FaGithub size={16} />
                     GitHub
                   </a>
                 )}
-
                 {sourceUrl && (
                   <a
                     href={sourceUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 border border-gray-300 px-5 py-3 text-sm font-medium"
+                    className="inline-flex items-center gap-2 border border-gray-300 px-5 py-3 text-sm font-medium text-gray-900 transition-colors hover:border-gray-900 dark:border-zinc-700 dark:text-zinc-100 dark:hover:border-zinc-400"
                   >
                     Source
                     <ExternalLink size={15} />
                   </a>
                 )}
-
                 {demoUrl && (
                   <a
                     href={demoUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 border border-gray-300 px-5 py-3 text-sm font-medium"
+                    className="inline-flex items-center gap-2 border border-gray-300 px-5 py-3 text-sm font-medium text-gray-900 transition-colors hover:border-gray-900 dark:border-zinc-700 dark:text-zinc-100 dark:hover:border-zinc-400"
                   >
                     Demo
                     <ExternalLink size={15} />

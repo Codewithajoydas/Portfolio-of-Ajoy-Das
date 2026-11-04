@@ -407,7 +407,7 @@ export default function DashboardPage() {
             </div>
           </section>
 
-          <section className="mt-6 grid gap-6 xl:grid-cols-[1.5fr_1fr]">
+          <section className="mt-6 grid gap-6 col-2 xl:grid-cols-[70%_30%] grid-cols-1">
             <div className="rounded-xl border bg-card p-6">
               <div className="mb-6 flex items-center justify-between">
                 <div>
@@ -438,7 +438,7 @@ export default function DashboardPage() {
                       key={content.id}
                       className="flex flex-col gap-3 rounded-lg border p-4 sm:flex-row sm:items-center"
                     >
-                      <div className="flex min-w-0 flex-1 items-center gap-3">
+                      <div className="flex min-w-0  items-center gap-3">
                         <div className="rounded-lg bg-muted p-2">
                           {content.type === "project" ? (
                             <FolderKanban className="size-4" />
@@ -495,7 +495,7 @@ export default function DashboardPage() {
 
                     return (
                       <div key={activity.id} className="flex gap-3">
-                        <div className="mt-0.5 rounded-lg bg-muted p-2">
+                        <div className="mt-0.5 rounded-lg bg-muted p-2 max-h-[30px] max-w-[30px]">
                           <Icon className="size-4" />
                         </div>
 

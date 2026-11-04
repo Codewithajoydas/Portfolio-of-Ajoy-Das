@@ -1,21 +1,15 @@
 import type { Metadata } from "next";
-
 import Link from "next/link";
 import { notFound } from "next/navigation";
-
 import {
   ArrowLeft,
   ArrowUpRight,
   ExternalLink,
 } from "lucide-react";
-
 import { FaGithub } from "react-icons/fa";
-
 import Footer from "@/components/Footer";
-
 import { connectDB } from "@/lib/connectDb";
 import ProjectModel from "@/models/project.model";
-
 import {
   absoluteUrl,
   createSeoMetadata,
@@ -42,7 +36,6 @@ export const dynamic = "force-dynamic";
 export async function generateStaticParams() {
   try {
     await connectDB();
-
     const projects = await ProjectModel.find({
       published: true,
     })
@@ -53,6 +46,7 @@ export async function generateStaticParams() {
     if (!Array.isArray(projects)) {
       return [];
     }
+
     return projects
       .filter(
         (project) =>
@@ -69,7 +63,6 @@ export async function generateStaticParams() {
       "Failed to generate project static params:",
       error,
     );
-
     return [];
   }
 }
@@ -86,7 +79,6 @@ export async function generateMetadata({
 
   try {
     await connectDB();
-
     const project = await ProjectModel.findOne({
       slug,
       published: true,
@@ -97,7 +89,6 @@ export async function generateMetadata({
     if (!project) {
       return {
         title: "Project Not Found",
-
         robots: {
           index: false,
           follow: false,
@@ -153,10 +144,8 @@ export async function generateMetadata({
       `Failed to generate metadata for project "${slug}":`,
       error,
     );
-
     return {
       title: "Project",
-
       robots: {
         index: false,
         follow: false,
@@ -169,18 +158,16 @@ export default async function ProjectDetailsPage({
   params,
 }: PageProps) {
   const { slug } = await params;
-
   let project;
 
   try {
-    /*
+    /**
      * Direct server-side MongoDB query.
      *
      * No API.
      * No getProjectBySlug().
      */
     await connectDB();
-
     project = await ProjectModel.findOne({
       slug,
       published: true,
@@ -192,7 +179,6 @@ export default async function ProjectDetailsPage({
       `Failed to load project "${slug}":`,
       error,
     );
-
     notFound();
   }
 
@@ -200,13 +186,12 @@ export default async function ProjectDetailsPage({
     notFound();
   }
 
-  /*
+  /**
    * Defensive values.
    *
    * These prevent .length and .map() from crashing
    * when the database contains null or malformed values.
    */
-
   const projectName =
     typeof project.name === "string" &&
     project.name.trim()
@@ -271,19 +256,19 @@ export default async function ProjectDetailsPage({
         ? project.thumbnail
         : null;
 
-const techStack = Array.isArray(project.techStack)
-  ? project.techStack.filter(
-      (technology: unknown): technology is string =>
-        typeof technology === "string" &&
-        technology.trim().length > 0,
-    )
-  : [];
+  const techStack = Array.isArray(project.techStack)
+    ? project.techStack.filter(
+        (technology: unknown): technology is string =>
+          typeof technology === "string" &&
+          technology.trim().length > 0,
+      )
+    : [];
 
   const features = Array.isArray(
     project.features,
   )
     ? project.features.filter(
-        (feature:unknown): feature is string =>
+        (feature: unknown): feature is string =>
           typeof feature === "string" &&
           feature.trim().length > 0,
       )
@@ -315,59 +300,46 @@ const techStack = Array.isArray(project.techStack)
     `/projects/${projectSlug}`,
   );
 
-  /*
+  /**
    * Safe structured data.
    */
   const structuredData = {
     "@context": "https://schema.org",
-
     "@graph": [
       {
         "@type": "CreativeWork",
-
         "@id": `${projectUrl}#project`,
-
         name: projectName,
-
         description,
-
         url: projectUrl,
-
         creator: {
           "@type": "Person",
-
           name: "Ajoy Das",
-
           url: absoluteUrl("/"),
         },
-
         ...(project.createdAt
           ? {
               dateCreated:
                 project.createdAt,
             }
           : {}),
-
         ...(project.updatedAt
           ? {
               dateModified:
                 project.updatedAt,
             }
           : {}),
-
         ...(image
           ? {
               image: [image],
             }
           : {}),
-
         ...(techStack.length > 0
           ? {
               keywords:
                 techStack.join(", "),
             }
           : {}),
-
         ...(category
           ? {
               about: {
@@ -376,52 +348,37 @@ const techStack = Array.isArray(project.techStack)
               },
             }
           : {}),
-
         ...(githubUrl
           ? {
               codeRepository:
                 githubUrl,
             }
           : {}),
-
         ...(liveUrl
           ? {
               sameAs: liveUrl,
             }
           : {}),
       },
-
       {
         "@type": "BreadcrumbList",
-
         itemListElement: [
           {
             "@type": "ListItem",
-
             position: 1,
-
             name: "Home",
-
             item: absoluteUrl("/"),
           },
-
           {
             "@type": "ListItem",
-
             position: 2,
-
             name: "Projects",
-
             item: absoluteUrl("/projects"),
           },
-
           {
             "@type": "ListItem",
-
             position: 3,
-
             name: projectName,
-
             item: projectUrl,
           },
         ],
@@ -430,7 +387,7 @@ const techStack = Array.isArray(project.techStack)
   };
 
   return (
-    <main className="min-h-screen bg-white text-gray-900">
+    <main className="min-h-screen bg-white text-gray-900 transition-colors duration-300 dark:bg-zinc-950 dark:text-zinc-100">
       {/* Structured Data */}
       <script
         type="application/ld+json"
@@ -440,30 +397,14 @@ const techStack = Array.isArray(project.techStack)
       />
 
       {/* Header */}
-      <header className="border-b border-gray-200 px-6 py-5 sm:px-10 lg:px-16">
-        <div className="mx-auto flex max-w-6xl items-center justify-between">
-          <Link
-            href="/projects"
-            className="inline-flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-gray-900"
-          >
-            <ArrowLeft size={16} />
-
-            All projects
-          </Link>
-
-          <span className="font-mono text-xs text-gray-400">
-            PROJECT / {projectSlug}
-          </span>
-        </div>
-      </header>
 
       {/* Hero */}
-      <section className="border-b border-gray-200 px-6 py-16 sm:px-10 lg:px-16 lg:py-24">
+      <section className="border-b border-gray-200 bg-gradient-to-br from-blue-50 via-white to-white px-6 py-16 transition-colors duration-300 dark:border-zinc-800 dark:from-blue-950 dark:via-zinc-950 dark:to-zinc-950 sm:px-10 lg:px-16 lg:py-24">
         <div className="mx-auto max-w-6xl">
           <div className="grid gap-12 lg:grid-cols-[1fr_0.85fr] lg:items-center">
             {/* Project Information */}
             <div>
-              <p className="text-sm font-medium uppercase tracking-[0.2em] text-blue-800">
+              <p className="text-sm font-medium uppercase tracking-[0.2em] text-blue-800 dark:text-blue-800">
                 {category}
               </p>
 
@@ -471,7 +412,7 @@ const techStack = Array.isArray(project.techStack)
                 {projectName}
               </h1>
 
-              <p className="mt-8 max-w-2xl text-lg leading-8 text-gray-600">
+              <p className="mt-8 max-w-2xl text-lg leading-8 text-gray-600 dark:text-zinc-400">
                 {description}
               </p>
 
@@ -479,10 +420,10 @@ const techStack = Array.isArray(project.techStack)
               {techStack.length > 0 && (
                 <div className="mt-8 flex flex-wrap gap-2">
                   {(techStack as string[]).map(
-                    (technology : string, index : number) => (
+                    (technology: string, index: number) => (
                       <span
                         key={`${technology}-${index}`}
-                        className="border border-gray-200 bg-gray-50 px-3 py-1.5 text-xs font-medium text-gray-600"
+                        className="border border-gray-200 bg-gray-50 px-3 py-1.5 text-xs font-medium text-gray-600 dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-zinc-300"
                       >
                         {technology}
                       </span>
@@ -499,25 +440,21 @@ const techStack = Array.isArray(project.techStack)
                       href={githubUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 bg-gray-900 px-5 py-3 text-sm font-medium text-white hover:bg-blue-800"
+                      className="inline-flex items-center gap-2 bg-gray-900 px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-blue-800 dark:bg-blue-600 dark:hover:bg-blue-500"
                     >
                       <FaGithub size={17} />
-
                       View on GitHub
-
                       <ArrowUpRight size={15} />
                     </a>
                   )}
-
                   {liveUrl && (
                     <a
                       href={liveUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 border border-gray-300 px-5 py-3 text-sm font-medium text-gray-900 hover:border-gray-900"
+                      className="inline-flex items-center gap-2 border border-gray-300 px-5 py-3 text-sm font-medium text-gray-900 transition-colors hover:border-gray-900 dark:border-zinc-700 dark:text-zinc-100 dark:hover:border-zinc-400"
                     >
                       Live Demo
-
                       <ExternalLink size={16} />
                     </a>
                   )}
@@ -526,7 +463,7 @@ const techStack = Array.isArray(project.techStack)
             </div>
 
             {/* Project Image */}
-            <div className="overflow-hidden border border-gray-200 bg-gray-100">
+            <div className="overflow-hidden border border-gray-200 bg-gray-100 dark:border-zinc-800 dark:bg-zinc-900">
               {image ? (
                 <img
                   src={image}
@@ -534,7 +471,7 @@ const techStack = Array.isArray(project.techStack)
                   className="aspect-video w-full object-cover"
                 />
               ) : (
-                <div className="flex aspect-video items-center justify-center text-gray-400">
+                <div className="flex aspect-video items-center justify-center text-gray-400 dark:text-zinc-500">
                   No image
                 </div>
               )}
@@ -549,20 +486,18 @@ const techStack = Array.isArray(project.techStack)
           {/* Features */}
           {features.length > 0 && (
             <section>
-              <p className="font-mono text-xs uppercase tracking-[0.2em] text-blue-800">
+              <p className="font-mono text-xs uppercase tracking-[0.2em] text-blue-800 dark:text-blue-800">
                 Features
               </p>
-
               <h2 className="mt-3 text-4xl font-semibold">
                 What it does
               </h2>
-
               <ul className="mt-8 grid gap-4 sm:grid-cols-2">
                 {features.map(
-                  (feature : string, index: number) => (
+                  (feature: string, index: number) => (
                     <li
                       key={`${feature}-${index}`}
-                      className="border border-gray-200 p-5 text-gray-600"
+                      className="border border-gray-200 p-5 text-gray-600 dark:border-zinc-800 dark:bg-zinc-900/40 dark:text-zinc-300"
                     >
                       {feature}
                     </li>
@@ -578,8 +513,7 @@ const techStack = Array.isArray(project.techStack)
               <h2 className="text-4xl font-semibold">
                 Challenges
               </h2>
-
-              <p className="mt-6 max-w-4xl whitespace-pre-line text-lg leading-8 text-gray-600">
+              <p className="mt-6 max-w-4xl whitespace-pre-line text-lg leading-8 text-gray-600 dark:text-zinc-400">
                 {challenges}
               </p>
             </section>
@@ -591,8 +525,7 @@ const techStack = Array.isArray(project.techStack)
               <h2 className="text-4xl font-semibold">
                 Learnings
               </h2>
-
-              <p className="mt-6 max-w-4xl whitespace-pre-line text-lg leading-8 text-gray-600">
+              <p className="mt-6 max-w-4xl whitespace-pre-line text-lg leading-8 text-gray-600 dark:text-zinc-400">
                 {learnings}
               </p>
             </section>
@@ -604,7 +537,6 @@ const techStack = Array.isArray(project.techStack)
               <h2 className="text-4xl font-semibold">
                 Screenshots
               </h2>
-
               <div className="mt-8 grid gap-6">
                 {screenshots.map(
                   (screenshot: string, index: number) => (
@@ -615,7 +547,7 @@ const techStack = Array.isArray(project.techStack)
                         index + 1
                       }`}
                       loading="lazy"
-                      className="w-full border border-gray-200"
+                      className="w-full border border-gray-200 dark:border-zinc-800"
                     />
                   ),
                 )}

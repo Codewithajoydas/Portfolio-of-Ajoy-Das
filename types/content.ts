@@ -105,3 +105,12 @@ export interface Article {
   createdAt: string;
   updatedAt: string;
 }
+
+export type SerializedProject = Omit<
+  Project,
+  "_id" | "createdAt" | "updatedAt"
+> & {
+  _id: string;
+  createdAt: string;
+  updatedAt: string;
+};
