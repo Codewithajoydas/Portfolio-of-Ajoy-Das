@@ -424,7 +424,7 @@ const structuredData =
       "primaryImageOfPage": {
         "@id": "https://www.codewithajoydas.in/about#profile-image"
       },
-      "hasPart": {
+      "mentions": {
         "@id": "https://www.codewithajoydas.in/about#selected-projects"
       },
       "inLanguage": "en-IN"
