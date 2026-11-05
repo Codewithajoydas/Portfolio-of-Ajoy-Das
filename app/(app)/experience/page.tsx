@@ -13,21 +13,23 @@ import {
 import Link from "next/link";
 import Footer from "@/components/Footer";
 import { Pacifico } from "next/font/google";
-import { createSeoMetadata } from "@/lib/seo";
-
+import PageTransition from "@/components/page-transition";
+import {
+  absoluteUrl,
+  createSeoMetadata,
+  safeJsonLd,
+} from "@/lib/seo";
 const pacifico = Pacifico({
   variable: "--font-pacifico",
   subsets: ["latin"],
   weight: "400",
 });
-
 export const metadata = createSeoMetadata({
   title: "Experience",
   description:
-    "Explore Ajoy Das's software development journey, projects, technologies, and engineering experience.",
+    "Explore Ajoy Das&apos;s software development journey, projects, technologies, and engineering experience.",
   path: "/experience",
 });
-
 const journey = [
   {
     number: "01",
@@ -90,7 +92,6 @@ const journey = [
     ],
   },
 ];
-
 const projects = [
   {
     number: "01",
@@ -106,7 +107,7 @@ const projects = [
       "Mongoose",
       "EJS",
     ],
-    github: "https://github.com/Code-Snippet-Manager/Kodhra",
+    github: "https\://github.com/Code-Snippet-Manager/Kodhra",
     image: "/images/projects/Kodhra.png",
   },
   {
@@ -123,7 +124,7 @@ const projects = [
       "Express.js",
       "MongoDB",
     ],
-    github: "https://github.com/Assign-Meter",
+    github: "https\://github.com/Assign-Meter",
     image: "/images/projects/Assign-Meter.png",
   },
   {
@@ -132,14 +133,8 @@ const projects = [
     type: "Developer Tool",
     description:
       "A CLI project generator created to automate project setup and provide reusable scaffolding for development workflows.",
-    technologies: [
-      "TypeScript",
-      "Node.js",
-      "Commander",
-      "Inquirer",
-      "Zod",
-    ],
-    github: "https://github.com/Codewithajoydas/cwad-lab-scaffolder",
+    technologies: ["TypeScript", "Node.js", "Commander", "Inquirer", "Zod"],
+    github: "https\://github.com/Codewithajoydas/cwad-lab-scaffolder",
     image: "/images/projects/CWAD-Lab-Scaffolder.png",
   },
   {
@@ -149,11 +144,10 @@ const projects = [
     description:
       "An independent software project focused on creating a practical application experience while continuing to explore product development.",
     technologies: [],
-    github: "https://github.com/Codewithajoydas/WiggleNote",
+    github: "https\://github.com/Codewithajoydas/WiggleNote",
     image: "/images/projects/WiggleNote.png",
   },
 ];
-
 const engineeringAreas = [
   {
     number: "01",
@@ -198,7 +192,6 @@ const engineeringAreas = [
     icon: GitBranch,
   },
 ];
-
 const principles = [
   {
     number: "01",
@@ -237,7 +230,6 @@ const principles = [
       "A useful software system involves architecture, workflow, deployment, maintenance, and the people using it.",
   },
 ];
-
 const currentFocus = [
   "Advanced JavaScript and TypeScript",
   "Node.js and backend engineering",
@@ -250,13 +242,11 @@ const currentFocus = [
   "Developer tooling",
   "Full-stack application development",
 ];
-
 const developmentStages = [
   {
     number: "01",
     title: "Learn",
-    description:
-      "Study the underlying concept and understand why it exists.",
+    description: "Study the underlying concept and understand why it exists.",
   },
   {
     number: "02",
@@ -289,585 +279,657 @@ const developmentStages = [
       "Extract the deeper lesson and carry it into the next project.",
   },
 ];
-
 export default function ExperiencePage() {
+  
+const personId = absoluteUrl("/about#person");
+const websiteId = absoluteUrl("/#website");
+const pageId = absoluteUrl("/experience#webpage");
+const breadcrumbId = absoluteUrl("/experience#breadcrumb");
+const projectsId = absoluteUrl("/experience#projects");
+
+const structuredData = {
+  "@context": "https://schema.org",
+
+  "@graph": [
+    {
+      "@type": "Person",
+      "@id": personId,
+      name: "Ajoy Das",
+      url: absoluteUrl("/about"),
+      jobTitle: "Independent Software Developer",
+      description:
+        "An independent developer building software, exploring engineering concepts, and continuously turning what he learns into working systems.",
+
+      sameAs: [
+        "https://github.com/Codewithajoydas",
+        "https://www.instagram.com/codewithajoydas",
+        "https://www.facebook.com/profile.php?id=100090674957174",
+        "https://www.youtube.com/@codewithajoydas"
+      ],
+
+      knowsAbout: [
+        "JavaScript",
+        "TypeScript",
+        "HTML",
+        "CSS",
+        "React",
+        "Next.js",
+        "Node.js",
+        "Express.js",
+        "MongoDB",
+        "Mongoose",
+        "Frontend Engineering",
+        "Backend Engineering",
+        "Database Engineering",
+        "Developer Tooling",
+        "Software Architecture",
+        "System Design",
+        "Performance Optimization",
+        "Software Testing",
+        "CI/CD",
+        "Git",
+        "Full-stack Development"
+      ]
+    },
+
+    {
+      "@type": "WebSite",
+      "@id": websiteId,
+      url: absoluteUrl("/"),
+      name: "Codewithajoydas",
+      description:
+        "The personal portfolio and software development website of Ajoy Das.",
+
+      publisher: {
+        "@id": personId
+      },
+
+      inLanguage: "en-IN"
+    },
+
+    {
+      "@type": "BreadcrumbList",
+      "@id": breadcrumbId,
+
+      itemListElement: [
+        {
+          "@type": "ListItem",
+          position: 1,
+          name: "Home",
+          item: absoluteUrl("/")
+        },
+        {
+          "@type": "ListItem",
+          position: 2,
+          name: "Experience",
+          item: absoluteUrl("/experience")
+        }
+      ]
+    },
+
+    {
+      "@type": "WebPage",
+      "@id": pageId,
+      url: absoluteUrl("/experience"),
+      name: "Experience | Codewithajoydas",
+
+      description:
+        "Explore Ajoy Das's software development journey, projects, technologies, and engineering experience.",
+
+      isPartOf: {
+        "@id": websiteId
+      },
+
+      about: {
+        "@id": personId
+      },
+
+      mainEntity: {
+        "@id": personId
+      },
+
+      breadcrumb: {
+        "@id": breadcrumbId
+      },
+
+      mentions: {
+        "@id": projectsId
+      },
+
+      inLanguage: "en-IN"
+    },
+
+    {
+      "@type": "ItemList",
+      "@id": projectsId,
+
+      name: "Software Projects by Ajoy Das",
+
+      description:
+        "A collection of software projects, developer tools, and applications built by Ajoy Das.",
+
+      itemListOrder:
+        "https://schema.org/ItemListOrderAscending",
+
+      numberOfItems: projects.length,
+
+      itemListElement: projects.map((project, index) => ({
+        "@type": "ListItem",
+        position: index + 1,
+
+        item: {
+          "@type": "CreativeWork",
+
+          "@id": `${absoluteUrl("/experience")}#project-${index + 1}`,
+
+          name: project.title,
+          description: project.description,
+          genre: project.type,
+
+          url: project.github,
+
+          image: {
+            "@type": "ImageObject",
+            url: absoluteUrl(project.image)
+          },
+
+          creator: {
+            "@id": personId
+          },
+
+          ...(project.technologies.length > 0 && {
+            keywords: project.technologies
+          })
+        }
+      }))
+    }
+  ]
+};
+
   return (
-    <main className="min-h-screen bg-white text-gray-900">
-      {/* ================================================================ */}
-      {/* HERO */}
-      {/* ================================================================ */}
-
-      <section className="relative overflow-hidden border-b border-gray-200 px-6 pb-24 pt-32 sm:px-10 lg:px-16">
-        <div className="pointer-events-none absolute -right-40 -top-40 h-[32rem] w-[32rem] rounded-full bg-blue-100/60 blur-3xl" />
-
-        <div className="pointer-events-none absolute -bottom-48 -left-40 h-[30rem] w-[30rem] rounded-full bg-sky-100/50 blur-3xl" />
-
-        <div className="relative mx-auto max-w-6xl">
-          <div className="grid gap-14 lg:grid-cols-[1fr_0.65fr] lg:items-end">
-            <div>
-              <p className="mb-6 text-sm font-medium uppercase tracking-[0.2em] text-blue-800">
-                Experience
-              </p>
-
-              <h1 className="max-w-5xl text-5xl font-semibold leading-[1.02] tracking-tight sm:text-6xl lg:text-7xl">
-                A journey from
-                <br />
-                <span className={`text-blue-800 ${pacifico.className}`}>learning to building.</span>
-              </h1>
-            </div>
-
-            <div>
-              <p className="max-w-xl text-lg leading-8 text-gray-600">
-                I&apos;m an independent developer building my own software,
-                exploring engineering concepts, and continuously turning what I
-                learn into working systems.
-              </p>
-            </div>
-          </div>
-
-          <div className="mt-16 grid gap-px overflow-hidden border border-gray-200 bg-gray-200 sm:grid-cols-3">
-            <div className="bg-white p-7">
-              <p className="text-3xl font-semibold">01</p>
-
-              <p className="mt-2 text-sm text-gray-500">
-                Independent developer
-              </p>
-            </div>
-
-            <div className="bg-white p-7">
-              <p className="text-3xl font-semibold">04+</p>
-
-              <p className="mt-2 text-sm text-gray-500">
-                Major software projects
-              </p>
-            </div>
-
-            <div className="bg-white p-7">
-              <p className="text-3xl font-semibold">∞</p>
-
-              <p className="mt-2 text-sm text-gray-500">
-                Things left to learn
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ================================================================ */}
-      {/* INTRODUCTION */}
-      {/* ================================================================ */}
-
-      <section className="px-6 py-24 sm:px-10 lg:px-16">
-        <div className="mx-auto grid max-w-6xl gap-14 lg:grid-cols-[0.75fr_1fr]">
-          <div>
-            <p className="text-sm font-medium uppercase tracking-[0.2em] text-blue-800">
-              Not a traditional career timeline
-            </p>
-
-            <h2 className="mt-5 max-w-md text-4xl font-semibold leading-tight tracking-tight">
-              I&apos;m building my career by building software.
-            </h2>
-          </div>
-
-          <div className="max-w-2xl">
-            <p className="text-lg leading-8 text-gray-600">
-              My experience cannot be accurately represented by a list of
-              companies and job titles. I work independently, build my own
-              software, study engineering concepts, and use projects as a way
-              to develop deeper technical ability.
-            </p>
-
-            <p className="mt-6 leading-7 text-gray-600">
-              That means my journey is closely connected to the things I build.
-              Each project introduces new problems, and each problem forces me
-              to learn something that the previous project did not require.
-            </p>
-
-            <p className="mt-6 leading-7 text-gray-600">
-              Over time, the focus has moved from simply making software work
-              toward understanding how complete systems should be designed,
-              structured, tested, maintained, and improved.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* ================================================================ */}
-      {/* JOURNEY */}
-      {/* ================================================================ */}
-
-      <section className="border-y border-gray-200 bg-gray-50 px-6 py-24 sm:px-10 lg:px-16">
-        <div className="mx-auto max-w-6xl">
-          <div className="max-w-3xl">
-            <p className="text-sm font-medium uppercase tracking-[0.2em] text-blue-800">
-              Development journey
-            </p>
-
-            <h2 className="mt-5 text-4xl font-semibold tracking-tight sm:text-5xl">
-              How the journey evolved.
-            </h2>
-
-            <p className="mt-5 leading-7 text-gray-600">
-              Each stage built on the previous one. The goal was never to
-              collect technologies. The goal was to become capable of building
-              increasingly complete software.
-            </p>
-          </div>
-
-          <div className="mt-16 space-y-6">
-            {journey.map((stage) => (
-              <article
-                key={stage.number}
-                className="grid gap-8 border border-gray-200 bg-white p-7 sm:p-9 lg:grid-cols-[120px_0.8fr_1fr]"
-              >
-                <div>
-                  <span className="font-mono text-sm text-blue-800">
-                    {stage.number}
+    <>
+    <script
+  id="experience-page-jsonld"
+  type="application/ld+json"
+  dangerouslySetInnerHTML={safeJsonLd(structuredData)}
+/>
+    <PageTransition>
+      <main className="min-h-screen bg-white text-gray-900 transition-colors duration-300 dark:bg-zinc-950 dark:text-zinc-100">
+        {/* ================================================================ */}
+        {/* HERO */}
+        {/* ================================================================ */}
+        <section className="relative overflow-hidden border-b border-gray-200 dark:border-zinc-800 bg-gradient-to-b from-blue-50 via-white to-white dark:from-blue-950 dark:via-zinc-950 dark:to-zinc-950 px-6 pb-24 pt-32 sm:px-10 lg:px-16">
+          <div className="pointer-events-none absolute -right-40 -top-40 h-[32rem] w-[32rem] rounded-full bg-blue-100/60 dark:bg-blue-900/20 blur-3xl" />
+          {/* <div className="pointer-events-none absolute -bottom-48 -left-40 h-[30rem] w-[30rem] rounded-full bg-sky-100/50 blur-3xl" /> */}
+          <div className="relative mx-auto max-w-6xl">
+            <div className="grid gap-14 lg:grid-cols-[1fr_0.65fr] lg:items-end">
+              <div>
+                <p className="mb-6 text-sm font-medium uppercase tracking-[0.2em] text-blue-800 dark:text-blue-800">
+                  Experience
+                </p>
+                <h1 className="max-w-5xl text-5xl font-semibold leading-[1.02] tracking-tight sm:text-6xl lg:text-7xl">
+                  A journey from
+                  <br />
+                  <span className={`text-blue-800 ${pacifico.className}`}>
+                    learning to building.
                   </span>
-
-                  <p className="mt-4 text-xs uppercase tracking-[0.15em] text-gray-400">
-                    {stage.period}
-                  </p>
-                </div>
-
-                <div>
-                  <h3 className="text-2xl font-semibold tracking-tight">
-                    {stage.title}
-                  </h3>
-                </div>
-
-                <div>
-                  <p className="leading-7 text-gray-600">
-                    {stage.description}
-                  </p>
-
-                  <div className="mt-7 space-y-3">
-                    {stage.points.map((point) => (
-                      <div
-                        key={point}
-                        className="flex items-start gap-3"
-                      >
-                        <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-blue-800" />
-
-                        <span className="text-sm leading-6 text-gray-600">
-                          {point}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </article>
-            ))}
+                </h1>
+              </div>
+              <div>
+                <p className="max-w-xl text-lg leading-8 text-gray-600 dark:text-zinc-400">
+                  I&apos;m an independent developer building my own software,
+                  exploring engineering concepts, and continuously turning what
+                  I learn into working systems.
+                </p>
+              </div>
+            </div>
+            <div className="mt-16 grid gap-px overflow-hidden border border-gray-200 dark:border-zinc-800 bg-gray-200 dark:bg-zinc-800 sm:grid-cols-3">
+              <div className="bg-white dark:bg-zinc-950 p-7">
+                <p className="text-3xl font-semibold">01</p>
+                <p className="mt-2 text-sm text-gray-500 dark:text-zinc-500">
+                  Independent developer
+                </p>
+              </div>
+              <div className="bg-white dark:bg-zinc-950 p-7">
+                <p className="text-3xl font-semibold">04+</p>
+                <p className="mt-2 text-sm text-gray-500 dark:text-zinc-500">
+                  Major software projects
+                </p>
+              </div>
+              <div className="bg-white dark:bg-zinc-950 p-7">
+                <p className="text-3xl font-semibold">∞</p>
+                <p className="mt-2 text-sm text-gray-500 dark:text-zinc-500">
+                  Things left to learn
+                </p>
+              </div>
+            </div>
           </div>
-        </div>
-      </section>
-
-   
-      {/* ================================================================ */}
-      {/* ENGINEERING AREAS */}
-      {/* ================================================================ */}
-
-      <section className="border-y border-gray-200 bg-gray-50 px-6 py-24 sm:px-10 lg:px-16">
-        <div className="mx-auto max-w-6xl">
-          <div className="max-w-3xl">
-            <p className="text-sm font-medium uppercase tracking-[0.2em] text-blue-800">
-              Engineering experience
-            </p>
-
-            <h2 className="mt-5 text-4xl font-semibold tracking-tight sm:text-5xl">
-              What building has taught me to work with.
-            </h2>
-          </div>
-
-          <div className="mt-14 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-            {engineeringAreas.map((area) => {
-              const Icon = area.icon;
-
-              return (
-                <article
-                  key={area.number}
-                  className="group border border-gray-200 bg-white p-7 transition-all duration-300 hover:-translate-y-1 hover:border-gray-300 hover:shadow-[5px_5px_0px_#193cb8]"
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex h-11 w-11 items-center justify-center border border-gray-200 bg-gray-50">
-                      <Icon size={20} />
-                    </div>
-
-                    <span className="font-mono text-xs text-gray-400">
-                      {area.number}
-                    </span>
-                  </div>
-
-                  <h3 className="mt-8 text-xl font-semibold">
-                    {area.title}
-                  </h3>
-
-                  <p className="mt-3 text-sm leading-6 text-gray-600">
-                    {area.description}
-                  </p>
-                </article>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* ================================================================ */}
-      {/* BUILDING PROCESS */}
-      {/* ================================================================ */}
-
-      <section className="px-6 py-24 sm:px-10 lg:px-16">
-        <div className="mx-auto max-w-6xl">
-          <div className="grid gap-14 lg:grid-cols-[0.7fr_1fr]">
+        </section>
+        {/* ================================================================ */}
+        {/* INTRODUCTION */}
+        {/* ================================================================ */}
+        <section className="px-6 py-24 sm:px-10 lg:px-16">
+          <div className="mx-auto grid max-w-6xl gap-14 lg:grid-cols-[0.75fr_1fr]">
             <div>
-              <p className="text-sm font-medium uppercase tracking-[0.2em] text-blue-800">
-                My development loop
+              <p className="text-sm font-medium uppercase tracking-[0.2em] text-blue-800 dark:text-blue-800">
+                Not a traditional career timeline
               </p>
-
-              <h2 className="mt-5 max-w-md text-4xl font-semibold tracking-tight">
-                How I turn a concept into experience.
+              <h2 className="mt-5 max-w-md text-4xl font-semibold leading-tight tracking-tight">
+                I&apos;m building my career by building software.
               </h2>
-
-              <p className="mt-6 max-w-md leading-7 text-gray-600">
-                Building software is not a straight line. I repeatedly move
-                between learning, experimenting, building, debugging, and
-                improving.
+            </div>
+            <div className="max-w-2xl">
+              <p className="text-lg leading-8 text-gray-600 dark:text-zinc-400">
+                My experience cannot be accurately represented by a list of
+                companies and job titles. I work independently, build my own
+                software, study engineering concepts, and use projects as a way
+                to develop deeper technical ability.
+              </p>
+              <p className="mt-6 leading-7 text-gray-600 dark:text-zinc-400">
+                That means my journey is closely connected to the things I
+                build. Each project introduces new problems, and each problem
+                forces me to learn something that the previous project did not
+                require.
+              </p>
+              <p className="mt-6 leading-7 text-gray-600 dark:text-zinc-400">
+                Over time, the focus has moved from simply making software work
+                toward understanding how complete systems should be designed,
+                structured, tested, maintained, and improved.
               </p>
             </div>
-
-            <div className="grid gap-px overflow-hidden border border-gray-200 bg-gray-200 sm:grid-cols-2">
-              {developmentStages.map((stage) => (
+          </div>
+        </section>
+        {/* ================================================================ */}
+        {/* JOURNEY */}
+        {/* ================================================================ */}
+        <section className="border-y border-gray-200 dark:border-zinc-800 bg-gray-50 dark:bg-zinc-900/60 px-6 py-24 sm:px-10 lg:px-16">
+          <div className="mx-auto max-w-6xl">
+            <div className="max-w-3xl">
+              <p className="text-sm font-medium uppercase tracking-[0.2em] text-blue-800 dark:text-blue-800">
+                Development journey
+              </p>
+              <h2 className="mt-5 text-4xl font-semibold tracking-tight sm:text-5xl">
+                How the journey evolved.
+              </h2>
+              <p className="mt-5 leading-7 text-gray-600 dark:text-zinc-400">
+                Each stage built on the previous one. The goal was never to
+                collect technologies. The goal was to become capable of building
+                increasingly complete software.
+              </p>
+            </div>
+            <div className="mt-16 space-y-6">
+              {journey.map((stage) => (
                 <article
                   key={stage.number}
-                  className="bg-white p-7"
+                  className="grid gap-8 border border-gray-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-7 sm:p-9 lg:grid-cols-[120px_0.8fr_1fr]"
                 >
-                  <span className="font-mono text-xs text-blue-800">
-                    {stage.number}
+                  <div>
+                    <span className="font-mono text-sm text-blue-800 dark:text-blue-800">
+                      {stage.number}
+                    </span>
+                    <p className="mt-4 text-xs uppercase tracking-[0.15em] text-gray-400 dark:text-zinc-500">
+                      {stage.period}
+                    </p>
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-semibold tracking-tight">
+                      {stage.title}
+                    </h3>
+                  </div>
+                  <div>
+                    <p className="leading-7 text-gray-600 dark:text-zinc-400">
+                      {stage.description}
+                    </p>
+                    <div className="mt-7 space-y-3">
+                      {stage.points.map((point) => (
+                        <div key={point} className="flex items-start gap-3">
+                          <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-blue-800" />
+                          <span className="text-sm leading-6 text-gray-600 dark:text-zinc-400">
+                            {point}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+        {/* ================================================================ */}
+        {/* ENGINEERING AREAS */}
+        {/* ================================================================ */}
+        <section className="border-y border-gray-200 dark:border-zinc-800 bg-gray-50 dark:bg-zinc-900/60 px-6 py-24 sm:px-10 lg:px-16">
+          <div className="mx-auto max-w-6xl">
+            <div className="max-w-3xl">
+              <p className="text-sm font-medium uppercase tracking-[0.2em] text-blue-800 dark:text-blue-800">
+                Engineering experience
+              </p>
+              <h2 className="mt-5 text-4xl font-semibold tracking-tight sm:text-5xl">
+                What building has taught me to work with.
+              </h2>
+            </div>
+            <div className="mt-14 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+              {engineeringAreas.map((area) => {
+                const Icon = area.icon;
+                return (
+                  <article
+                    key={area.number}
+                    className="group border border-gray-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-7 transition-all duration-300 hover:-translate-y-1 hover:border-gray-300 dark:hover:border-zinc-700 hover:shadow-[5px_5px_0px_#193cb8]"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex h-11 w-11 items-center justify-center border border-gray-200 dark:border-zinc-800 bg-gray-50 dark:bg-zinc-900/60">
+                        <Icon size={20} />
+                      </div>
+                      <span className="font-mono text-xs text-gray-400 dark:text-zinc-500">
+                        {area.number}
+                      </span>
+                    </div>
+                    <h3 className="mt-8 text-xl font-semibold">{area.title}</h3>
+                    <p className="mt-3 text-sm leading-6 text-gray-600 dark:text-zinc-400">
+                      {area.description}
+                    </p>
+                  </article>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+        {/* ================================================================ */}
+        {/* BUILDING PROCESS */}
+        {/* ================================================================ */}
+        <section className="px-6 py-24 sm:px-10 lg:px-16">
+          <div className="mx-auto max-w-6xl">
+            <div className="grid gap-14 lg:grid-cols-[0.7fr_1fr]">
+              <div>
+                <p className="text-sm font-medium uppercase tracking-[0.2em] text-blue-800 dark:text-blue-800">
+                  My development loop
+                </p>
+                <h2 className="mt-5 max-w-md text-4xl font-semibold tracking-tight">
+                  How I turn a concept into experience.
+                </h2>
+                <p className="mt-6 max-w-md leading-7 text-gray-600 dark:text-zinc-400">
+                  Building software is not a straight line. I repeatedly move
+                  between learning, experimenting, building, debugging, and
+                  improving.
+                </p>
+              </div>
+              <div className="grid gap-px overflow-hidden border border-gray-200 dark:border-zinc-800 bg-gray-200 dark:bg-zinc-800 sm:grid-cols-2">
+                {developmentStages.map((stage) => (
+                  <article
+                    key={stage.number}
+                    className="bg-white dark:bg-zinc-950 p-7"
+                  >
+                    <span className="font-mono text-xs text-blue-800 dark:text-blue-800">
+                      {stage.number}
+                    </span>
+                    <h3 className="mt-6 text-xl font-semibold">
+                      {stage.title}
+                    </h3>
+                    <p className="mt-3 text-sm leading-6 text-gray-600 dark:text-zinc-400">
+                      {stage.description}
+                    </p>
+                  </article>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+        {/* ================================================================ */}
+        {/* PRINCIPLES */}
+        {/* ================================================================ */}
+        <section className="border-y border-gray-200 dark:border-zinc-800 bg-gray-900 dark:bg-zinc-900 px-6 py-24 text-white sm:px-10 lg:px-16">
+          <div className="mx-auto max-w-6xl">
+            <div className="max-w-3xl">
+              <p className="text-sm font-medium uppercase tracking-[0.2em] text-blue-300">
+                Engineering principles
+              </p>
+              <h2 className="mt-5 text-4xl font-semibold tracking-tight sm:text-5xl">
+                The principles behind the work.
+              </h2>
+              <p className="mt-5 leading-7 text-gray-400 dark:text-zinc-500">
+                These principles influence how I approach learning, projects,
+                architecture, debugging, and continuous improvement.
+              </p>
+            </div>
+            <div className="mt-14 grid gap-px overflow-hidden border border-white/10 bg-white/10 sm:grid-cols-2 lg:grid-cols-3">
+              {principles.map((principle) => (
+                <article
+                  key={principle.number}
+                  className="bg-gray-900 dark:bg-zinc-900 p-7"
+                >
+                  <span className="font-mono text-xs text-blue-300">
+                    {principle.number}
                   </span>
-
-                  <h3 className="mt-6 text-xl font-semibold">
-                    {stage.title}
+                  <h3 className="mt-7 text-xl font-semibold">
+                    {principle.title}
                   </h3>
-
-                  <p className="mt-3 text-sm leading-6 text-gray-600">
-                    {stage.description}
+                  <p className="mt-3 text-sm leading-6 text-gray-400 dark:text-zinc-500">
+                    {principle.description}
                   </p>
                 </article>
               ))}
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* ================================================================ */}
-      {/* PRINCIPLES */}
-      {/* ================================================================ */}
-
-      <section className="border-y border-gray-200 bg-gray-900 px-6 py-24 text-white sm:px-10 lg:px-16">
-        <div className="mx-auto max-w-6xl">
-          <div className="max-w-3xl">
-            <p className="text-sm font-medium uppercase tracking-[0.2em] text-blue-300">
-              Engineering principles
-            </p>
-
-            <h2 className="mt-5 text-4xl font-semibold tracking-tight sm:text-5xl">
-              The principles behind the work.
-            </h2>
-
-            <p className="mt-5 leading-7 text-gray-400">
-              These principles influence how I approach learning, projects,
-              architecture, debugging, and continuous improvement.
-            </p>
-          </div>
-
-          <div className="mt-14 grid gap-px overflow-hidden border border-white/10 bg-white/10 sm:grid-cols-2 lg:grid-cols-3">
-            {principles.map((principle) => (
-              <article
-                key={principle.number}
-                className="bg-gray-900 p-7"
-              >
-                <span className="font-mono text-xs text-blue-300">
-                  {principle.number}
-                </span>
-
-                <h3 className="mt-7 text-xl font-semibold">
-                  {principle.title}
-                </h3>
-
-                <p className="mt-3 text-sm leading-6 text-gray-400">
-                  {principle.description}
-                </p>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ================================================================ */}
-      {/* CURRENT FOCUS */}
-      {/* ================================================================ */}
-
-      <section className="px-6 py-24 sm:px-10 lg:px-16">
-        <div className="mx-auto max-w-6xl">
-          <div className="grid gap-14 lg:grid-cols-[0.75fr_1fr] lg:items-start">
-            <div>
-              <p className="text-sm font-medium uppercase tracking-[0.2em] text-blue-800">
-                Right now
-              </p>
-
-              <h2 className="mt-5 text-4xl font-semibold tracking-tight">
-                What I&apos;m working toward.
-              </h2>
-
-              <p className="mt-6 max-w-md leading-7 text-gray-600">
-                The goal is to move from knowing individual technologies toward
-                being able to design and build complete, reliable software
-                systems.
-              </p>
-            </div>
-
-            <div className="border border-gray-200">
-              {currentFocus.map((item, index) => (
-                <div
-                  key={item}
-                  className="flex items-center gap-5 border-b border-gray-200 px-6 py-5 last:border-b-0"
-                >
-                  <span className="font-mono text-xs text-blue-800">
-                    {String(index + 1).padStart(2, "0")}
-                  </span>
-
-                  <span className="text-sm font-medium text-gray-800">
-                    {item}
-                  </span>
-
-                  <span className="ml-auto h-1.5 w-1.5 rounded-full bg-gray-300" />
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ================================================================ */}
-      {/* INDEPENDENT BUILDER */}
-      {/* ================================================================ */}
-
-      <section className="border-y border-gray-200 bg-gray-50 px-6 py-24 sm:px-10 lg:px-16">
-        <div className="mx-auto max-w-6xl">
-          <div className="grid gap-14 lg:grid-cols-[1fr_0.75fr] lg:items-center">
-            <div>
-              <div className="flex h-12 w-12 items-center justify-center bg-blue-50 text-blue-800">
-                <Rocket size={21} />
-              </div>
-
-              <h2 className="mt-7 max-w-2xl text-4xl font-semibold tracking-tight sm:text-5xl">
-                I&apos;m not waiting for a job to build software.
-              </h2>
-
-              <p className="mt-6 max-w-2xl text-lg leading-8 text-gray-600">
-                Working independently gives me the freedom to choose what I
-                build, what I study, and which engineering problems I want to
-                explore next.
-              </p>
-
-              <p className="mt-5 max-w-2xl leading-7 text-gray-600">
-                That also means taking responsibility for the entire process:
-                understanding the problem, designing the solution, writing the
-                code, debugging it, learning what I do not know, and improving
-                the final system.
-              </p>
-            </div>
-
-            <div className="border border-gray-200 bg-white p-8">
-              <div className="flex items-center gap-3">
-                <BriefcaseBusiness size={19} />
-
-                <p className="text-sm font-semibold">
-                  Independent development
-                </p>
-              </div>
-
-              <div className="mt-7 space-y-5">
-                <div className="border-l-2 border-blue-800 pl-4">
-                  <p className="text-sm leading-6 text-gray-600">
-                    Define the problem
-                  </p>
-                </div>
-
-                <div className="border-l-2 border-blue-800 pl-4">
-                  <p className="text-sm leading-6 text-gray-600">
-                    Design the solution
-                  </p>
-                </div>
-
-                <div className="border-l-2 border-blue-800 pl-4">
-                  <p className="text-sm leading-6 text-gray-600">
-                    Build the software
-                  </p>
-                </div>
-
-                <div className="border-l-2 border-blue-800 pl-4">
-                  <p className="text-sm leading-6 text-gray-600">
-                    Test and debug
-                  </p>
-                </div>
-
-                <div className="border-l-2 border-blue-800 pl-4">
-                  <p className="text-sm leading-6 text-gray-600">
-                    Learn and improve
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ================================================================ */}
-      {/* WHAT COMES NEXT */}
-      {/* ================================================================ */}
-
-      <section className="px-6 py-24 sm:px-10 lg:px-16">
-        <div className="mx-auto max-w-6xl">
-          <div className="border border-gray-200 p-8 sm:p-12">
-            <div className="grid gap-12 lg:grid-cols-[1fr_auto] lg:items-end">
+        </section>
+        {/* ================================================================ */}
+        {/* CURRENT FOCUS */}
+        {/* ================================================================ */}
+        <section className="px-6 py-24 sm:px-10 lg:px-16">
+          <div className="mx-auto max-w-6xl">
+            <div className="grid gap-14 lg:grid-cols-[0.75fr_1fr] lg:items-start">
               <div>
-                <p className="text-sm font-medium uppercase tracking-[0.2em] text-blue-800">
-                  Next chapter
+                <p className="text-sm font-medium uppercase tracking-[0.2em] text-blue-800 dark:text-blue-800">
+                  Right now
                 </p>
-
-                <h2 className="mt-5 max-w-3xl text-4xl font-semibold tracking-tight sm:text-5xl">
-                  Build larger systems. Understand them more deeply.
+                <h2 className="mt-5 text-4xl font-semibold tracking-tight">
+                  What I&apos;m working toward.
                 </h2>
-
-                <p className="mt-6 max-w-2xl leading-7 text-gray-600">
-                  The next stage is not about collecting more technologies for
-                  the sake of having a longer skills list. It is about taking
-                  the technologies I already know and combining them into more
-                  complete, reliable, and thoughtfully designed software.
+                <p className="mt-6 max-w-md leading-7 text-gray-600 dark:text-zinc-400">
+                  The goal is to move from knowing individual technologies
+                  toward being able to design and build complete, reliable
+                  software systems.
                 </p>
               </div>
-
-              <Link
-                href="/projects"
-                className="inline-flex items-center justify-center gap-2 bg-gray-900 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-blue-800"
-              >
-                See what I&apos;m building
-                <ArrowUpRight size={17} />
-              </Link>
+              <div className="border border-gray-200 dark:border-zinc-800">
+                {currentFocus.map((item, index) => (
+                  <div
+                    key={item}
+                    className="flex items-center gap-5 border-b border-gray-200 dark:border-zinc-800 px-6 py-5 last:border-b-0"
+                  >
+                    <span className="font-mono text-xs text-blue-800 dark:text-blue-800">
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
+                    <span className="text-sm font-medium text-gray-800 dark:text-zinc-200">
+                      {item}
+                    </span>
+                    <span className="ml-auto h-1.5 w-1.5 rounded-full bg-gray-300" />
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* ================================================================ */}
-      {/* NAVIGATION */}
-      {/* ================================================================ */}
-
-      <section className="border-t border-gray-200 bg-gray-50 px-6 py-20 sm:px-10 lg:px-16">
-        <div className="mx-auto grid max-w-6xl gap-5 md:grid-cols-3">
-          <Link
-            href="/about"
-            className="group border border-gray-200 bg-white p-7 transition-all duration-300 hover:-translate-y-1 hover:border-gray-300 hover:shadow-[5px_5px_0px_#193cb8]"
-          >
-            <p className="text-xs font-medium uppercase tracking-[0.15em] text-blue-800">
-              01
+        </section>
+        {/* ================================================================ */}
+        {/* INDEPENDENT BUILDER */}
+        {/* ================================================================ */}
+        <section className="border-y border-gray-200 dark:border-zinc-800 bg-gray-50 dark:bg-zinc-900/60 px-6 py-24 sm:px-10 lg:px-16">
+          <div className="mx-auto max-w-6xl">
+            <div className="grid gap-14 lg:grid-cols-[1fr_0.75fr] lg:items-center">
+              <div>
+                <div className="flex h-12 w-12 items-center justify-center bg-blue-50 dark:bg-blue-950/40 text-blue-800 dark:text-blue-800">
+                  <Rocket size={21} />
+                </div>
+                <h2 className="mt-7 max-w-2xl text-4xl font-semibold tracking-tight sm:text-5xl">
+                  I&apos;m not waiting for a job to build software.
+                </h2>
+                <p className="mt-6 max-w-2xl text-lg leading-8 text-gray-600 dark:text-zinc-400">
+                  Working independently gives me the freedom to choose what I
+                  build, what I study, and which engineering problems I want to
+                  explore next.
+                </p>
+                <p className="mt-5 max-w-2xl leading-7 text-gray-600 dark:text-zinc-400">
+                  That also means taking responsibility for the entire process:
+                  understanding the problem, designing the solution, writing the
+                  code, debugging it, learning what I do not know, and improving
+                  the final system.
+                </p>
+              </div>
+              <div className="border border-gray-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-8">
+                <div className="flex items-center gap-3">
+                  <BriefcaseBusiness size={19} />
+                  <p className="text-sm font-semibold">
+                    Independent development
+                  </p>
+                </div>
+                <div className="mt-7 space-y-5">
+                  <div className="border-l-2 border-blue-800 pl-4">
+                    <p className="text-sm leading-6 text-gray-600 dark:text-zinc-400">
+                      Define the problem
+                    </p>
+                  </div>
+                  <div className="border-l-2 border-blue-800 pl-4">
+                    <p className="text-sm leading-6 text-gray-600 dark:text-zinc-400">
+                      Design the solution
+                    </p>
+                  </div>
+                  <div className="border-l-2 border-blue-800 pl-4">
+                    <p className="text-sm leading-6 text-gray-600 dark:text-zinc-400">
+                      Build the software
+                    </p>
+                  </div>
+                  <div className="border-l-2 border-blue-800 pl-4">
+                    <p className="text-sm leading-6 text-gray-600 dark:text-zinc-400">
+                      Test and debug
+                    </p>
+                  </div>
+                  <div className="border-l-2 border-blue-800 pl-4">
+                    <p className="text-sm leading-6 text-gray-600 dark:text-zinc-400">
+                      Learn and improve
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        {/* ================================================================ */}
+        {/* WHAT COMES NEXT */}
+        {/* ================================================================ */}
+        <section className="px-6 py-24 sm:px-10 lg:px-16">
+          <div className="mx-auto max-w-6xl">
+            <div className="border border-gray-200 dark:border-zinc-800 p-8 sm:p-12">
+              <div className="grid gap-12 lg:grid-cols-[1fr_auto] lg:items-end">
+                <div>
+                  <p className="text-sm font-medium uppercase tracking-[0.2em] text-blue-800 dark:text-blue-800">
+                    Next chapter
+                  </p>
+                  <h2 className="mt-5 max-w-3xl text-4xl font-semibold tracking-tight sm:text-5xl">
+                    Build larger systems. Understand them more deeply.
+                  </h2>
+                  <p className="mt-6 max-w-2xl leading-7 text-gray-600 dark:text-zinc-400">
+                    The next stage is not about collecting more technologies for
+                    the sake of having a longer skills list. It is about taking
+                    the technologies I already know and combining them into more
+                    complete, reliable, and thoughtfully designed software.
+                  </p>
+                </div>
+                <Link
+                  href="/projects"
+                  className="inline-flex items-center justify-center gap-2 bg-gray-900 dark:bg-zinc-900 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-blue-800 dark:hover:bg-blue-700"
+                >
+                  See what I&apos;m building
+                  <ArrowUpRight size={17} />
+                </Link>
+              </div>
+            </div>
+          </div>
+        </section>
+        {/* ================================================================ */}
+        {/* NAVIGATION */}
+        {/* ================================================================ */}
+        <section className="border-t border-gray-200 dark:border-zinc-800 bg-gray-50 dark:bg-zinc-900/60 px-6 py-20 sm:px-10 lg:px-16">
+          <div className="mx-auto grid max-w-6xl gap-5 md:grid-cols-3">
+            <Link
+              href="/about"
+              className="group border border-gray-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-7 transition-all duration-300 hover:-translate-y-1 hover:border-gray-300 dark:hover:border-zinc-700 hover:shadow-[5px_5px_0px_#193cb8]"
+            >
+              <p className="text-xs font-medium uppercase tracking-[0.15em] text-blue-800 dark:text-blue-800">
+                01
+              </p>
+              <h3 className="mt-6 text-xl font-semibold">About me</h3>
+              <p className="mt-3 text-sm leading-6 text-gray-600 dark:text-zinc-400">
+                Learn more about the person behind the software.
+              </p>
+              <ArrowUpRight
+                size={18}
+                className="mt-7 text-gray-400 dark:text-zinc-500 transition-transform group-hover:-translate-y-1 group-hover:translate-x-1"
+              />
+            </Link>
+            <Link
+              href="/skills"
+              className="group border border-gray-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-7 transition-all duration-300 hover:-translate-y-1 hover:border-gray-300 dark:hover:border-zinc-700 hover:shadow-[5px_5px_0px_#193cb8]"
+            >
+              <p className="text-xs font-medium uppercase tracking-[0.15em] text-blue-800 dark:text-blue-800">
+                02
+              </p>
+              <h3 className="mt-6 text-xl font-semibold">Skills</h3>
+              <p className="mt-3 text-sm leading-6 text-gray-600 dark:text-zinc-400">
+                Explore the technologies and engineering areas I work with.
+              </p>
+              <ArrowUpRight
+                size={18}
+                className="mt-7 text-gray-400 dark:text-zinc-500 transition-transform group-hover:-translate-y-1 group-hover:translate-x-1"
+              />
+            </Link>
+            <Link
+              href="/projects"
+              className="group border border-gray-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-7 transition-all duration-300 hover:-translate-y-1 hover:border-gray-300 dark:hover:border-zinc-700 hover:shadow-[5px_5px_0px_#193cb8]"
+            >
+              <p className="text-xs font-medium uppercase tracking-[0.15em] text-blue-800 dark:text-blue-800">
+                03
+              </p>
+              <h3 className="mt-6 text-xl font-semibold">Projects</h3>
+              <p className="mt-3 text-sm leading-6 text-gray-600 dark:text-zinc-400">
+                See the software where this experience has been applied.
+              </p>
+              <ArrowUpRight
+                size={18}
+                className="mt-7 text-gray-400 dark:text-zinc-500 transition-transform group-hover:-translate-y-1 group-hover:translate-x-1"
+              />
+            </Link>
+          </div>
+        </section>
+        {/* ================================================================ */}
+        {/* CONTACT CTA */}
+        {/* ================================================================ */}
+        <section className="border-t border-gray-200 dark:border-zinc-800 px-6 py-24 sm:px-10 lg:px-16">
+          <div className="mx-auto max-w-6xl text-center">
+            <p className="text-sm font-medium uppercase tracking-[0.2em] text-blue-800 dark:text-blue-800">
+              Let&apos;s build
             </p>
-
-            <h3 className="mt-6 text-xl font-semibold">
-              About me
-            </h3>
-
-            <p className="mt-3 text-sm leading-6 text-gray-600">
-              Learn more about the person behind the software.
+            <h2 className="mx-auto mt-5 max-w-3xl text-4xl font-semibold tracking-tight sm:text-5xl">
+              Have an idea worth turning into software?
+            </h2>
+            <p className="mx-auto mt-6 max-w-2xl leading-7 text-gray-600 dark:text-zinc-400">
+              I&apos;m always interested in practical problems, interesting
+              systems, and opportunities to build something useful.
             </p>
-
-            <ArrowUpRight
-              size={18}
-              className="mt-7 text-gray-400 transition-transform group-hover:-translate-y-1 group-hover:translate-x-1"
-            />
-          </Link>
-
-          <Link
-            href="/skills"
-            className="group border border-gray-200 bg-white p-7 transition-all duration-300 hover:-translate-y-1 hover:border-gray-300 hover:shadow-[5px_5px_0px_#193cb8]"
-          >
-            <p className="text-xs font-medium uppercase tracking-[0.15em] text-blue-800">
-              02
-            </p>
-
-            <h3 className="mt-6 text-xl font-semibold">
-              Skills
-            </h3>
-
-            <p className="mt-3 text-sm leading-6 text-gray-600">
-              Explore the technologies and engineering areas I work with.
-            </p>
-
-            <ArrowUpRight
-              size={18}
-              className="mt-7 text-gray-400 transition-transform group-hover:-translate-y-1 group-hover:translate-x-1"
-            />
-          </Link>
-
-          <Link
-            href="/projects"
-            className="group border border-gray-200 bg-white p-7 transition-all duration-300 hover:-translate-y-1 hover:border-gray-300 hover:shadow-[5px_5px_0px_#193cb8]"
-          >
-            <p className="text-xs font-medium uppercase tracking-[0.15em] text-blue-800">
-              03
-            </p>
-
-            <h3 className="mt-6 text-xl font-semibold">
-              Projects
-            </h3>
-
-            <p className="mt-3 text-sm leading-6 text-gray-600">
-              See the software where this experience has been applied.
-            </p>
-
-            <ArrowUpRight
-              size={18}
-              className="mt-7 text-gray-400 transition-transform group-hover:-translate-y-1 group-hover:translate-x-1"
-            />
-          </Link>
-        </div>
-      </section>
-
-      {/* ================================================================ */}
-      {/* CONTACT CTA */}
-      {/* ================================================================ */}
-
-      <section className="border-t border-gray-200 px-6 py-24 sm:px-10 lg:px-16">
-        <div className="mx-auto max-w-6xl text-center">
-          <p className="text-sm font-medium uppercase tracking-[0.2em] text-blue-800">
-            Let&apos;s build
-          </p>
-
-          <h2 className="mx-auto mt-5 max-w-3xl text-4xl font-semibold tracking-tight sm:text-5xl">
-            Have an idea worth turning into software?
-          </h2>
-
-          <p className="mx-auto mt-6 max-w-2xl leading-7 text-gray-600">
-            I&apos;m always interested in practical problems, interesting
-            systems, and opportunities to build something useful.
-          </p>
-
-          <Link
-            href="/contact"
-            className="mt-9 inline-flex items-center gap-2 bg-gray-900 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-blue-800"
-          >
-            Start a conversation
-            <ArrowUpRight size={17} />
-          </Link>
-        </div>
-      </section>
-
-      {/* ================================================================ */}
-      {/* FOOTER */}
-      {/* ================================================================ */}
-
-      <Footer />
-    </main>
+            <Link
+              href="/contact"
+              className="mt-9 inline-flex items-center gap-2 bg-gray-900 dark:bg-zinc-900 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-blue-800 dark:hover:bg-blue-700"
+            >
+              Start a conversation
+              <ArrowUpRight size={17} />
+            </Link>
+          </div>
+        </section>
+        {/* ================================================================ */}
+        {/* FOOTER */}
+        {/* ================================================================ */}
+        <Footer />
+      </main>
+    </PageTransition>
+    </>
   );
 }

@@ -1,6 +1,20 @@
-import { Code2, Mail } from "lucide-react";
+"use client";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { Code2, Mail, ArrowUpRight } from "lucide-react";
 import { Pacifico } from "next/font/google";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+import {
+  FaFacebook,
+  FaGithub,
+  FaGoogle,
+  FaInstagram,
+  FaYoutube,
+} from "react-icons/fa";
 
 const pacifico = Pacifico({
   variable: "--font-pacifico",
@@ -8,145 +22,179 @@ const pacifico = Pacifico({
   weight: "400",
 });
 
+const navigation = [
+  {
+    title: "Explore",
+    links: [
+      { label: "Home", href: "/" },
+      { label: "Projects", href: "/projects" },
+      { label: "Skills", href: "/skills" },
+      { label: "Experience", href: "/experience" },
+    ],
+  },
+  {
+    title: "Discover",
+    links: [
+      { label: "About Me", href: "/about" },
+      { label: "Contact", href: "/contact" },
+    ],
+  },
+];
+
+const socialLinks = [
+  {
+    label: "GitHub",
+    href: "https://github.com/Codewithajoydas",
+    icon: FaGithub,
+  },
+  {
+    label: "Email",
+    href: "mailto:codewithajoydas@gmail.com",
+    icon: Mail,
+  },
+  {
+    label: "Instagram",
+    href: "https://www.instagram.com/codewithajoydas",
+    icon: FaInstagram,
+  },
+  {
+    label: "Facebook",
+    href: "https://www.facebook.com/profile.php?id=100090674957174&sk=photos",
+    icon: FaFacebook,
+  },
+  {
+    label: "Youtube",
+    href: "https://www.youtube.com/@codewithajoydas",
+    icon: FaYoutube,
+  },
+  {
+    label: "Google",
+    href: "https://www.google.com/preferences/source?q=codewithajoydas.in",
+    icon: FaGoogle,
+  },
+];
+
 export default function Footer() {
+  const currentYear = new Date().getFullYear();
+  const pathname = usePathname();
+
   return (
-    <footer className="border-t border-gray-200 bg-white px-6 py-12 sm:px-10 lg:px-16">
-      <div className="mx-auto max-w-7xl">
-        <div className="flex flex-col gap-10 lg:flex-row lg:items-start lg:justify-between">
+    <footer
+      aria-label="Website footer"
+      className="border-t border-gray-200 bg-white text-gray-900 transition-colors duration-300 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-100"
+    >
+      <div className="mx-auto max-w-7xl px-6 py-14 sm:px-10 lg:px-16">
+        {/* Main Footer */}
+        <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr_1fr] lg:gap-10">
           {/* Brand */}
-          <div className="max-w-sm">
+          <div className="max-w-md">
             <Link
               href="/"
-              className={`${pacifico.className} text-2xl text-blue-800`}
+              aria-label="Codewithajoydas homepage"
+              className={`${pacifico.className} inline-block text-2xl text-blue-800 transition-colors hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300`}
             >
               Codewithajoydas
             </Link>
 
-            <p className="mt-4 text-sm leading-6 text-gray-500">
-              Software developer building applications, developer tools,
-              experiments, and systems while continuously learning.
+            <p className="mt-5 max-w-sm text-sm leading-7 text-gray-600 dark:text-zinc-400">
+              Software developer focused on building meaningful applications,
+              developer tools, and practical digital experiences through
+              continuous learning and experimentation.
             </p>
+
+            {/* Social Links */}
+            <div className="mt-7 flex items-center gap-3">
+              {socialLinks.map(({ label, href, icon: Icon}) => (
+                <Tooltip key={label}>
+                  <TooltipTrigger>
+                    <a
+                      key={label}
+                      href={href}
+                      target={href.startsWith("http") ? "_blank" : undefined}
+                      rel={
+                        href.startsWith("http")
+                          ? "noopener noreferrer"
+                          : undefined
+                      }
+                      aria-label={label}
+                      className="flex size-10 items-center justify-center border border-gray-200 text-gray-600 transition-all duration-200 hover:border-blue-800 hover:bg-blue-800 hover:text-white dark:border-zinc-800 dark:text-zinc-400 dark:hover:border-blue-500 dark:hover:bg-blue-500 dark:hover:text-white"
+                    >
+                      <Icon size={17} strokeWidth={1.8} />
+                    </a>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>{label}</p>
+                  </TooltipContent>
+                </Tooltip>
+              ))}
+            </div>
           </div>
 
           {/* Navigation */}
-          <div className="grid grid-cols-2 gap-x-16 gap-y-8 sm:grid-cols-3">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gray-400">
-                Explore
-              </p>
+          {navigation.map((group) => (
+            <div key={group.title}>
+              <h3 className="text-xs font-semibold uppercase tracking-[0.2em] text-gray-400 dark:text-zinc-500">
+                {group.title}
+              </h3>
 
-              <div className="mt-4 flex flex-col gap-3 text-sm">
-                <Link
-                  href="/projects"
-                  className="text-gray-600 transition-colors hover:text-blue-800"
-                >
-                  Projects
-                </Link>
-
-                <Link
-                  href="/skills"
-                  className="text-gray-600 transition-colors hover:text-blue-800"
-                >
-                  Skills
-                </Link>
-
-                <Link
-                  href="/experience"
-                  className="text-gray-600 transition-colors hover:text-blue-800"
-                >
-                  Experience
-                </Link>
-              </div>
+              <ul className="mt-6 space-y-4">
+                {group.links.map((item) => (
+                  <li key={item.href}>
+                    <Link
+                      href={item.href}
+                      className="group inline-flex items-center gap-1 text-sm text-gray-600 transition-colors duration-200 hover:text-blue-800 dark:text-zinc-400 dark:hover:text-blue-400"
+                    >
+                      {item.label}
+                      <ArrowUpRight
+                        size={13}
+                        className="opacity-0 transition-all duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:opacity-100"
+                      />
+                    </Link>
+                  </li>
+                ))}
+              </ul>
             </div>
+          ))}
 
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gray-400">
-                About
-              </p>
+          {/* Contact */}
+          <div>
+            <h3 className="text-xs font-semibold uppercase tracking-[0.2em] text-gray-400 dark:text-zinc-500">
+              Get in touch
+            </h3>
 
-              <div className="mt-4 flex flex-col gap-3 text-sm">
-                <Link
-                  href="/about"
-                  className="text-gray-600 transition-colors hover:text-blue-800"
-                >
-                  About Me
-                </Link>
+            <p className="mt-6 text-sm leading-7 text-gray-600 dark:text-zinc-400">
+              Have an idea, a project, or an opportunity to discuss? Feel free
+              to reach out.
+            </p>
 
-                <Link
-                  href="/contact"
-                  className="text-gray-600 transition-colors hover:text-blue-800"
-                >
-                  Contact
-                </Link>
-              </div>
-            </div>
+            <a
+              href="mailto:codewithajoydas@gmail.com?subject=Let's%20Connect"
+              className="mt-5 inline-flex items-center gap-2 border-b border-blue-800 pb-1 text-sm font-medium text-blue-800 transition-colors hover:text-blue-600 dark:border-blue-400 dark:text-blue-400 dark:hover:text-blue-300"
+            >
+              Let&apos;s talk
+              <ArrowUpRight size={15} />
+            </a>
 
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gray-400">
-                Connect
-              </p>
-
-              <div className="mt-4 flex items-center gap-3">
-                <a
-                  href="https://github.com/Codewithajoydas"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="GitHub"
-                  className="flex size-9 items-center justify-center border border-gray-200 text-gray-600 transition-all hover:border-gray-900 hover:bg-gray-900 hover:text-white"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
-                    fill="currentColor"
-                    className="bi bi-github"
-                    viewBox="0 0 16 16"
-                  >
-                    <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8" />
-                  </svg>
-                </a>
-
-                <a
-                  href="https://www.linkedin.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="LinkedIn"
-                  className="flex size-9 items-center justify-center border border-gray-200 text-gray-600 transition-all hover:border-blue-800 hover:bg-blue-800 hover:text-white"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
-                    fill="currentColor"
-                    className="bi bi-linkedin"
-                    viewBox="0 0 16 16"
-                  >
-                    <path d="M0 1.146C0 .513.526 0 1.175 0h13.65C15.474 0 16 .513 16 1.146v13.708c0 .633-.526 1.146-1.175 1.146H1.175C.526 16 0 15.487 0 14.854zm4.943 12.248V6.169H2.542v7.225zm-1.2-8.212c.837 0 1.358-.554 1.358-1.248-.015-.709-.52-1.248-1.342-1.248S2.4 3.226 2.4 3.934c0 .694.521 1.248 1.327 1.248zm4.908 8.212V9.359c0-.216.016-.432.08-.586.173-.431.568-.878 1.232-.878.869 0 1.216.662 1.216 1.634v3.865h2.401V9.25c0-2.22-1.184-3.252-2.764-3.252-1.274 0-1.845.7-2.165 1.193v.025h-.016l.016-.025V6.169h-2.4c.03.678 0 7.225 0 7.225z" />
-                  </svg>
-                </a>
-
-                <a
-                  href="mailto:codewithajoydas@gmail.com"
-                  aria-label="Email"
-                  className="flex size-9 items-center justify-center border border-gray-200 text-gray-600 transition-all hover:border-gray-900 hover:bg-gray-900 hover:text-white"
-                >
-                  <Mail size={17} />
-                </a>
-              </div>
-            </div>
+            <p className="mt-5 break-all text-xs text-gray-400 dark:text-zinc-500">
+              codewithajoydas@gmail.com
+            </p>
           </div>
         </div>
 
-        {/* Bottom */}
-        <div className="mt-12 flex flex-col gap-3 border-t border-gray-200 pt-6 text-xs text-gray-400 sm:flex-row sm:items-center sm:justify-between">
-          <p>
-            © {new Date().getFullYear()} Codewithajoydas. All rights reserved.
+        {/* Bottom Bar */}
+        <div className="mt-16 flex flex-col gap-5 border-t border-gray-200 pt-7 dark:border-zinc-800 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-xs leading-6 text-gray-500 dark:text-zinc-500">
+            © {currentYear} Codewithajoydas. All rights reserved.
           </p>
 
-          <div className="flex items-center gap-2">
-            <Code2 size={14} />
-            <span>Built with Next.js & Tailwind CSS</span>
-          </div>
+          {pathname !== "/" && (
+            <Link
+              href="/"
+              className="w-fit text-xs text-gray-500 transition-colors hover:text-blue-800 dark:text-zinc-500 dark:hover:text-blue-400"
+            >
+              Back to home ↑
+            </Link>
+          )}
         </div>
       </div>
     </footer>
