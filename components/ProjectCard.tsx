@@ -16,7 +16,8 @@ export default function ProjectCard({
   return (
     <article
       className="
-        group relative m-4 w-[45%] min-w-2xs
+        group relative m-4 w-[100%] min-w-2xs
+        lg:w-[45%]
         cursor-pointer overflow-hidden
         border border-gray-200 bg-white p-2
         transition-all duration-300 ease-out

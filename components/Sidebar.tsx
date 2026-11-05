@@ -67,7 +67,6 @@ export default function SidebarComponent() {
             transition-transform
             duration-300
             ease-out
-
             dark:border-zinc-800
             dark:bg-zinc-950/95
           `,
@@ -76,13 +75,11 @@ export default function SidebarComponent() {
         aria-hidden={!sidebarOpen}
         inert={!sidebarOpen}
       >
-        <div className="flex h-full flex-col">
-
-          {/* Sidebar Header */}
+        <div className="flex h-full flex-col overflow-auto pt-3">
           <div
             className="
               flex h-20 items-center justify-between
-              border-b border-gray-100 px-6
+              border-b border-gray-100 px-6 pb-3
               dark:border-zinc-800
             "
           >
@@ -98,7 +95,6 @@ export default function SidebarComponent() {
                   text-gray-900
                   transition-colors duration-200
                   hover:text-blue-800
-
                   dark:text-white
                   dark:hover:text-blue-400
                 `,
@@ -126,14 +122,13 @@ export default function SidebarComponent() {
               className="
                 flex h-10 w-10
                 items-center justify-center
-                rounded-full border
+                 border
                 border-gray-200
                 text-gray-700
                 transition-all duration-200
                 hover:border-gray-300
                 hover:bg-gray-50
                 hover:text-blue-800
-
                 dark:border-zinc-800
                 dark:text-zinc-300
                 dark:hover:border-zinc-700

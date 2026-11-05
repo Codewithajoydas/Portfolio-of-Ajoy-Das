@@ -266,32 +266,32 @@ const aboutImageUrl = new URL(
 />
       <PageTransition>
         <main className="min-h-screen bg-white text-gray-900 transition-colors duration-300 dark:bg-zinc-950 dark:text-zinc-100">
-          <section className="relative flex min-h-screen items-center overflow-hidden bg-linear-to-br from-blue-50 via-white to-white px-6 py-24 sm:px-10 lg:px-16 dark:bg-gradient-to-br dark:from-blue-950 dark:via-zinc-950 dark:to-zinc-950 transition-colors duration-500">
-            <div className="relative z-10 mx-auto flex w-full max-w-7xl flex-col-reverse items-center gap-12 lg:flex-row lg:gap-8">
-              <div className="w-full flex-1 lg:max-w-3xl">
-                <p className="mb-5 text-sm font-medium uppercase tracking-[0.25em] text-gray-600 dark:text-zinc-400">
+          <section className="relative flex min-h-0 items-center overflow-hidden bg-linear-to-br from-blue-50 via-white to-white px-4 py-16 transition-colors duration-500 sm:px-6 sm:py-20 md:px-10 lg:min-h-screen lg:px-16 lg:py-24 dark:bg-gradient-to-br dark:from-blue-950 dark:via-zinc-950 dark:to-zinc-950">
+            <div className="relative z-10 mx-auto flex w-full max-w-7xl flex-col-reverse items-center gap-10 sm:gap-12 lg:flex-row lg:gap-12">
+              <div className="w-full min-w-0 flex-1 text-center lg:max-w-3xl lg:text-left">
+                <p className="mb-4 text-xs font-semibold uppercase tracking-[0.2em] text-gray-600 sm:mb-5 sm:text-sm sm:tracking-[0.25em] dark:text-zinc-400">
                   Software Developer
                 </p>
-                <h1 className="text-5xl font-bold leading-[1.05] tracking-tight sm:text-6xl lg:text-7xl">
+                <h1 className="break-words text-4xl font-bold leading-[1.08] tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
                   Hi, I&apos;m{" "}
                   <span
-                    className={`${pacifico.className} text-blue-800 dark:text-blue-800`}
+                    className={`${pacifico.className} break-words text-blue-800 dark:text-blue-400`}
                   >
                     Codewithajoydas
                   </span>
                 </h1>
-                <p className="mt-7 max-w-2xl text-lg leading-8 text-gray-600 sm:text-xl dark:text-zinc-300">
+                <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-gray-600 sm:mt-7 sm:text-lg sm:leading-8 md:text-xl lg:mx-0 dark:text-zinc-300">
                   I&apos;m a software developer who enjoys turning ideas into
                   real, scalable products. I build, experiment, and learn across
                   the full stack — from interfaces and APIs to the systems
                   behind them.
                 </p>
-                <p className="mt-4 max-w-xl text-base leading-7 text-gray-500 dark:text-zinc-400">
+                <p className="mx-auto mt-4 max-w-xl text-sm leading-6 text-gray-500 sm:text-base sm:leading-7 lg:mx-0 dark:text-zinc-400">
                   This portfolio is my engineering playground — a collection of
                   projects, experiments, tools, and things I&apos;ve built while
                   becoming a better developer.
                 </p>
-                <div className="mt-8 flex flex-wrap gap-4">
+                <div className="mt-7 flex flex-wrap justify-center gap-3 sm:gap-4 lg:justify-start">
                   <a
                     href="#projects"
                     className="group inline-flex items-center gap-2 bg-blue-800 px-6 py-3 text-sm font-semibold text-white transition-all duration-300 hover:scale-[1.01] hover:bg-blue-700 hover:shadow-lg"
@@ -310,15 +310,15 @@ const aboutImageUrl = new URL(
                   </Link>
                 </div>
               </div>
-              <div className="relative flex w-full flex-1 justify-center lg:min-h-150 lg:justify-end">
-                <div className="relative h-[85%] w-[70%] sm:h-125 sm:w-[75%] lg:h-150 lg:w-[80%]">
+              <div className="relative flex w-full flex-1 justify-center lg:min-h-[38rem] lg:justify-end">
+                <div className="relative h-[clamp(16rem,65vw,28rem)] w-full max-w-[34rem] sm:h-[clamp(22rem,55vw,32rem)] lg:h-[38rem] lg:max-w-none lg:w-[85%]">
                   <Image
                     src="/images/Codewithajoydas_Hero-page.png"
                     alt="Ajoy Das — Software Developer"
                     fill
                     priority
                     sizes="(max-width: 1024px) 80vw, 40vw"
-                    className="object-contain object-bottom"
+                    className="object-contain object-center lg:object-bottom"
                   />
                   <div className="absolute bottom-0 h-25 w-full bg-linear-to-t from-gray-50 to-transparent dark:from-zinc-950" />
                 </div>
@@ -328,40 +328,40 @@ const aboutImageUrl = new URL(
           </section>
           <section
             id="what-i-build"
-            className="bg-white px-6 py-24 sm:px-10 lg:px-16 lg:py-32 dark:bg-zinc-950"
+            className="bg-white px-4 py-16 sm:px-6 sm:py-20 md:px-10 lg:px-16 lg:py-32 dark:bg-zinc-950"
           >
             <div className="mx-auto w-full max-w-7xl">
-              <div className="grid items-center gap-16 lg:grid-cols-[0.8fr_1.2fr] lg:gap-24">
-                <div className="relative flex justify-center lg:justify-start">
-                  <div className="relative w-full">
+              <div className="grid min-w-0 items-center gap-10 sm:gap-14 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20 xl:gap-24">
+                <div className="relative flex min-w-0 justify-center lg:justify-start">
+                  <div className="relative mx-auto w-[50%] max-w-[31.25rem] lg:mx-0 lg:w-full">
                     <Image
                       src="/images/Codewithajoydas_About-page.png"
                       alt="Codewithajoydas development skills"
                       width={500}
                       height={500}
-                      className="object-contain"
+                      className="h-auto w-full object-contain"
                     />
                   </div>
                 </div>
                 <div>
-                  <p className="mb-5 text-sm font-medium uppercase tracking-[0.25em] text-gray-500 dark:text-zinc-400">
+                  <p className="mb-4 text-xs font-semibold uppercase tracking-[0.2em] text-gray-500 sm:mb-5 sm:text-sm sm:tracking-[0.25em] dark:text-zinc-400">
                     What I Build
                   </p>
-                  <h2 className="max-w-4xl text-4xl font-semibold leading-[1.1] tracking-tight text-gray-900 sm:text-5xl lg:text-6xl dark:text-zinc-100">
+                  <h2 className="max-w-4xl break-words text-3xl font-semibold leading-[1.12] tracking-tight text-gray-900 sm:text-4xl md:text-5xl lg:text-6xl dark:text-zinc-100">
                     From small experiments to{" "}
                     <span
-                      className={`${pacifico.className} text-blue-800 dark:text-blue-800`}
+                      className={`${pacifico.className} break-words text-blue-800 dark:text-blue-400`}
                     >
                       complete software systems.
                     </span>
                   </h2>
-                  <p className="mt-6 max-w-2xl text-lg leading-8 text-gray-600 dark:text-zinc-300">
+                  <p className="mt-5 max-w-2xl text-base leading-7 text-gray-600 sm:mt-6 sm:text-lg sm:leading-8 dark:text-zinc-300">
                     I build full-stack applications, developer tools, automation
                     workflows, and JavaScript experiments — turning ideas into
                     software that is useful, maintainable, and built with a deep
                     understanding of how things work.
                   </p>
-                  <div className="mt-12 grid gap-x-8 gap-y-10 sm:grid-cols-2">
+                  <div className="mt-9 grid grid-cols-1 gap-x-8 gap-y-8 sm:mt-12 sm:grid-cols-2 sm:gap-y-10">
                     {thingsIBuild.map((item) => (
                       <div
                         key={item.number}
@@ -385,24 +385,24 @@ const aboutImageUrl = new URL(
           </section>
           <section
             id="projects"
-            className="bg-gray-50 px-6 py-24 sm:px-10 lg:px-16 lg:py-32 dark:bg-zinc-900/60"
+            className="bg-gray-50 px-4 py-16 sm:px-6 sm:py-20 md:px-10 lg:px-16 lg:py-32 dark:bg-zinc-900/60"
           >
             <div className="mx-auto w-full max-w-7xl">
-              <div className="flex flex-col justify-between gap-8 lg:flex-row lg:items-end">
+              <div className="flex flex-col justify-between gap-6 sm:gap-8 lg:flex-row lg:items-end">
                 <div>
                   <p className="text-sm font-medium uppercase tracking-[0.25em] text-gray-500 dark:text-zinc-400">
                     Featured Work
                   </p>
-                  <h2 className="mt-5 max-w-3xl text-4xl font-semibold tracking-tight text-gray-900 sm:text-5xl dark:text-zinc-100">
+                  <h2 className="mt-4 max-w-3xl break-words text-3xl font-semibold tracking-tight text-gray-900 sm:mt-5 sm:text-4xl md:text-5xl dark:text-zinc-100">
                     Things I&apos;ve{" "}
                     <span
-                      className={`${pacifico.className} text-blue-800 dark:text-blue-800`}
+                      className={`${pacifico.className} break-words text-blue-800 dark:text-blue-400`}
                     >
                       actually built
                     </span>
                     .
                   </h2>
-                  <p className="mt-5 max-w-2xl text-lg leading-8 text-gray-600 dark:text-zinc-300">
+                  <p className="mt-4 max-w-2xl text-base leading-7 text-gray-600 sm:mt-5 sm:text-lg sm:leading-8 dark:text-zinc-300">
                     A selection of featured applications, developer tools, and
                     experiments from my journey of learning and building
                     software.
@@ -420,7 +420,7 @@ const aboutImageUrl = new URL(
                 </Link>
               </div>
               {featuredProjects.length > 0 ? (
-                <div className="mt-14 flex flex-wrap items-center justify-center">
+                <div className="mt-9 flex flex-wrap items-stretch justify-center gap-5 sm:mt-12 lg:mt-14">
                   {featuredProjects.map((project: Project) => (
                     <ProjectCard
                       key={String(project._id)}
@@ -435,7 +435,7 @@ const aboutImageUrl = new URL(
                   ))}
                 </div>
               ) : (
-                <div className="mt-14 flex min-h-40 items-center justify-center border border-dashed border-gray-300 dark:border-zinc-700">
+                <div className="mt-9 flex min-h-40 items-center justify-center border border-dashed border-gray-300 px-4 text-center sm:mt-12 dark:border-zinc-700">
                   <p className="text-sm text-gray-500 dark:text-zinc-400">
                     No featured projects available.
                   </p>
@@ -445,23 +445,23 @@ const aboutImageUrl = new URL(
           </section>
           <section
             id="how-i-think"
-            className="bg-white px-6 py-24 sm:px-10 lg:px-16 lg:py-32 dark:bg-zinc-950"
+            className="bg-white px-4 py-16 sm:px-6 sm:py-20 md:px-10 lg:px-16 lg:py-32 dark:bg-zinc-950"
           >
             <div className="mx-auto w-full max-w-7xl">
-              <div className="grid gap-16 lg:grid-cols-[0.8fr_1.2fr] lg:gap-24">
+              <div className="grid min-w-0 gap-10 sm:gap-14 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20 xl:gap-24">
                 <div>
                   <p className="text-sm font-medium uppercase tracking-[0.25em] text-gray-500 dark:text-zinc-400">
                     How I Think
                   </p>
-                  <h2 className="mt-5 text-4xl font-semibold leading-[1.1] tracking-tight text-gray-900 sm:text-5xl lg:text-6xl dark:text-zinc-100">
+                  <h2 className="mt-4 break-words text-3xl font-semibold leading-[1.12] tracking-tight text-gray-900 sm:mt-5 sm:text-4xl md:text-5xl lg:text-6xl dark:text-zinc-100">
                     I don&apos;t just want to{" "}
                     <span
-                      className={`${pacifico.className} text-blue-800 dark:text-blue-800`}
+                      className={`${pacifico.className} break-words text-blue-800 dark:text-blue-400`}
                     >
                       build things.
                     </span>
                   </h2>
-                  <p className="mt-6 max-w-lg text-lg leading-8 text-gray-600 dark:text-zinc-300">
+                  <p className="mt-5 max-w-lg text-base leading-7 text-gray-600 sm:mt-6 sm:text-lg sm:leading-8 dark:text-zinc-300">
                     I want to understand how they work, why they work, and how
                     they can be made better.
                   </p>
@@ -480,7 +480,7 @@ const aboutImageUrl = new URL(
                   {howIThink.map((item) => (
                     <div
                       key={item.number}
-                      className="grid gap-4 border-b border-gray-200 py-8 sm:grid-cols-[70px_190px_1fr] dark:border-zinc-800"
+                      className="grid grid-cols-[2.5rem_minmax(0,1fr)] gap-x-4 gap-y-2 border-b border-gray-200 py-6 sm:grid-cols-[70px_190px_minmax(0,1fr)] sm:gap-4 sm:py-8 dark:border-zinc-800"
                     >
                       <span className="text-xs font-medium tracking-[0.2em] text-gray-400 dark:text-zinc-500">
                         {item.number}
@@ -499,7 +499,7 @@ const aboutImageUrl = new URL(
           </section>
           <section
             id="contact-cta"
-            className="relative overflow-hidden bg-blue-900 px-6 py-24 text-white sm:px-10 lg:px-16 lg:py-32 dark:bg-blue-950"
+            className="relative overflow-hidden bg-blue-900 px-4 py-16 text-white sm:px-6 sm:py-20 md:px-10 lg:px-16 lg:py-32 dark:bg-blue-950"
           >
             <div className="pointer-events-none absolute -right-32 -top-32 h-100 w-100 rounded-full bg-blue-700/40 blur-3xl" />
             <div className="pointer-events-none absolute -bottom-40 -left-40 h-112.5 w-112.5 rounded-full bg-blue-800/50 blur-3xl" />
@@ -507,22 +507,22 @@ const aboutImageUrl = new URL(
               <p className="text-sm font-medium uppercase tracking-[0.25em] text-blue-200">
                 Let&apos;s Build
               </p>
-              <h2 className="mt-6 max-w-4xl text-5xl font-semibold leading-[1.05] tracking-tight sm:text-6xl lg:text-8xl">
+              <h2 className="mt-5 max-w-4xl break-words text-4xl font-semibold leading-[1.08] tracking-tight sm:mt-6 sm:text-5xl md:text-6xl lg:text-8xl">
                 Have an idea?
                 <br />
                 <span className={`${pacifico.className} text-blue-200`}>
                   Let&apos;s make it real.
                 </span>
               </h2>
-              <div className="mt-10 flex flex-col gap-8 sm:flex-row sm:items-center sm:justify-between">
-                <p className="max-w-xl text-base leading-7 text-blue-100 sm:text-lg">
+              <div className="mt-8 flex flex-col gap-6 sm:mt-10 sm:gap-8 md:flex-row md:items-center md:justify-between">
+                <p className="max-w-xl text-sm leading-6 text-blue-100 sm:text-base sm:leading-7 lg:text-lg">
                   Whether it&apos;s a product, an interesting technical problem,
                   or something worth experimenting with, I&apos;m always
                   interested in building useful software.
                 </p>
                 <Link
                   href="/contact"
-                  className="group inline-flex w-fit shrink-0 items-center gap-3 bg-white px-7 py-4 text-sm font-semibold text-blue-900 transition-all duration-300 hover:bg-blue-50 hover:shadow-xl"
+                  className="group inline-flex w-fit max-w-full shrink-0 items-center justify-center gap-3 bg-white px-6 py-3.5 text-sm font-semibold text-blue-900 transition-all duration-300 hover:bg-blue-50 hover:shadow-xl sm:px-7 sm:py-4"
                 >
                   Get in touch
                   <ArrowUpRight
@@ -539,3 +539,4 @@ const aboutImageUrl = new URL(
     </>
   );
 }
+

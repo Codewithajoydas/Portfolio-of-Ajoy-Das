@@ -72,7 +72,10 @@ export default function HeaderComponent() {
   return (
     <header
       className={clsx(
-        "fixed inset-x-0 top-0 z-50 px-4 transition-all duration-300 ease-in-out sm:px-8 lg:px-12",
+        "fixed inset-x-0 top-0 z-50 transition-all duration-300 ease-in-out",
+        scrollPosition <= 10
+              ? "bg-transparent border-transparent"
+              : "border border-gray-200/50 dark:border-zinc-800/50 bg-white/70 dark:bg-zinc-950/70 backdrop-blur-md shadow-sm"
       )}
       style={{
         transform: scrollDirection === "down" && scrollPosition > 100 ? "translateY(-100%)" : "translateY(0)",
@@ -84,9 +87,7 @@ export default function HeaderComponent() {
         <div
           className={clsx(
             "flex h-16 items-center justify-between px-6 transition-all duration-300 rounded-xl",
-            scrollPosition <= 10
-              ? "bg-transparent border-transparent"
-              : "border border-gray-200/50 dark:border-zinc-800/50 bg-white/70 dark:bg-zinc-950/70 backdrop-blur-md shadow-sm"
+            
           )}
         >
           {/* Logo */}
@@ -158,7 +159,7 @@ export default function HeaderComponent() {
             onClick={toggleSidebar}
             aria-label="Open navigation menu"
             className={clsx(
-              "flex h-10 w-10 items-center justify-center border rounded-lg transition-all duration-200 xl:hidden active:scale-95",
+              "flex h-10 w-10 items-center justify-center border transition-all duration-200 xl:hidden active:scale-95",
               "border-gray-200 text-gray-700 bg-white/50",
               "hover:border-gray-300 hover:bg-gray-50 hover:text-blue-600",
               "dark:border-zinc-800 dark:text-zinc-300 dark:bg-zinc-900/50",
