@@ -1,282 +1,458 @@
 import React from "react";
 import {
-ArrowUpRight,
-BriefcaseBusiness,
-Code2,
-Database,
-GitBranch,
-Layers3,
-Rocket,
-Terminal,
-Wrench,
+  ArrowUpRight,
+  BriefcaseBusiness,
+  Code2,
+  Database,
+  GitBranch,
+  Layers3,
+  Rocket,
+  Terminal,
+  Wrench,
 } from "lucide-react";
 import Link from "next/link";
 import Footer from "@/components/Footer";
 import { Pacifico } from "next/font/google";
-import { createSeoMetadata } from "@/lib/seo";
 import PageTransition from "@/components/page-transition";
+import {
+  absoluteUrl,
+  createSeoMetadata,
+  safeJsonLd,
+} from "@/lib/seo";
 const pacifico = Pacifico({
-variable: "--font-pacifico",
-subsets: ["latin"],
-weight: "400",
+  variable: "--font-pacifico",
+  subsets: ["latin"],
+  weight: "400",
 });
 export const metadata = createSeoMetadata({
-title: "Experience",
-description:
-"Explore Ajoy Das&apos;s software development journey, projects, technologies, and engineering experience.",
-path: "/experience",
+  title: "Experience",
+  description:
+    "Explore Ajoy Das&apos;s software development journey, projects, technologies, and engineering experience.",
+  path: "/experience",
 });
 const journey = [
-{
-number: "01",
-title: "Learning the fundamentals",
-period: "Foundation",
-description:
-"My development journey started with understanding the fundamentals rather than immediately depending on frameworks. JavaScript, HTML, CSS, programming concepts, browser APIs, asynchronous programming, and the mechanics behind the web became the foundation for everything that followed.",
-points: [
-"JavaScript fundamentals and advanced language mechanics",
-"DOM and browser APIs",
-"Asynchronous JavaScript and Promises",
-"Object-oriented and functional programming",
-"HTML and CSS fundamentals",
-"Understanding how web applications work",
-],
-},
-{
-number: "02",
-title: "Moving from learning to building",
-period: "Projects",
-description:
-"After learning individual concepts, I started connecting them through practical projects. Instead of treating learning as an isolated activity, projects became a way to discover where concepts actually matter.",
-points: [
-"Building complete applications",
-"Working with frontend and backend code",
-"Connecting applications to databases",
-"Designing APIs and application workflows",
-"Learning through debugging real problems",
-"Improving projects after the first working version",
-],
-},
-{
-number: "03",
-title: "Building my own software",
-period: "Independent Development",
-description:
-"My focus gradually moved toward building software that solves actual problems. This includes developer tools, full-stack applications, backend systems, and utilities designed around real workflows.",
-points: [
-"Building independent software products",
-"Creating developer tooling",
-"Working with authentication and databases",
-"Designing reusable application architecture",
-"Building CLI applications",
-"Exploring full-stack product development",
-],
-},
-{
-number: "04",
-title: "Going deeper into engineering",
-period: "Engineering",
-description:
-"Building larger applications naturally introduced questions beyond simply making something work. Architecture, scalability, maintainability, performance, testing, deployment, and system design became increasingly important.",
-points: [
-"System design",
-"Software architecture",
-"Backend architecture",
-"Performance optimization",
-"Testing and reliability",
-"CI/CD and deployment workflows",
-],
-},
+  {
+    number: "01",
+    title: "Learning the fundamentals",
+    period: "Foundation",
+    description:
+      "My development journey started with understanding the fundamentals rather than immediately depending on frameworks. JavaScript, HTML, CSS, programming concepts, browser APIs, asynchronous programming, and the mechanics behind the web became the foundation for everything that followed.",
+    points: [
+      "JavaScript fundamentals and advanced language mechanics",
+      "DOM and browser APIs",
+      "Asynchronous JavaScript and Promises",
+      "Object-oriented and functional programming",
+      "HTML and CSS fundamentals",
+      "Understanding how web applications work",
+    ],
+  },
+  {
+    number: "02",
+    title: "Moving from learning to building",
+    period: "Projects",
+    description:
+      "After learning individual concepts, I started connecting them through practical projects. Instead of treating learning as an isolated activity, projects became a way to discover where concepts actually matter.",
+    points: [
+      "Building complete applications",
+      "Working with frontend and backend code",
+      "Connecting applications to databases",
+      "Designing APIs and application workflows",
+      "Learning through debugging real problems",
+      "Improving projects after the first working version",
+    ],
+  },
+  {
+    number: "03",
+    title: "Building my own software",
+    period: "Independent Development",
+    description:
+      "My focus gradually moved toward building software that solves actual problems. This includes developer tools, full-stack applications, backend systems, and utilities designed around real workflows.",
+    points: [
+      "Building independent software products",
+      "Creating developer tooling",
+      "Working with authentication and databases",
+      "Designing reusable application architecture",
+      "Building CLI applications",
+      "Exploring full-stack product development",
+    ],
+  },
+  {
+    number: "04",
+    title: "Going deeper into engineering",
+    period: "Engineering",
+    description:
+      "Building larger applications naturally introduced questions beyond simply making something work. Architecture, scalability, maintainability, performance, testing, deployment, and system design became increasingly important.",
+    points: [
+      "System design",
+      "Software architecture",
+      "Backend architecture",
+      "Performance optimization",
+      "Testing and reliability",
+      "CI/CD and deployment workflows",
+    ],
+  },
 ];
 const projects = [
-{
-number: "01",
-title: "Kodhra",
-type: "Developer Tool",
-description:
-"A code snippet management application built around the idea of keeping reusable code organized and accessible.",
-technologies: [
-"JavaScript",
-"Node.js",
-"Express.js",
-"MongoDB",
-"Mongoose",
-"EJS",
-],
-github: "https\://github.com/Code-Snippet-Manager/Kodhra",
-image: "/images/projects/Kodhra.png",
-},
-{
-number: "02",
-title: "Assign Meter",
-type: "Full-stack Platform",
-description:
-"A larger software system involving web, mobile, and backend applications, providing practical experience across multiple parts of a product.",
-technologies: [
-"Next.js",
-"React",
-"React Native",
-"Node.js",
-"Express.js",
-"MongoDB",
-],
-github: "https\://github.com/Assign-Meter",
-image: "/images/projects/Assign-Meter.png",
-},
-{
-number: "03",
-title: "CWAD Lab Scaffolder",
-type: "Developer Tool",
-description:
-"A CLI project generator created to automate project setup and provide reusable scaffolding for development workflows.",
-technologies: ["TypeScript", "Node.js", "Commander", "Inquirer", "Zod"],
-github: "https\://github.com/Codewithajoydas/cwad-lab-scaffolder",
-image: "/images/projects/CWAD-Lab-Scaffolder.png",
-},
-{
-number: "04",
-title: "WiggleNote",
-type: "Application",
-description:
-"An independent software project focused on creating a practical application experience while continuing to explore product development.",
-technologies: [],
-github: "https\://github.com/Codewithajoydas/WiggleNote",
-image: "/images/projects/WiggleNote.png",
-},
+  {
+    number: "01",
+    title: "Kodhra",
+    type: "Developer Tool",
+    description:
+      "A code snippet management application built around the idea of keeping reusable code organized and accessible.",
+    technologies: [
+      "JavaScript",
+      "Node.js",
+      "Express.js",
+      "MongoDB",
+      "Mongoose",
+      "EJS",
+    ],
+    github: "https\://github.com/Code-Snippet-Manager/Kodhra",
+    image: "/images/projects/Kodhra.png",
+  },
+  {
+    number: "02",
+    title: "Assign Meter",
+    type: "Full-stack Platform",
+    description:
+      "A larger software system involving web, mobile, and backend applications, providing practical experience across multiple parts of a product.",
+    technologies: [
+      "Next.js",
+      "React",
+      "React Native",
+      "Node.js",
+      "Express.js",
+      "MongoDB",
+    ],
+    github: "https\://github.com/Assign-Meter",
+    image: "/images/projects/Assign-Meter.png",
+  },
+  {
+    number: "03",
+    title: "CWAD Lab Scaffolder",
+    type: "Developer Tool",
+    description:
+      "A CLI project generator created to automate project setup and provide reusable scaffolding for development workflows.",
+    technologies: ["TypeScript", "Node.js", "Commander", "Inquirer", "Zod"],
+    github: "https\://github.com/Codewithajoydas/cwad-lab-scaffolder",
+    image: "/images/projects/CWAD-Lab-Scaffolder.png",
+  },
+  {
+    number: "04",
+    title: "WiggleNote",
+    type: "Application",
+    description:
+      "An independent software project focused on creating a practical application experience while continuing to explore product development.",
+    technologies: [],
+    github: "https\://github.com/Codewithajoydas/WiggleNote",
+    image: "/images/projects/WiggleNote.png",
+  },
 ];
 const engineeringAreas = [
-{
-number: "01",
-title: "Frontend Engineering",
-description:
-"Building interfaces with React, Next.js, HTML, CSS, and modern frontend tooling while keeping usability and maintainability in mind.",
-icon: Code2,
-},
-{
-number: "02",
-title: "Backend Engineering",
-description:
-"Working with Node.js, Express.js, APIs, authentication, databases, server-side logic, and application workflows.",
-icon: Terminal,
-},
-{
-number: "03",
-title: "Database Engineering",
-description:
-"Working with MongoDB, Mongoose, data modeling, relationships, queries, and the role databases play inside application architecture.",
-icon: Database,
-},
-{
-number: "04",
-title: "Developer Tooling",
-description:
-"Building CLI tools, project generators, utilities, and development workflows that reduce repetitive work.",
-icon: Wrench,
-},
-{
-number: "05",
-title: "Architecture",
-description:
-"Learning how applications should be structured so individual components can evolve without making the entire system difficult to maintain.",
-icon: Layers3,
-},
-{
-number: "06",
-title: "Engineering Workflow",
-description:
-"Working with Git, GitHub, package management, bundlers, testing, CI/CD, and the broader software development workflow.",
-icon: GitBranch,
-},
+  {
+    number: "01",
+    title: "Frontend Engineering",
+    description:
+      "Building interfaces with React, Next.js, HTML, CSS, and modern frontend tooling while keeping usability and maintainability in mind.",
+    icon: Code2,
+  },
+  {
+    number: "02",
+    title: "Backend Engineering",
+    description:
+      "Working with Node.js, Express.js, APIs, authentication, databases, server-side logic, and application workflows.",
+    icon: Terminal,
+  },
+  {
+    number: "03",
+    title: "Database Engineering",
+    description:
+      "Working with MongoDB, Mongoose, data modeling, relationships, queries, and the role databases play inside application architecture.",
+    icon: Database,
+  },
+  {
+    number: "04",
+    title: "Developer Tooling",
+    description:
+      "Building CLI tools, project generators, utilities, and development workflows that reduce repetitive work.",
+    icon: Wrench,
+  },
+  {
+    number: "05",
+    title: "Architecture",
+    description:
+      "Learning how applications should be structured so individual components can evolve without making the entire system difficult to maintain.",
+    icon: Layers3,
+  },
+  {
+    number: "06",
+    title: "Engineering Workflow",
+    description:
+      "Working with Git, GitHub, package management, bundlers, testing, CI/CD, and the broader software development workflow.",
+    icon: GitBranch,
+  },
 ];
 const principles = [
-{
-number: "01",
-title: "Understand first",
-description:
-"I try to understand what is happening underneath a technology instead of treating it as a black box.",
-},
-{
-number: "02",
-title: "Build to learn",
-description:
-"Projects turn abstract concepts into practical engineering experience.",
-},
-{
-number: "03",
-title: "Keep fundamentals strong",
-description:
-"Framework knowledge is useful, but strong fundamentals make it easier to learn whatever comes next.",
-},
-{
-number: "04",
-title: "Solve real problems",
-description:
-"Building software around actual problems creates better constraints and better learning opportunities.",
-},
-{
-number: "05",
-title: "Improve the second version",
-description:
-"The first working implementation is rarely the final implementation. Refactoring and iteration are part of the process.",
-},
-{
-number: "06",
-title: "Think beyond the code",
-description:
-"A useful software system involves architecture, workflow, deployment, maintenance, and the people using it.",
-},
+  {
+    number: "01",
+    title: "Understand first",
+    description:
+      "I try to understand what is happening underneath a technology instead of treating it as a black box.",
+  },
+  {
+    number: "02",
+    title: "Build to learn",
+    description:
+      "Projects turn abstract concepts into practical engineering experience.",
+  },
+  {
+    number: "03",
+    title: "Keep fundamentals strong",
+    description:
+      "Framework knowledge is useful, but strong fundamentals make it easier to learn whatever comes next.",
+  },
+  {
+    number: "04",
+    title: "Solve real problems",
+    description:
+      "Building software around actual problems creates better constraints and better learning opportunities.",
+  },
+  {
+    number: "05",
+    title: "Improve the second version",
+    description:
+      "The first working implementation is rarely the final implementation. Refactoring and iteration are part of the process.",
+  },
+  {
+    number: "06",
+    title: "Think beyond the code",
+    description:
+      "A useful software system involves architecture, workflow, deployment, maintenance, and the people using it.",
+  },
 ];
 const currentFocus = [
-"Advanced JavaScript and TypeScript",
-"Node.js and backend engineering",
-"System design",
-"Software architecture",
-"Database design",
-"Web performance",
-"Testing",
-"CI/CD",
-"Developer tooling",
-"Full-stack application development",
+  "Advanced JavaScript and TypeScript",
+  "Node.js and backend engineering",
+  "System design",
+  "Software architecture",
+  "Database design",
+  "Web performance",
+  "Testing",
+  "CI/CD",
+  "Developer tooling",
+  "Full-stack application development",
 ];
 const developmentStages = [
-{
-number: "01",
-title: "Learn",
-description: "Study the underlying concept and understand why it exists.",
-},
-{
-number: "02",
-title: "Experiment",
-description:
-"Create small implementations to understand how the concept behaves.",
-},
-{
-number: "03",
-title: "Build",
-description:
-"Apply the concept inside a larger project with real constraints.",
-},
-{
-number: "04",
-title: "Break",
-description:
-"Find edge cases, bugs, limitations, and architectural problems.",
-},
-{
-number: "05",
-title: "Improve",
-description:
-"Refactor the implementation and improve the surrounding system.",
-},
-{
-number: "06",
-title: "Understand",
-description:
-"Extract the deeper lesson and carry it into the next project.",
-},
+  {
+    number: "01",
+    title: "Learn",
+    description: "Study the underlying concept and understand why it exists.",
+  },
+  {
+    number: "02",
+    title: "Experiment",
+    description:
+      "Create small implementations to understand how the concept behaves.",
+  },
+  {
+    number: "03",
+    title: "Build",
+    description:
+      "Apply the concept inside a larger project with real constraints.",
+  },
+  {
+    number: "04",
+    title: "Break",
+    description:
+      "Find edge cases, bugs, limitations, and architectural problems.",
+  },
+  {
+    number: "05",
+    title: "Improve",
+    description:
+      "Refactor the implementation and improve the surrounding system.",
+  },
+  {
+    number: "06",
+    title: "Understand",
+    description:
+      "Extract the deeper lesson and carry it into the next project.",
+  },
 ];
 export default function ExperiencePage() {
+  
+const personId = absoluteUrl("/about#person");
+const websiteId = absoluteUrl("/#website");
+const pageId = absoluteUrl("/experience#webpage");
+const breadcrumbId = absoluteUrl("/experience#breadcrumb");
+const projectsId = absoluteUrl("/experience#projects");
+
+const structuredData = {
+  "@context": "https://schema.org",
+
+  "@graph": [
+    {
+      "@type": "Person",
+      "@id": personId,
+      name: "Ajoy Das",
+      url: absoluteUrl("/about"),
+      jobTitle: "Independent Software Developer",
+      description:
+        "An independent developer building software, exploring engineering concepts, and continuously turning what he learns into working systems.",
+
+      sameAs: [
+        "https://github.com/Codewithajoydas",
+        "https://www.instagram.com/codewithajoydas",
+        "https://www.facebook.com/profile.php?id=100090674957174",
+        "https://www.youtube.com/@codewithajoydas"
+      ],
+
+      knowsAbout: [
+        "JavaScript",
+        "TypeScript",
+        "HTML",
+        "CSS",
+        "React",
+        "Next.js",
+        "Node.js",
+        "Express.js",
+        "MongoDB",
+        "Mongoose",
+        "Frontend Engineering",
+        "Backend Engineering",
+        "Database Engineering",
+        "Developer Tooling",
+        "Software Architecture",
+        "System Design",
+        "Performance Optimization",
+        "Software Testing",
+        "CI/CD",
+        "Git",
+        "Full-stack Development"
+      ]
+    },
+
+    {
+      "@type": "WebSite",
+      "@id": websiteId,
+      url: absoluteUrl("/"),
+      name: "Codewithajoydas",
+      description:
+        "The personal portfolio and software development website of Ajoy Das.",
+
+      publisher: {
+        "@id": personId
+      },
+
+      inLanguage: "en-IN"
+    },
+
+    {
+      "@type": "BreadcrumbList",
+      "@id": breadcrumbId,
+
+      itemListElement: [
+        {
+          "@type": "ListItem",
+          position: 1,
+          name: "Home",
+          item: absoluteUrl("/")
+        },
+        {
+          "@type": "ListItem",
+          position: 2,
+          name: "Experience",
+          item: absoluteUrl("/experience")
+        }
+      ]
+    },
+
+    {
+      "@type": "WebPage",
+      "@id": pageId,
+      url: absoluteUrl("/experience"),
+      name: "Experience | Codewithajoydas",
+
+      description:
+        "Explore Ajoy Das's software development journey, projects, technologies, and engineering experience.",
+
+      isPartOf: {
+        "@id": websiteId
+      },
+
+      about: {
+        "@id": personId
+      },
+
+      mainEntity: {
+        "@id": personId
+      },
+
+      breadcrumb: {
+        "@id": breadcrumbId
+      },
+
+      mentions: {
+        "@id": projectsId
+      },
+
+      inLanguage: "en-IN"
+    },
+
+    {
+      "@type": "ItemList",
+      "@id": projectsId,
+
+      name: "Software Projects by Ajoy Das",
+
+      description:
+        "A collection of software projects, developer tools, and applications built by Ajoy Das.",
+
+      itemListOrder:
+        "https://schema.org/ItemListOrderAscending",
+
+      numberOfItems: projects.length,
+
+      itemListElement: projects.map((project, index) => ({
+        "@type": "ListItem",
+        position: index + 1,
+
+        item: {
+          "@type": "CreativeWork",
+
+          "@id": `${absoluteUrl("/experience")}#project-${index + 1}`,
+
+          name: project.title,
+          description: project.description,
+          genre: project.type,
+
+          url: project.github,
+
+          image: {
+            "@type": "ImageObject",
+            url: absoluteUrl(project.image)
+          },
+
+          creator: {
+            "@id": personId
+          },
+
+          ...(project.technologies.length > 0 && {
+            keywords: project.technologies
+          })
+        }
+      }))
+    }
+  ]
+};
+
   return (
+    <>
+    <script
+  id="experience-page-jsonld"
+  type="application/ld+json"
+  dangerouslySetInnerHTML={safeJsonLd(structuredData)}
+/>
     <PageTransition>
       <main className="min-h-screen bg-white text-gray-900 transition-colors duration-300 dark:bg-zinc-950 dark:text-zinc-100">
         {/* ================================================================ */}
@@ -480,7 +656,10 @@ export default function ExperiencePage() {
               </div>
               <div className="grid gap-px overflow-hidden border border-gray-200 dark:border-zinc-800 bg-gray-200 dark:bg-zinc-800 sm:grid-cols-2">
                 {developmentStages.map((stage) => (
-                  <article key={stage.number} className="bg-white dark:bg-zinc-950 p-7">
+                  <article
+                    key={stage.number}
+                    className="bg-white dark:bg-zinc-950 p-7"
+                  >
                     <span className="font-mono text-xs text-blue-800 dark:text-blue-800">
                       {stage.number}
                     </span>
@@ -515,7 +694,10 @@ export default function ExperiencePage() {
             </div>
             <div className="mt-14 grid gap-px overflow-hidden border border-white/10 bg-white/10 sm:grid-cols-2 lg:grid-cols-3">
               {principles.map((principle) => (
-                <article key={principle.number} className="bg-gray-900 dark:bg-zinc-900 p-7">
+                <article
+                  key={principle.number}
+                  className="bg-gray-900 dark:bg-zinc-900 p-7"
+                >
                   <span className="font-mono text-xs text-blue-300">
                     {principle.number}
                   </span>
@@ -748,5 +930,6 @@ export default function ExperiencePage() {
         <Footer />
       </main>
     </PageTransition>
+    </>
   );
 }

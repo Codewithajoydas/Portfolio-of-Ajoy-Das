@@ -25,6 +25,7 @@ import {
 import { Pacifico } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
+import Script from "next/script";
 import { FaGithub } from "react-icons/fa";
 const pacifico = Pacifico({
   variable: "--font-pacifico",
@@ -326,8 +327,168 @@ export const metadata = createSeoMetadata({
     "Ajoy Das is a software developer building web applications, developer tools, open-source projects, and technical experiments.",
   path: "/about",
 });
+
+const structuredData = 
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Person",
+      "@id": "https://www.codewithajoydas.in/about#person",
+      "name": "Ajoy Das",
+      "url": "https://www.codewithajoydas.in/about",
+      "description": "A developer who enjoys turning ideas into working software while understanding the engineering underneath it.",
+      "image": {
+        "@id": "https://www.codewithajoydas.in/about#profile-image"
+      },
+      "jobTitle": "Software Developer",
+      "hasOccupation": {
+        "@type": "Occupation",
+        "name": "MIS Executive"
+      },
+      "worksFor": {
+        "@type": "Organization",
+        "name": "Genus Power Infrastructures"
+      },
+      "email": "codewithajoydas@gmail.com",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Nagaon",
+        "addressRegion": "Assam",
+        "addressCountry": "IN"
+      },
+      "sameAs": [
+        "https://github.com/Codewithajoydas",
+        "https://www.instagram.com/codewithajoydas",
+        "https://www.facebook.com/profile.php?id=100090674957174",
+        "https://www.youtube.com/@codewithajoydas"
+      ],
+      "knowsAbout": [
+        "HTML",
+        "CSS",
+        "JavaScript",
+        "TypeScript",
+        "React",
+        "Next.js",
+        "Node.js",
+        "Express.js",
+        "React Native",
+        "REST APIs",
+        "MongoDB",
+        "Backend Development",
+        "Frontend Development",
+        "Mobile Application Development",
+        "Database Management",
+        "Automation",
+        "Web Performance",
+        "Software Testing",
+        "Developer Tooling",
+        "System Design"
+      ],
+      "mainEntityOfPage": {
+        "@id": "https://www.codewithajoydas.in/about#webpage"
+      }
+    },
+    {
+      "@type": "ImageObject",
+      "@id": "https://www.codewithajoydas.in/about#profile-image",
+      "contentUrl": "https://www.codewithajoydas.in/images/Codewithajoydas_Skills-page.png",
+      "url": "https://www.codewithajoydas.in/images/Codewithajoydas_Skills-page.png",
+      "caption": "Ajoy Das — Software Developer"
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://www.codewithajoydas.in/#website",
+      "url": "https://www.codewithajoydas.in/",
+      "name": "Codewithajoydas",
+      "publisher": {
+        "@id": "https://www.codewithajoydas.in/about#person"
+      },
+      "inLanguage": "en-IN"
+    },
+    {
+      "@type": "ProfilePage",
+      "@id": "https://www.codewithajoydas.in/about#webpage",
+      "url": "https://www.codewithajoydas.in/about",
+      "name": "About Ajoy Das",
+      "description": "Learn about Ajoy Das, a software developer interested in web development, mobile applications, backend systems, automation, data workflows, and developer tooling.",
+      "isPartOf": {
+        "@id": "https://www.codewithajoydas.in/#website"
+      },
+      "about": {
+        "@id": "https://www.codewithajoydas.in/about#person"
+      },
+      "mainEntity": {
+        "@id": "https://www.codewithajoydas.in/about#person"
+      },
+      "primaryImageOfPage": {
+        "@id": "https://www.codewithajoydas.in/about#profile-image"
+      },
+      "hasPart": {
+        "@id": "https://www.codewithajoydas.in/about#selected-projects"
+      },
+      "inLanguage": "en-IN"
+    },
+    {
+      "@type": "ItemList",
+      "@id": "https://www.codewithajoydas.in/about#selected-projects",
+      "name": "Selected Projects by Ajoy Das",
+      "itemListOrder": "https://schema.org/ItemListOrderAscending",
+      "numberOfItems": 3,
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "item": {
+            "@type": "CreativeWork",
+            "name": "Assign Meter",
+            "description": "A mobile application and management portal created to solve manual meter-assignment workflow problems. It supports meter ID collection, camera-based scanning, assignment management, and reporting.",
+            "url": "https://play.google.com/store/apps/details?id=com.ajoy974.assignMeter",
+            "creator": {
+              "@id": "https://www.codewithajoydas.in/about#person"
+            }
+          }
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "item": {
+            "@type": "CreativeWork",
+            "name": "PhotoMart",
+            "description": "A mobile application focused on photo-related services, user interaction, responsive interfaces, and application workflows.",
+            "url": "https://play.google.com/store/apps/details?id=com.ajoy974.Photo_Mart",
+            "creator": {
+              "@id": "https://www.codewithajoydas.in/about#person"
+            }
+          }
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "item": {
+            "@type": "CreativeWork",
+            "name": "Kodhra",
+            "description": "A code-management and organization platform focused on development workflows and structured handling of code-related information.",
+            "creator": {
+              "@id": "https://www.codewithajoydas.in/about#person"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
+
+
 export default function AboutPage() {
   return (
+    <>
+    <Script
+  id="about-page-structured-data"
+  type="application/ld+json"
+  dangerouslySetInnerHTML={{
+    __html: JSON.stringify(structuredData),
+  }}/>
     <PageTransition>
       <main className="min-h-screen bg-white text-gray-900 dark:bg-zinc-950 dark:text-zinc-100">
         <section className="relative min-h-[90vh] overflow-hidden bg-gradient-to-br from-blue-50 via-white to-white dark:from-blue-950/50 dark:via-zinc-950 dark:to-zinc-950 px-6 py-24 sm:px-10 lg:flex lg:items-center lg:px-16 lg:py-32">
@@ -950,5 +1111,6 @@ export default function AboutPage() {
         <Footer />
       </main>
     </PageTransition>
+    </>
   );
 }

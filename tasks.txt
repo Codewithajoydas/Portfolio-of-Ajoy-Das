@@ -1,4 +1,6 @@
-Target
+-----------------
+---- Target------
+-----------------
 
 Add animation [done]
 Add Dark and light mode [done]
@@ -7,4 +9,5 @@ Change the project Layout for better UI [done]
 Make contact form perfect [done]
 Update the Footer [done]
 Change the about page hero image [done]
-Add structured JSON
+Make a form to get email from client directly from contact page [done]
+Add structured JSON [done]

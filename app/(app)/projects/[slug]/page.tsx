@@ -15,13 +15,11 @@ import {
   createSeoMetadata,
   safeJsonLd,
 } from "@/lib/seo";
-
 type PageProps = {
   params: Promise<{
     slug: string;
   }>;
 };
-
 /**
  * Generate static project routes.
  *
@@ -32,7 +30,6 @@ type PageProps = {
  */
 export const revalidate = 0;
 export const dynamic = "force-dynamic";
-
 export async function generateStaticParams() {
   try {
     await connectDB();
@@ -42,11 +39,9 @@ export async function generateStaticParams() {
       .select("slug published")
       .lean()
       .exec();
-
     if (!Array.isArray(projects)) {
       return [];
     }
-
     return projects
       .filter(
         (project) =>
@@ -66,7 +61,6 @@ export async function generateStaticParams() {
     return [];
   }
 }
-
 /**
  * Generate SEO metadata for a project.
  *
@@ -76,7 +70,6 @@ export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-
   try {
     await connectDB();
     const project = await ProjectModel.findOne({
@@ -85,7 +78,6 @@ export async function generateMetadata({
     })
       .lean()
       .exec();
-
     if (!project) {
       return {
         title: "Project Not Found",
@@ -95,25 +87,21 @@ export async function generateMetadata({
         },
       };
     }
-
     const projectName =
       typeof project.name === "string" &&
       project.name.trim()
         ? project.name
         : "Project";
-
     const projectSlug =
       typeof project.slug === "string" &&
       project.slug.trim()
         ? project.slug
         : slug;
-
     const title =
       typeof project.seoTitle === "string" &&
       project.seoTitle.trim()
         ? project.seoTitle
         : `${projectName} — Project`;
-
     const description =
       typeof project.seoDescription === "string" &&
       project.seoDescription.trim()
@@ -123,7 +111,6 @@ export async function generateMetadata({
             project.shortDescription.trim()
           ? project.shortDescription
           : `Learn more about ${projectName}.`;
-
     const image =
       typeof project.banner === "string" &&
       project.banner.trim()
@@ -132,7 +119,6 @@ export async function generateMetadata({
             project.thumbnail.trim()
           ? project.thumbnail
           : undefined;
-
     return createSeoMetadata({
       title,
       description,
@@ -153,13 +139,11 @@ export async function generateMetadata({
     };
   }
 }
-
 export default async function ProjectDetailsPage({
   params,
 }: PageProps) {
   const { slug } = await params;
   let project;
-
   try {
     /**
      * Direct server-side MongoDB query.
@@ -181,11 +165,9 @@ export default async function ProjectDetailsPage({
     );
     notFound();
   }
-
   if (!project) {
     notFound();
   }
-
   /**
    * Defensive values.
    *
@@ -197,19 +179,16 @@ export default async function ProjectDetailsPage({
     project.name.trim()
       ? project.name
       : "Untitled Project";
-
   const projectSlug =
     typeof project.slug === "string" &&
     project.slug.trim()
       ? project.slug
       : slug;
-
   const category =
     typeof project.category === "string" &&
     project.category.trim()
       ? project.category
       : "Project";
-
   const description =
     typeof project.description === "string" &&
     project.description.trim()
@@ -219,34 +198,28 @@ export default async function ProjectDetailsPage({
           project.shortDescription.trim()
         ? project.shortDescription
         : "No description available.";
-
   const shortDescription =
     typeof project.shortDescription === "string"
       ? project.shortDescription
       : "";
-
   const seoDescription =
     typeof project.seoDescription === "string"
       ? project.seoDescription
       : "";
-
   const seoTitle =
     typeof project.seoTitle === "string"
       ? project.seoTitle
       : "";
-
   const githubUrl =
     typeof project.githubUrl === "string" &&
     project.githubUrl.trim()
       ? project.githubUrl
       : null;
-
   const liveUrl =
     typeof project.liveUrl === "string" &&
     project.liveUrl.trim()
       ? project.liveUrl
       : null;
-
   const image =
     typeof project.banner === "string" &&
     project.banner.trim()
@@ -255,7 +228,6 @@ export default async function ProjectDetailsPage({
           project.thumbnail.trim()
         ? project.thumbnail
         : null;
-
   const techStack = Array.isArray(project.techStack)
     ? project.techStack.filter(
         (technology: unknown): technology is string =>
@@ -263,7 +235,6 @@ export default async function ProjectDetailsPage({
           technology.trim().length > 0,
       )
     : [];
-
   const features = Array.isArray(
     project.features,
   )
@@ -273,7 +244,6 @@ export default async function ProjectDetailsPage({
           feature.trim().length > 0,
       )
     : [];
-
   const screenshots = Array.isArray(
     project.screenshots,
   )
@@ -283,23 +253,19 @@ export default async function ProjectDetailsPage({
           screenshot.trim().length > 0,
       )
     : [];
-
   const challenges =
     typeof project.challenges === "string" &&
     project.challenges.trim()
       ? project.challenges
       : null;
-
   const learnings =
     typeof project.learnings === "string" &&
     project.learnings.trim()
       ? project.learnings
       : null;
-
   const projectUrl = absoluteUrl(
     `/projects/${projectSlug}`,
   );
-
   /**
    * Safe structured data.
    */
@@ -385,7 +351,6 @@ export default async function ProjectDetailsPage({
       },
     ],
   };
-
   return (
     <main className="min-h-screen bg-white text-gray-900 transition-colors duration-300 dark:bg-zinc-950 dark:text-zinc-100">
       {/* Structured Data */}
@@ -395,9 +360,7 @@ export default async function ProjectDetailsPage({
           structuredData,
         )}
       />
-
       {/* Header */}
-
       {/* Hero */}
       <section className="border-b border-gray-200 bg-gradient-to-br from-blue-50 via-white to-white px-6 py-16 transition-colors duration-300 dark:border-zinc-800 dark:from-blue-950 dark:via-zinc-950 dark:to-zinc-950 sm:px-10 lg:px-16 lg:py-24">
         <div className="mx-auto max-w-6xl">
@@ -407,15 +370,12 @@ export default async function ProjectDetailsPage({
               <p className="text-sm font-medium uppercase tracking-[0.2em] text-blue-800 dark:text-blue-800">
                 {category}
               </p>
-
               <h1 className="mt-5 text-6xl font-semibold leading-[0.95] tracking-tight sm:text-7xl lg:text-8xl">
                 {projectName}
               </h1>
-
               <p className="mt-8 max-w-2xl text-lg leading-8 text-gray-600 dark:text-zinc-400">
                 {description}
               </p>
-
               {/* Tech Stack */}
               {techStack.length > 0 && (
                 <div className="mt-8 flex flex-wrap gap-2">
@@ -431,7 +391,6 @@ export default async function ProjectDetailsPage({
                   )}
                 </div>
               )}
-
               {/* Links */}
               {(githubUrl || liveUrl) && (
                 <div className="mt-10 flex flex-wrap gap-3">
@@ -461,7 +420,6 @@ export default async function ProjectDetailsPage({
                 </div>
               )}
             </div>
-
             {/* Project Image */}
             <div className="overflow-hidden border border-gray-200 bg-gray-100 dark:border-zinc-800 dark:bg-zinc-900">
               {image ? (
@@ -479,7 +437,6 @@ export default async function ProjectDetailsPage({
           </div>
         </div>
       </section>
-
       {/* Content */}
       <section className="px-6 py-20 sm:px-10 lg:px-16">
         <div className="mx-auto max-w-6xl">
@@ -506,7 +463,6 @@ export default async function ProjectDetailsPage({
               </ul>
             </section>
           )}
-
           {/* Challenges */}
           {challenges && (
             <section className="mt-20">
@@ -518,7 +474,6 @@ export default async function ProjectDetailsPage({
               </p>
             </section>
           )}
-
           {/* Learnings */}
           {learnings && (
             <section className="mt-20">
@@ -530,7 +485,6 @@ export default async function ProjectDetailsPage({
               </p>
             </section>
           )}
-
           {/* Screenshots */}
           {screenshots.length > 0 && (
             <section className="mt-20">
@@ -556,7 +510,6 @@ export default async function ProjectDetailsPage({
           )}
         </div>
       </section>
-
       <Footer />
     </main>
   );

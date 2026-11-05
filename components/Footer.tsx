@@ -1,8 +1,20 @@
-
+"use client";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { Code2, Mail, ArrowUpRight } from "lucide-react";
 import { Pacifico } from "next/font/google";
 import Link from "next/link";
-import { FaGithub } from "react-icons/fa";
+import { usePathname } from "next/navigation";
+import {
+  FaFacebook,
+  FaGithub,
+  FaGoogle,
+  FaInstagram,
+  FaYoutube,
+} from "react-icons/fa";
 
 const pacifico = Pacifico({
   variable: "--font-pacifico",
@@ -40,10 +52,31 @@ const socialLinks = [
     href: "mailto:codewithajoydas@gmail.com",
     icon: Mail,
   },
+  {
+    label: "Instagram",
+    href: "https://www.instagram.com/codewithajoydas",
+    icon: FaInstagram,
+  },
+  {
+    label: "Facebook",
+    href: "https://www.facebook.com/profile.php?id=100090674957174&sk=photos",
+    icon: FaFacebook,
+  },
+  {
+    label: "Youtube",
+    href: "https://www.youtube.com/@codewithajoydas",
+    icon: FaYoutube,
+  },
+  {
+    label: "Google",
+    href: "https://www.google.com/preferences/source?q=codewithajoydas.in",
+    icon: FaGoogle,
+  },
 ];
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
+  const pathname = usePathname();
 
   return (
     <footer
@@ -51,13 +84,10 @@ export default function Footer() {
       className="border-t border-gray-200 bg-white text-gray-900 transition-colors duration-300 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-100"
     >
       <div className="mx-auto max-w-7xl px-6 py-14 sm:px-10 lg:px-16">
-
         {/* Main Footer */}
         <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr_1fr] lg:gap-10">
-
           {/* Brand */}
           <div className="max-w-md">
-
             <Link
               href="/"
               aria-label="Codewithajoydas homepage"
@@ -67,24 +97,35 @@ export default function Footer() {
             </Link>
 
             <p className="mt-5 max-w-sm text-sm leading-7 text-gray-600 dark:text-zinc-400">
-              Software developer focused on building meaningful
-              applications, developer tools, and practical digital
-              experiences through continuous learning and experimentation.
+              Software developer focused on building meaningful applications,
+              developer tools, and practical digital experiences through
+              continuous learning and experimentation.
             </p>
 
             {/* Social Links */}
             <div className="mt-7 flex items-center gap-3">
-              {socialLinks.map(({ label, href, icon: Icon }) => (
-                <a
-                  key={label}
-                  href={href}
-                  target={href.startsWith("http") ? "_blank" : undefined}
-                  rel={href.startsWith("http") ? "noopener noreferrer" : undefined}
-                  aria-label={label}
-                  className="flex size-10 items-center justify-center border border-gray-200 text-gray-600 transition-all duration-200 hover:border-blue-800 hover:bg-blue-800 hover:text-white dark:border-zinc-800 dark:text-zinc-400 dark:hover:border-blue-500 dark:hover:bg-blue-500 dark:hover:text-white"
-                >
-                  <Icon size={17} strokeWidth={1.8} />
-                </a>
+              {socialLinks.map(({ label, href, icon: Icon}) => (
+                <Tooltip key={label}>
+                  <TooltipTrigger>
+                    <a
+                      key={label}
+                      href={href}
+                      target={href.startsWith("http") ? "_blank" : undefined}
+                      rel={
+                        href.startsWith("http")
+                          ? "noopener noreferrer"
+                          : undefined
+                      }
+                      aria-label={label}
+                      className="flex size-10 items-center justify-center border border-gray-200 text-gray-600 transition-all duration-200 hover:border-blue-800 hover:bg-blue-800 hover:text-white dark:border-zinc-800 dark:text-zinc-400 dark:hover:border-blue-500 dark:hover:bg-blue-500 dark:hover:text-white"
+                    >
+                      <Icon size={17} strokeWidth={1.8} />
+                    </a>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>{label}</p>
+                  </TooltipContent>
+                </Tooltip>
               ))}
             </div>
           </div>
@@ -122,8 +163,8 @@ export default function Footer() {
             </h3>
 
             <p className="mt-6 text-sm leading-7 text-gray-600 dark:text-zinc-400">
-              Have an idea, a project, or an opportunity to discuss?
-              Feel free to reach out.
+              Have an idea, a project, or an opportunity to discuss? Feel free
+              to reach out.
             </p>
 
             <a
@@ -142,19 +183,18 @@ export default function Footer() {
 
         {/* Bottom Bar */}
         <div className="mt-16 flex flex-col gap-5 border-t border-gray-200 pt-7 dark:border-zinc-800 sm:flex-row sm:items-center sm:justify-between">
-
           <p className="text-xs leading-6 text-gray-500 dark:text-zinc-500">
             © {currentYear} Codewithajoydas. All rights reserved.
           </p>
 
-          
-
-          <Link
-            href="/"
-            className="w-fit text-xs text-gray-500 transition-colors hover:text-blue-800 dark:text-zinc-500 dark:hover:text-blue-400"
-          >
-            Back to home ↑
-          </Link>
+          {pathname !== "/" && (
+            <Link
+              href="/"
+              className="w-fit text-xs text-gray-500 transition-colors hover:text-blue-800 dark:text-zinc-500 dark:hover:text-blue-400"
+            >
+              Back to home ↑
+            </Link>
+          )}
         </div>
       </div>
     </footer>

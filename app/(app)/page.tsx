@@ -9,6 +9,7 @@ import ProjectModel from "@/models/project.model";
 import { Project } from "@/types/content";
 import { absoluteUrl, safeJsonLd } from "@/lib/seo";
 import PageTransition from "@/components/page-transition";
+import Script from "next/script";
 export const revalidate = 0;
 export const dynamic = "force-dynamic";
 const pacifico = Pacifico({
@@ -85,25 +86,184 @@ export default async function Home() {
   const featuredProjects = projects.filter(
     (project) => project.featured === true && project.published === true,
   );
+  const siteUrl = absoluteUrl("/");
+const heroImageUrl = new URL(
+  "/images/Codewithajoydas_Hero-page.png",
+  siteUrl,
+).toString();
+const aboutImageUrl = new URL(
+  "/images/Codewithajoydas_About-page.png",
+  siteUrl,
+).toString();
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={safeJsonLd({
-          "@context": "https://schema.org",
-          "@type": "Person",
-          name: "Ajoy Das",
-          url: absoluteUrl("/"),
-          jobTitle: "Software Developer",
-          email: "codewithajoydas@gmail.com",
-          address: {
-            "@type": "PostalAddress",
-            addressRegion: "Assam",
-            addressCountry: "IN",
+<Script
+  id="about-page-structured-data"
+  type="application/ld+json"
+  dangerouslySetInnerHTML={safeJsonLd({
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Person",
+        "@id": `${siteUrl}#person`,
+        name: "Ajoy Das",
+        url: siteUrl,
+        jobTitle: "Software Developer",
+        email: "codewithajoydas@gmail.com",
+        image: {
+          "@id": `${siteUrl}#hero-image`,
+        },
+        address: {
+          "@type": "PostalAddress",
+          addressRegion: "Assam",
+          addressCountry: "IN",
+        },
+        sameAs: [
+          "https://github.com/Codewithajoydas",
+          "https://www.instagram.com/codewithajoydas",
+          "https://www.facebook.com/profile.php?id=100090674957174",
+          "https://www.youtube.com/@codewithajoydas",
+        ],
+        knowsAbout: [
+          "Software Development",
+          "Web Development",
+          "JavaScript",
+          "TypeScript",
+          "React",
+          "Next.js",
+          "Node.js",
+          "Frontend Development",
+          "Backend Development",
+          "Full Stack Development",
+          "Database Design",
+          "API Development",
+        ],
+      },
+      {
+        "@type": "WebSite",
+        "@id": `${siteUrl}#website`,
+        url: siteUrl,
+        name: "Ajoy Das",
+        alternateName: "Codewithajoydas",
+        publisher: {
+          "@id": `${siteUrl}#person`,
+        },
+        creator: {
+          "@id": `${siteUrl}#person`,
+        },
+        inLanguage: "en-IN",
+      },
+      {
+        "@type": "WebPage",
+        "@id": `${siteUrl}#webpage`,
+        url: siteUrl,
+        name: "Ajoy Das | Software Developer",
+        description:
+          "Official portfolio of Ajoy Das, Software Developer. Explore software projects, developer tools, experiments, and engineering work.",
+        isPartOf: {
+          "@id": `${siteUrl}#website`,
+        },
+        about: {
+          "@id": `${siteUrl}#person`,
+        },
+        mainEntity: {
+          "@id": `${siteUrl}#person`,
+        },
+        primaryImageOfPage: {
+          "@id": `${siteUrl}#hero-image`,
+        },
+        image: [
+          {
+            "@id": `${siteUrl}#hero-image`,
           },
-          sameAs: ["https://github.com/Codewithajoydas"],
-        })}
-      />
+          {
+            "@id": `${siteUrl}#about-image`,
+          },
+        ],
+        inLanguage: "en-IN",
+      },
+      {
+        "@type": "ImageObject",
+        "@id": `${siteUrl}#hero-image`,
+        url: heroImageUrl,
+        contentUrl: heroImageUrl,
+        name: "Ajoy Das - Software Developer",
+        caption: "Ajoy Das, Software Developer",
+        representativeOfPage: true,
+      },
+      {
+        "@type": "ImageObject",
+        "@id": `${siteUrl}#about-image`,
+        url: aboutImageUrl,
+        contentUrl: aboutImageUrl,
+        name: "Ajoy Das - Development Skills",
+        caption: "Development and engineering skills",
+      },
+      ...(featuredProjects.length > 0
+        ? [
+            {
+              "@type": "ItemList",
+              "@id": `${siteUrl}#featured-projects`,
+              name: "Featured Projects by Ajoy Das",
+              description:
+                "A collection of featured software projects, applications, and developer tools.",
+              numberOfItems: featuredProjects.length,
+              itemListElement: featuredProjects.map(
+                (project, index) => ({
+                  "@type": "ListItem",
+                  position: index + 1,
+                  item: {
+                    "@id": `${absoluteUrl(
+                      `/projects/${project.slug}`,
+                    )}#project`,
+                  },
+                }),
+              ),
+            },
+            ...featuredProjects.flatMap((project) => {
+              const projectUrl = absoluteUrl(
+                `/projects/${project.slug}`,
+              );
+              const imageUrl = new URL(
+                project.thumbnail ||
+                  "/images/projects/project-placeholder.png",
+                siteUrl,
+              ).toString();
+              const imageId =
+                `${siteUrl}#project-image-${encodeURIComponent(
+                  project.slug,
+                )}`;
+              return [
+                {
+                  "@type": "ImageObject",
+                  "@id": imageId,
+                  url: imageUrl,
+                  contentUrl: imageUrl,
+                  name: `${project.name} - Project Thumbnail`,
+                  caption: `Preview of ${project.name}`,
+                },
+                {
+                  "@type": "CreativeWork",
+                  "@id": `${projectUrl}#project`,
+                  name: project.name,
+                  url: projectUrl,
+                  image: {
+                    "@id": imageId,
+                  },
+                  creator: {
+                    "@id": `${siteUrl}#person`,
+                  },
+                  author: {
+                    "@id": `${siteUrl}#person`,
+                  },
+                },
+              ];
+            }),
+          ]
+        : []),
+    ],
+  })}
+/>
       <PageTransition>
         <main className="min-h-screen bg-white text-gray-900 transition-colors duration-300 dark:bg-zinc-950 dark:text-zinc-100">
           <section className="relative flex min-h-screen items-center overflow-hidden bg-linear-to-br from-blue-50 via-white to-white px-6 py-24 sm:px-10 lg:px-16 dark:bg-gradient-to-br dark:from-blue-950 dark:via-zinc-950 dark:to-zinc-950 transition-colors duration-500">
@@ -114,7 +274,9 @@ export default async function Home() {
                 </p>
                 <h1 className="text-5xl font-bold leading-[1.05] tracking-tight sm:text-6xl lg:text-7xl">
                   Hi, I&apos;m{" "}
-                  <span className={`${pacifico.className} text-blue-800 dark:text-blue-800`}>
+                  <span
+                    className={`${pacifico.className} text-blue-800 dark:text-blue-800`}
+                  >
                     Codewithajoydas
                   </span>
                 </h1>
@@ -187,7 +349,9 @@ export default async function Home() {
                   </p>
                   <h2 className="max-w-4xl text-4xl font-semibold leading-[1.1] tracking-tight text-gray-900 sm:text-5xl lg:text-6xl dark:text-zinc-100">
                     From small experiments to{" "}
-                    <span className={`${pacifico.className} text-blue-800 dark:text-blue-800`}>
+                    <span
+                      className={`${pacifico.className} text-blue-800 dark:text-blue-800`}
+                    >
                       complete software systems.
                     </span>
                   </h2>
@@ -231,7 +395,9 @@ export default async function Home() {
                   </p>
                   <h2 className="mt-5 max-w-3xl text-4xl font-semibold tracking-tight text-gray-900 sm:text-5xl dark:text-zinc-100">
                     Things I&apos;ve{" "}
-                    <span className={`${pacifico.className} text-blue-800 dark:text-blue-800`}>
+                    <span
+                      className={`${pacifico.className} text-blue-800 dark:text-blue-800`}
+                    >
                       actually built
                     </span>
                     .
@@ -289,7 +455,9 @@ export default async function Home() {
                   </p>
                   <h2 className="mt-5 text-4xl font-semibold leading-[1.1] tracking-tight text-gray-900 sm:text-5xl lg:text-6xl dark:text-zinc-100">
                     I don&apos;t just want to{" "}
-                    <span className={`${pacifico.className} text-blue-800 dark:text-blue-800`}>
+                    <span
+                      className={`${pacifico.className} text-blue-800 dark:text-blue-800`}
+                    >
                       build things.
                     </span>
                   </h2>

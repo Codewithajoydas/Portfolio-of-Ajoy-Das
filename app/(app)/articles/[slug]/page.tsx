@@ -16,20 +16,16 @@ import {
 } from "@/lib/article-detail";
 import { createSeoMetadata, safeJsonLd } from "@/lib/seo";
 import type { Article } from "@/types/article/Article";
-
 type PageProps = {
   params: Promise<{ slug: string }>;
 };
-
 export const revalidate = 0;
 export const dynamic = "force-dynamic";
-
 export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
   const { slug } = await params;
   const articleSlug = safeString(slug);
-
   if (!articleSlug) {
     return {
       ...createSeoMetadata({
@@ -40,10 +36,8 @@ export async function generateMetadata({
       robots: { index: false, follow: true },
     };
   }
-
   try {
     const article = await getArticleBySlug(articleSlug);
-
     if (!article) {
       return {
         ...createSeoMetadata({
@@ -54,9 +48,7 @@ export async function generateMetadata({
         robots: { index: false, follow: true },
       };
     }
-
     const meta = getArticlePageMeta(article, articleSlug);
-
     return createSeoMetadata({
       title: meta.articleTitle,
       description: meta.excerpt,
@@ -77,29 +69,22 @@ export async function generateMetadata({
     };
   }
 }
-
 export default async function ArticleDetailsPage({
   params,
 }: PageProps) {
   const { slug } = await params;
   const articleSlug = safeString(slug);
-
   if (!articleSlug) notFound();
-
   let article: Article | null = null;
-
   try {
     article = await getArticleBySlug(articleSlug);
   } catch (error) {
     console.error("Failed to load article:", error);
     notFound();
   }
-
   if (!article) notFound();
-
   const meta = getArticlePageMeta(article, articleSlug);
   const structuredData = buildArticleStructuredData(article, meta);
-
   const {
     articleTitle,
     category,
@@ -116,15 +101,12 @@ export default async function ArticleDetailsPage({
     hasUpdatedDate,
     publishedTime,
   } = meta;
-
   return (
     <main className="min-h-screen bg-white text-gray-900 transition-colors duration-300 dark:bg-zinc-950 dark:text-zinc-100">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={safeJsonLd(structuredData)}
       />
-
-
       <article>
         <header className="border-b border-gray-200 bg-gradient-to-br from-blue-50 via-white to-white px-6 py-16 transition-colors duration-300 dark:border-zinc-800 dark:from-blue-950 dark:via-zinc-950 dark:to-zinc-950 sm:px-10 lg:px-16 lg:py-24">
           <div className="mx-auto max-w-4xl">
@@ -136,15 +118,12 @@ export default async function ArticleDetailsPage({
                 </span>
               )}
             </div>
-
             <h1 className="mt-6 text-5xl font-semibold leading-[1.05] tracking-tight sm:text-6xl lg:text-7xl">
               {articleTitle}
             </h1>
-
             <p className="mt-8 max-w-3xl text-xl leading-8 text-gray-600 dark:text-zinc-400">
               {excerpt}
             </p>
-
             <div className="mt-8 flex flex-wrap items-center gap-4 text-sm text-gray-500 dark:text-zinc-400">
               {createdDate && (
                 <time dateTime={publishedTime || undefined}>
@@ -158,7 +137,6 @@ export default async function ArticleDetailsPage({
                 </>
               )}
             </div>
-
             {tags.length > 0 && (
               <div className="mt-6 flex flex-wrap gap-2">
                 {tags.map((tag, index) => (
@@ -171,7 +149,6 @@ export default async function ArticleDetailsPage({
                 ))}
               </div>
             )}
-
             {image && (
               <div className="mt-12 overflow-hidden border border-gray-200 dark:border-zinc-800">
                 <Image
@@ -187,7 +164,6 @@ export default async function ArticleDetailsPage({
             )}
           </div>
         </header>
-
         <section className="px-6 py-16 sm:px-10 lg:px-16">
           <div className="mx-auto max-w-4xl">
             <div className="prose prose-lg max-w-none dark:prose-invert">
@@ -325,7 +301,6 @@ export default async function ArticleDetailsPage({
                 {content}
               </ReactMarkdown>
             </div>
-
             {(githubUrl || sourceUrl || demoUrl) && (
               <div className="mt-16 flex flex-wrap gap-3 border-t border-gray-200 pt-8 dark:border-zinc-800">
                 {githubUrl && (
@@ -366,7 +341,6 @@ export default async function ArticleDetailsPage({
           </div>
         </section>
       </article>
-
       <Footer />
     </main>
   );
