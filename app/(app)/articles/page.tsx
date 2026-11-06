@@ -25,7 +25,7 @@ export default async function ArticlesPage() {
   const articles = await ArticleModel.find({
     published: true,
   })
-    .lean()
+    .lean().sort({createdAt:-1})
     .exec();
   const publishedArticles = articles as unknown as Article[];
   const websiteId = absoluteUrl("/#website");
