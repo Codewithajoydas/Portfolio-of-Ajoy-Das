@@ -45,7 +45,7 @@ const structuredData = {
       jobTitle: "Software Developer",
       description:
         "A software developer writing technical articles, tutorials, and practical guides about modern web development and software engineering.",
-      email: "codewithajoydas@gmail.com",
+      email: "ajoydas@codewithajoydas.in",
       sameAs: [
         "https://github.com/Codewithajoydas",
         "https://www.instagram.com/codewithajoydas",

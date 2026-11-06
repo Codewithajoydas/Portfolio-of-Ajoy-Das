@@ -350,7 +350,7 @@ const structuredData =
         "@type": "Organization",
         "name": "Genus Power Infrastructures"
       },
-      "email": "codewithajoydas@gmail.com",
+      "email": "ajoydas@codewithajoydas.in",
       "address": {
         "@type": "PostalAddress",
         "addressLocality": "Nagaon",

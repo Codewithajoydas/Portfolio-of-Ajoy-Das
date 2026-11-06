@@ -9,7 +9,7 @@ export const sendEmail = async (
   await resend.emails.send({
     from: "Ajoy Das <ajoydas@codewithajoydas.in>",
     to: [
-      "codewithajoydas@gmail.com",
+      "ajoydas@codewithajoydas.in",
       "ajoydas@codewithajoydas.in",
     ],
     replyTo: email,

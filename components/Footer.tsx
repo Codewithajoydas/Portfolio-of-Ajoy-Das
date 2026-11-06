@@ -49,7 +49,7 @@ const socialLinks = [
   },
   {
     label: "Email",
-    href: "mailto:codewithajoydas@gmail.com",
+    href: "mailto:ajoydas@codewithajoydas.in",
     icon: Mail,
   },
   {
@@ -168,7 +168,7 @@ export default function Footer() {
             </p>
 
             <a
-              href="mailto:codewithajoydas@gmail.com?subject=Let's%20Connect"
+              href="mailto:ajoydas@codewithajoydas.in?subject=Let's%20Connect"
               className="mt-5 inline-flex items-center gap-2 border-b border-blue-800 pb-1 text-sm font-medium text-blue-800 transition-colors hover:text-blue-600 dark:border-blue-400 dark:text-blue-400 dark:hover:text-blue-300"
             >
               Let&apos;s talk
@@ -176,7 +176,7 @@ export default function Footer() {
             </a>
 
             <p className="mt-5 break-all text-xs text-gray-400 dark:text-zinc-500">
-              codewithajoydas@gmail.com
+              ajoydas@codewithajoydas.in
             </p>
           </div>
         </div>

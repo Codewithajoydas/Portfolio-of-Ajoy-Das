@@ -109,7 +109,7 @@ const aboutImageUrl = new URL(
         name: "Ajoy Das",
         url: siteUrl,
         jobTitle: "Software Developer",
-        email: "codewithajoydas@gmail.com",
+        email: "ajoydas@codewithajoydas.in",
         image: {
           "@id": `${siteUrl}#hero-image`,
         },

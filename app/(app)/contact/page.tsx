@@ -26,8 +26,8 @@ const contactMethods = [
   {
     title: "Email",
     description: "For project ideas, collaboration, or just a conversation.",
-    value: "codewithajoydas@gmail.com",
-    href: "mailto:codewithajoydas@gmail.com",
+    value: "ajoydas@codewithajoydas.in",
+    href: "mailto:ajoydas@codewithajoydas.in",
     icon: Mail,
   },
   {
@@ -63,7 +63,7 @@ const structuredData = {
       jobTitle: "Software Developer",
       description:
         "A software developer interested in building practical software, developer tools, full-stack products, and backend systems.",
-      email: "codewithajoydas@gmail.com",
+      email: "ajoydas@codewithajoydas.in",
       sameAs: [
         "https://github.com/Codewithajoydas",
         "https://www.instagram.com/codewithajoydas",
@@ -74,7 +74,7 @@ const structuredData = {
         "@type": "ContactPoint",
         contactType:
           "Project inquiries, collaboration, and general questions",
-        email: "codewithajoydas@gmail.com"
+        email: "ajoydas@codewithajoydas.in"
       }
     },
     {
@@ -165,7 +165,7 @@ export default function ContactPage() {
             </div>
             <div className="mt-10 flex flex-wrap gap-4">
               <a
-                href="mailto:codewithajoydas@gmail.com"
+                href="mailto:ajoydas@codewithajoydas.in"
                 className="inline-flex items-center gap-2 bg-gray-900 px-6 py-3 text-sm font-medium text-white transition-all hover:-translate-y-0.5 hover:bg-blue-800 dark:bg-blue-600 dark:hover:bg-blue-500"
               >
                 Send me an email
@@ -310,7 +310,7 @@ export default function ContactPage() {
                   </div>
                 </div>
                 <a
-                  href="mailto:codewithajoydas@gmail.com"
+                  href="mailto:ajoydas@codewithajoydas.in"
                   className="
                     inline-flex shrink-0 items-center justify-center gap-2
                     border border-gray-900 px-6 py-3 text-sm font-medium
@@ -355,10 +355,10 @@ export default function ContactPage() {
                   Prefer email?
                 </p>
                 <a
-                  href="mailto:codewithajoydas@gmail.com"
+                  href="mailto:ajoydas@codewithajoydas.in"
                   className="mt-3 inline-flex items-center gap-2 text-sm font-medium text-blue-800 transition-colors hover:text-blue-600 dark:text-blue-300 dark:hover:text-blue-200"
                 >
-                  codewithajoydas@gmail.com
+                  ajoydas@codewithajoydas.in
                   <ArrowUpRight size={16} />
                 </a>
               </div>

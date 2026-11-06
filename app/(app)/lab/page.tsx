@@ -70,7 +70,7 @@ export default async function LabPage({ searchParams }: LabPageProps) {
         name: "Ajoy Das",
         url: absoluteUrl("/about"),
         jobTitle: "Software Developer",
-        email: "codewithajoydas@gmail.com",
+        email: "ajoydas@codewithajoydas.in",
         sameAs: [
           "https://github.com/Codewithajoydas",
           "https://www.instagram.com/codewithajoydas",
