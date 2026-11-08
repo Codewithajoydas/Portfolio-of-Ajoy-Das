@@ -1,9 +1,8 @@
 ﻿import Image from "next/image";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { ArrowLeft, ExternalLink } from "lucide-react";
+import {ExternalLink } from "lucide-react";
 import type { Metadata } from "next";
 import { FaGithub } from "react-icons/fa";
 import Footer from "@/components/Footer";
@@ -33,7 +32,7 @@ export async function generateMetadata({
         description: "Read articles and tutorials by Ajoy Das.",
         path: "/articles",
       }),
-      robots: { index: false, follow: true },
+      robots: { index: true, follow: true },
     };
   }
   try {
@@ -45,7 +44,7 @@ export async function generateMetadata({
           description: "Read articles and tutorials by Ajoy Das.",
           path: `/articles/${articleSlug}`,
         }),
-        robots: { index: false, follow: true },
+        robots: { index: true, follow: true },
       };
     }
     const meta = getArticlePageMeta(article, articleSlug);
@@ -65,10 +64,13 @@ export async function generateMetadata({
         description: "Read articles and tutorials by Ajoy Das.",
         path: `/articles/${articleSlug}`,
       }),
-      robots: { index: false, follow: true },
+      robots: { index: true, follow: true },
     };
   }
 }
+
+
+
 export default async function ArticleDetailsPage({
   params,
 }: PageProps) {

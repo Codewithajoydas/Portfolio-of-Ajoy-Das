@@ -107,6 +107,14 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           geist.variable,
         )}
       >
+        <head>
+          <link
+            rel="preload"
+            href="/loading.gif"
+            as="image"
+            fetchPriority="high"
+          />
+        </head>
         <body className="min-h-full flex flex-col">{children}</body>
       </html>
     </SidebarProvider>

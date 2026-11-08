@@ -1,11 +1,7 @@
 "use client";
-
 import { useEffect, useState } from "react";
-
 import { Controller, useForm } from "react-hook-form";
-
 import { zodResolver } from "@hookform/resolvers/zod";
-
 import {
   Field,
   FieldContent,
@@ -17,15 +13,10 @@ import {
   FieldSet,
   FieldTitle,
 } from "@/components/ui/field";
-
 import { Input } from "@/components/ui/input";
-
 import { Textarea } from "@/components/ui/textarea";
-
 import { Switch } from "@/components/ui/switch";
-
 import { Button } from "@/components/ui/button";
-
 import {
   Select,
   SelectContent,
@@ -33,7 +24,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
 import {
   Table,
   TableBody,
@@ -42,7 +32,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-
 import {
   AlertDialog,
   AlertDialogAction,
@@ -53,9 +42,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-
 import { toast } from "@/components/ui/toast";
-
 import {
   Pencil,
   Plus,
@@ -64,37 +51,28 @@ import {
   Loader2,
   FileJson,
 } from "lucide-react";
-
 import {
   articleSchema,
   type ArticleFormData,
 } from "@/validators/article.validator";
-
 type Article = ArticleFormData & {
   id?: string;
   _id?: string;
   createdAt?: string;
   updatedAt?: string;
 };
-
 export default function ArticlePage() {
   const [articles, setArticles] = useState<Article[]>([]);
   const [loadingArticles, setLoadingArticles] = useState(true);
-
   const [openArticleForm, setOpenArticleForm] = useState(false);
-
   const [editingArticleId, setEditingArticleId] = useState<string | null>(
     null
   );
-
   const [articleToDelete, setArticleToDelete] =
     useState<Article | null>(null);
-
   const [deletingArticleId, setDeletingArticleId] =
     useState<string | null>(null);
-
   const [importingJson, setImportingJson] = useState(false);
-
   const {
     register,
     control,
@@ -108,55 +86,43 @@ export default function ArticlePage() {
     },
   } = useForm<ArticleFormData>({
     resolver: zodResolver(articleSchema),
-
     defaultValues: {
       title: "",
       slug: "",
       excerpt: "",
       content: "",
-
       coverImage: "",
       thumbnail: "",
-
       category: "other",
       readingTime: undefined,
       tags: "",
-
       published: false,
       featured: false,
       comments: true,
-
       sourceUrl: "",
       githubUrl: "",
       demoUrl: "",
-
       seoTitle: "",
       seoDescription: "",
       canonicalUrl: "",
     },
   });
-
   async function fetchArticles() {
     try {
       setLoadingArticles(true);
-
       const response = await fetch("/api/get-articles", {
         method: "GET",
         credentials: "include",
       });
-
       const result = await response.json();
-
       if (!response.ok) {
         throw new Error(
           result?.error || "Failed to fetch articles"
         );
       }
-
       setArticles(result?.articles ?? result ?? []);
     } catch (error) {
       console.error("Fetch articles error:", error);
-
       toast.add({
         type: "error",
         title: "Failed to load articles",
@@ -169,22 +135,17 @@ export default function ArticlePage() {
       setLoadingArticles(false);
     }
   }
-
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchArticles();
   }, []);
-
   async function onSubmit(data: ArticleFormData) {
     try {
       const isEditing = Boolean(editingArticleId);
-
       const url = isEditing
         ? `/api/articles/${editingArticleId}`
         : "/api/create-article";
-
       const method = isEditing ? "PATCH" : "POST";
-
       const response = await fetch(url, {
         method,
         headers: {
@@ -193,9 +154,7 @@ export default function ArticlePage() {
         credentials: "include",
         body: JSON.stringify(data),
       });
-
       const result = await response.json();
-
       if (!response.ok) {
         throw new Error(
           result?.error?.formErrors?.[0] ||
@@ -205,9 +164,7 @@ export default function ArticlePage() {
             } article`
         );
       }
-
       await fetchArticles();
-
       toast.add({
         type: "success",
         title: isEditing
@@ -217,18 +174,14 @@ export default function ArticlePage() {
           ? "The article has been updated successfully."
           : "The article has been created successfully.",
       });
-
       reset();
-
       setEditingArticleId(null);
-
       setOpenArticleForm(false);
     } catch (error) {
       console.error(
         `${editingArticleId ? "Update" : "Create"} article error:`,
         error
       );
-
       toast.add({
         type: "error",
         title: editingArticleId
@@ -241,15 +194,11 @@ export default function ArticlePage() {
       });
     }
   }
-
   function handleCreateArticle() {
     reset();
-
     setEditingArticleId(null);
-
     setOpenArticleForm(true);
   }
-
   async function handleJsonImport(file: File) {
     if (
       !file.name.toLowerCase().endsWith(".json") &&
@@ -260,17 +209,12 @@ export default function ArticlePage() {
         title: "Invalid file",
         description: "Please drop a valid JSON file.",
       });
-
       return;
     }
-
     try {
       setImportingJson(true);
-
       const text = await file.text();
-
       const parsed = JSON.parse(text);
-
       const jsonData =
         parsed &&
         typeof parsed === "object" &&
@@ -279,7 +223,6 @@ export default function ArticlePage() {
         !Array.isArray(parsed.article)
           ? parsed.article
           : parsed;
-
       if (
         !jsonData ||
         typeof jsonData !== "object" ||
@@ -289,7 +232,6 @@ export default function ArticlePage() {
           "The JSON file must contain an article object."
         );
       }
-
       const allowedFields: (keyof ArticleFormData)[] = [
         "title",
         "slug",
@@ -310,16 +252,12 @@ export default function ArticlePage() {
         "seoDescription",
         "canonicalUrl",
       ];
-
       const currentValues = getValues();
-
       const mergedValues = {
         ...currentValues,
       };
-
       let importedCount = 0;
       let preservedFormCount = 0;
-
       for (const field of allowedFields) {
         if (
           !Object.prototype.hasOwnProperty.call(
@@ -329,32 +267,25 @@ export default function ArticlePage() {
         ) {
           continue;
         }
-
         const jsonValue = jsonData[field];
-
         if (
           jsonValue === undefined ||
           jsonValue === null
         ) {
           continue;
         }
-
         if (Boolean(dirtyFields[field])) {
           preservedFormCount++;
           continue;
         }
-
         Object.assign(mergedValues, {
           [field]: jsonValue,
         });
-
         importedCount++;
       }
-
       reset(mergedValues, {
         keepDirtyValues: true,
       });
-
       toast.add({
         type: "success",
         title: "JSON imported",
@@ -365,7 +296,6 @@ export default function ArticlePage() {
       });
     } catch (error) {
       console.error("JSON import error:", error);
-
       toast.add({
         type: "error",
         title: "Failed to import JSON",
@@ -378,90 +308,67 @@ export default function ArticlePage() {
       setImportingJson(false);
     }
   }
-
   function handleCloseForm() {
     reset();
-
     setEditingArticleId(null);
-
     setOpenArticleForm(false);
   }
-
   function handleEditArticle(article: Article) {
     const articleId = article.id ?? article._id;
-
     if (!articleId) {
       toast.add({
         type: "error",
         title: "Article ID missing",
         description: "Unable to edit this article.",
       });
-
       return;
     }
-
     setEditingArticleId(articleId);
-
     reset({
       title: article.title ?? "",
       slug: article.slug ?? "",
       excerpt: article.excerpt ?? "",
       content: article.content ?? "",
-
       coverImage: article.coverImage ?? "",
       thumbnail: article.thumbnail ?? "",
-
       category: article.category ?? "other",
       readingTime: article.readingTime,
       tags: article.tags ?? "",
-
       published: article.published ?? false,
       featured: article.featured ?? false,
       comments: article.comments ?? true,
-
       sourceUrl: article.sourceUrl ?? "",
       githubUrl: article.githubUrl ?? "",
       demoUrl: article.demoUrl ?? "",
-
       seoTitle: article.seoTitle ?? "",
       seoDescription: article.seoDescription ?? "",
       canonicalUrl: article.canonicalUrl ?? "",
     });
-
     setOpenArticleForm(true);
   }
-
   function handleDeleteArticle(article: Article) {
     const articleId = article.id ?? article._id;
-
     if (!articleId) {
       toast.add({
         type: "error",
         title: "Article ID missing",
         description: "Unable to delete this article.",
       });
-
       return;
     }
-
     setArticleToDelete(article);
   }
-
   async function confirmDeleteArticle() {
     if (!articleToDelete) {
       return;
     }
-
     const articleId =
       articleToDelete.id ?? articleToDelete._id;
-
     if (!articleId) {
       return;
     }
-
     try {
       setDeletingArticleId(articleId);
-
       const response = await fetch(
         `/api/articles/${articleId}`,
         {
@@ -469,32 +376,24 @@ export default function ArticlePage() {
           credentials: "include",
         }
       );
-
       const result = await response.json();
-
       if (!response.ok) {
         throw new Error(
           result?.error || "Failed to delete article"
         );
       }
-
       setArticles((currentArticles) =>
         currentArticles.filter(
           (article) =>
             (article.id ?? article._id) !== articleId
         )
       );
-
       if (editingArticleId === articleId) {
         reset();
-
         setEditingArticleId(null);
-
         setOpenArticleForm(false);
       }
-
       setArticleToDelete(null);
-
       toast.add({
         type: "success",
         title: "Article deleted",
@@ -503,7 +402,6 @@ export default function ArticlePage() {
       });
     } catch (error) {
       console.error("Delete article error:", error);
-
       toast.add({
         type: "error",
         title: "Failed to delete article",
@@ -516,7 +414,6 @@ export default function ArticlePage() {
       setDeletingArticleId(null);
     }
   }
-
   return (
     <div className="relative min-h-screen w-full px-6 py-12">
       <AlertDialog
@@ -532,7 +429,6 @@ export default function ArticlePage() {
             <AlertDialogTitle>
               Delete article?
             </AlertDialogTitle>
-
             <AlertDialogDescription>
               Are you sure you want to delete{" "}
               <span className="font-medium text-foreground">
@@ -541,14 +437,12 @@ export default function ArticlePage() {
               ? This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
-
           <AlertDialogFooter>
             <AlertDialogCancel
               disabled={Boolean(deletingArticleId)}
             >
               Cancel
             </AlertDialogCancel>
-
             <AlertDialogAction
               onClick={confirmDeleteArticle}
               disabled={Boolean(deletingArticleId)}
@@ -566,7 +460,6 @@ export default function ArticlePage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-
       {openArticleForm && (
         <div className="absolute inset-0 z-50 mx-auto w-full max-w-4xl overflow-y-auto bg-white p-10">
           <Button
@@ -577,7 +470,6 @@ export default function ArticlePage() {
           >
             <X />
           </Button>
-
           <div
             className="mb-8 rounded-lg border-2 border-dashed p-6 text-center"
             onDragOver={(event) => {
@@ -585,21 +477,17 @@ export default function ArticlePage() {
             }}
             onDrop={(event) => {
               event.preventDefault();
-
               const file =
                 event.dataTransfer.files?.[0];
-
               if (file) {
                 void handleJsonImport(file);
               }
             }}
           >
             <FileJson className="mx-auto mb-3 h-8 w-8" />
-
             <p className="font-medium">
               Drop article JSON here
             </p>
-
             <p className="mt-1 text-sm text-muted-foreground">
               JSON fills missing fields. Values already entered in
               the form always have priority.
@@ -615,15 +503,12 @@ export default function ArticlePage() {
               onChange={(event) => {
                 const file =
                   event.target.files?.[0];
-
                 if (file) {
                   void handleJsonImport(file);
                 }
-
                 event.target.value = "";
               }}
             />
-
             {importingJson && (
               <div className="mt-3 flex items-center justify-center gap-2 text-sm text-muted-foreground">
                 <Loader2 className="h-4 w-4 animate-spin" />
@@ -631,7 +516,6 @@ export default function ArticlePage() {
               </div>
             )}
           </div>
-
           <form onSubmit={handleSubmit(onSubmit)}>
             <FieldSet>
               <FieldLegend>
@@ -639,64 +523,53 @@ export default function ArticlePage() {
                   ? "Edit article"
                   : "Article details"}
               </FieldLegend>
-
               <FieldDescription>
                 {editingArticleId
                   ? "Update your article details."
                   : "Create an article for your portfolio blog."}
               </FieldDescription>
-
               <FieldGroup>
                 <FieldLegend>
                   Basic information
                 </FieldLegend>
-
                 <Field>
                   <FieldLabel htmlFor="article-title">
                     Article title
                   </FieldLabel>
-
                   <Input
                     id="article-title"
                     placeholder="Understanding JavaScript Closures"
                     maxLength={120}
                     {...register("title")}
                   />
-
                   {errors.title && (
                     <FieldDescription className="text-red-500">
                       {errors.title.message}
                     </FieldDescription>
                   )}
                 </Field>
-
                 <Field>
                   <FieldLabel htmlFor="article-slug">
                     Slug
                   </FieldLabel>
-
                   <Input
                     id="article-slug"
                     placeholder="understanding-javascript-closures"
                     {...register("slug")}
                   />
-
                   <FieldDescription>
                     This will be used in the article URL.
                   </FieldDescription>
-
                   {errors.slug && (
                     <FieldDescription className="text-red-500">
                       {errors.slug.message}
                     </FieldDescription>
                   )}
                 </Field>
-
                 <Field>
                   <FieldLabel htmlFor="article-excerpt">
                     Excerpt
                   </FieldLabel>
-
                   <Textarea
                     id="article-excerpt"
                     placeholder="A practical guide to understanding JavaScript closures..."
@@ -704,12 +577,10 @@ export default function ArticlePage() {
                     rows={3}
                     {...register("excerpt")}
                   />
-
                   <FieldDescription>
                     A short summary shown on article cards
                     and previews.
                   </FieldDescription>
-
                   {errors.excerpt && (
                     <FieldDescription className="text-red-500">
                       {errors.excerpt.message}
@@ -717,23 +588,18 @@ export default function ArticlePage() {
                   )}
                 </Field>
               </FieldGroup>
-
               <FieldSeparator />
-
               <FieldGroup>
                 <FieldLegend>
                   Article content
                 </FieldLegend>
-
                 <FieldDescription>
                   Write the actual content of your article.
                 </FieldDescription>
-
                 <Field>
                   <FieldLabel htmlFor="article-content">
                     Content
                   </FieldLabel>
-
                   <Textarea
                     id="article-content"
                     placeholder="Start writing your article..."
@@ -741,12 +607,10 @@ export default function ArticlePage() {
                     className="min-h-[500px]"
                     {...register("content")}
                   />
-
                   <FieldDescription>
                     You can later replace this textarea with a
                     Markdown or rich text editor.
                   </FieldDescription>
-
                   {errors.content && (
                     <FieldDescription className="text-red-500">
                       {errors.content.message}
@@ -754,53 +618,43 @@ export default function ArticlePage() {
                   )}
                 </Field>
               </FieldGroup>
-
               <FieldSeparator />
-
               <FieldGroup>
                 <FieldLegend>
                   Article media
                 </FieldLegend>
-
                 <FieldDescription>
                   Images used when displaying your article.
                 </FieldDescription>
-
                 <Field>
                   <FieldLabel htmlFor="cover-image">
                     Cover image
                   </FieldLabel>
-
                   <Input
                     id="cover-image"
                     type="url"
                     placeholder="https://example.com/article-cover.png"
                     {...register("coverImage")}
                   />
-
                   <FieldDescription>
                     Recommended aspect ratio: 16:9.
                   </FieldDescription>
-
                   {errors.coverImage && (
                     <FieldDescription className="text-red-500">
                       {errors.coverImage.message}
                     </FieldDescription>
                   )}
                 </Field>
-
                 <Field>
                   <FieldLabel htmlFor="thumbnail">
                     Thumbnail
                   </FieldLabel>
-
                   <Input
                     id="thumbnail"
                     type="url"
                     placeholder="https://example.com/article-thumbnail.png"
                     {...register("thumbnail")}
                   />
-
                   {errors.thumbnail && (
                     <FieldDescription className="text-red-500">
                       {errors.thumbnail.message}
@@ -808,20 +662,16 @@ export default function ArticlePage() {
                   )}
                 </Field>
               </FieldGroup>
-
               <FieldSeparator />
-
               <FieldGroup>
                 <FieldLegend>
                   Classification
                 </FieldLegend>
-
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   <Field>
                     <FieldLabel>
                       Category
                     </FieldLabel>
-
                     <Controller
                       name="category"
                       control={control}
@@ -833,44 +683,34 @@ export default function ArticlePage() {
                           <SelectTrigger>
                             <SelectValue placeholder="Select category" />
                           </SelectTrigger>
-
                           <SelectContent>
                             <SelectItem value="javascript">
                               JavaScript
                             </SelectItem>
-
                             <SelectItem value="typescript">
                               TypeScript
                             </SelectItem>
-
                             <SelectItem value="react">
                               React
                             </SelectItem>
-
                             <SelectItem value="nextjs">
                               Next.js
                             </SelectItem>
-
                             <SelectItem value="nodejs">
                               Node.js
                             </SelectItem>
-
                             <SelectItem value="css">
                               CSS
                             </SelectItem>
-
                             <SelectItem value="web-development">
                               Web Development
                             </SelectItem>
-
                             <SelectItem value="career">
                               Career
                             </SelectItem>
-
                             <SelectItem value="tutorial">
                               Tutorial
                             </SelectItem>
-
                             <SelectItem value="other">
                               Other
                             </SelectItem>
@@ -878,19 +718,16 @@ export default function ArticlePage() {
                         </Select>
                       )}
                     />
-
                     {errors.category && (
                       <FieldDescription className="text-red-500">
                         {errors.category.message}
                       </FieldDescription>
                     )}
                   </Field>
-
                   <Field>
                     <FieldLabel htmlFor="reading-time">
                       Reading time
                     </FieldLabel>
-
                     <Input
                       id="reading-time"
                       type="number"
@@ -900,11 +737,9 @@ export default function ArticlePage() {
                         valueAsNumber: true,
                       })}
                     />
-
                     <FieldDescription>
                       Estimated reading time in minutes.
                     </FieldDescription>
-
                     {errors.readingTime && (
                       <FieldDescription className="text-red-500">
                         {errors.readingTime.message}
@@ -912,22 +747,18 @@ export default function ArticlePage() {
                     )}
                   </Field>
                 </div>
-
                 <Field>
                   <FieldLabel htmlFor="tags">
                     Tags
                   </FieldLabel>
-
                   <Input
                     id="tags"
                     placeholder="javascript, closures, functions, fundamentals"
                     {...register("tags")}
                   />
-
                   <FieldDescription>
                     Separate tags with commas.
                   </FieldDescription>
-
                   {errors.tags && (
                     <FieldDescription className="text-red-500">
                       {errors.tags.message}
@@ -935,14 +766,11 @@ export default function ArticlePage() {
                   )}
                 </Field>
               </FieldGroup>
-
               <FieldSeparator />
-
               <FieldGroup>
                 <FieldLegend>
                   Article settings
                 </FieldLegend>
-
                 <Controller
                   name="published"
                   control={control}
@@ -953,12 +781,10 @@ export default function ArticlePage() {
                         checked={field.value}
                         onCheckedChange={field.onChange}
                       />
-
                       <FieldContent>
                         <FieldTitle>
                           Published
                         </FieldTitle>
-
                         <FieldDescription>
                           Make this article visible on your
                           public portfolio.
@@ -967,7 +793,6 @@ export default function ArticlePage() {
                     </Field>
                   )}
                 />
-
                 <Controller
                   name="featured"
                   control={control}
@@ -978,12 +803,10 @@ export default function ArticlePage() {
                         checked={field.value}
                         onCheckedChange={field.onChange}
                       />
-
                       <FieldContent>
                         <FieldTitle>
                           Featured article
                         </FieldTitle>
-
                         <FieldDescription>
                           Display this article prominently on
                           your blog page.
@@ -992,7 +815,6 @@ export default function ArticlePage() {
                     </Field>
                   )}
                 />
-
                 <Controller
                   name="comments"
                   control={control}
@@ -1003,12 +825,10 @@ export default function ArticlePage() {
                         checked={field.value}
                         onCheckedChange={field.onChange}
                       />
-
                       <FieldContent>
                         <FieldTitle>
                           Enable comments
                         </FieldTitle>
-
                         <FieldDescription>
                           Allow readers to comment on this
                           article.
@@ -1018,69 +838,57 @@ export default function ArticlePage() {
                   )}
                 />
               </FieldGroup>
-
               <FieldSeparator />
-
               <FieldGroup>
                 <FieldLegend>
                   References and links
                 </FieldLegend>
-
                 <Field>
                   <FieldLabel htmlFor="source-url">
                     Source / reference URL
                   </FieldLabel>
-
                   <Input
                     id="source-url"
                     type="url"
                     placeholder="https://developer.mozilla.org/..."
                     {...register("sourceUrl")}
                   />
-
                   {errors.sourceUrl && (
                     <FieldDescription className="text-red-500">
                       {errors.sourceUrl.message}
                     </FieldDescription>
                   )}
                 </Field>
-
                 <Field>
                   <FieldLabel htmlFor="github-url">
                     GitHub URL
                   </FieldLabel>
-
                   <Input
                     id="github-url"
                     type="url"
                     placeholder="https://github.com/username/repository"
                     {...register("githubUrl")}
                   />
-
                   <FieldDescription>
                     Useful when the article contains a project
                     or code example.
                   </FieldDescription>
-
                   {errors.githubUrl && (
                     <FieldDescription className="text-red-500">
                       {errors.githubUrl.message}
                     </FieldDescription>
                   )}
                 </Field>
-
                 <Field>
                   <FieldLabel htmlFor="demo-url">
                     Demo URL
                   </FieldLabel>
-
                   <Input
                     id="demo-url"
                     type="url"
                     placeholder="https://example.com"
                     {...register("demoUrl")}
                   />
-
                   {errors.demoUrl && (
                     <FieldDescription className="text-red-500">
                       {errors.demoUrl.message}
@@ -1088,42 +896,34 @@ export default function ArticlePage() {
                   )}
                 </Field>
               </FieldGroup>
-
               <FieldSeparator />
-
               <FieldGroup>
                 <FieldLegend>
                   SEO
                 </FieldLegend>
-
                 <FieldDescription>
                   Search engine metadata for this article.
                 </FieldDescription>
-
                 <Field>
                   <FieldLabel htmlFor="seo-title">
                     SEO title
                   </FieldLabel>
-
                   <Input
                     id="seo-title"
                     placeholder="JavaScript Closures Explained | Ajoy Das"
                     maxLength={60}
                     {...register("seoTitle")}
                   />
-
                   {errors.seoTitle && (
                     <FieldDescription className="text-red-500">
                       {errors.seoTitle.message}
                     </FieldDescription>
                   )}
                 </Field>
-
                 <Field>
                   <FieldLabel htmlFor="seo-description">
                     SEO description
                   </FieldLabel>
-
                   <Textarea
                     id="seo-description"
                     placeholder="Learn how JavaScript closures work with practical examples..."
@@ -1131,26 +931,22 @@ export default function ArticlePage() {
                     rows={3}
                     {...register("seoDescription")}
                   />
-
                   {errors.seoDescription && (
                     <FieldDescription className="text-red-500">
                       {errors.seoDescription.message}
                     </FieldDescription>
                   )}
                 </Field>
-
                 <Field>
                   <FieldLabel htmlFor="canonical-url">
                     Canonical URL
                   </FieldLabel>
-
                   <Input
                     id="canonical-url"
                     type="url"
                     placeholder="https://codewithajoydas.live/blog/..."
                     {...register("canonicalUrl")}
                   />
-
                   {errors.canonicalUrl && (
                     <FieldDescription className="text-red-500">
                       {errors.canonicalUrl.message}
@@ -1158,7 +954,6 @@ export default function ArticlePage() {
                   )}
                 </Field>
               </FieldGroup>
-
               <div className="flex justify-end gap-3 pt-6">
                 <Button
                   type="button"
@@ -1168,7 +963,6 @@ export default function ArticlePage() {
                 >
                   Cancel
                 </Button>
-
                 <Button
                   type="submit"
                   disabled={isSubmitting}
@@ -1176,7 +970,6 @@ export default function ArticlePage() {
                   {isSubmitting ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-
                       {editingArticleId
                         ? "Updating..."
                         : "Creating..."}
@@ -1192,59 +985,51 @@ export default function ArticlePage() {
           </form>
         </div>
       )}
-
       <div className="flex min-h-screen flex-col gap-6">
         <div className="sticky top-0 z-20 flex items-center justify-between border-b bg-white py-4">
           <div>
             <h1 className="text-3xl font-bold tracking-tight">
               Articles
             </h1>
-
             <p className="mt-1 text-sm text-muted-foreground">
               Manage all articles in your portfolio.
             </p>
           </div>
-
           <Button onClick={handleCreateArticle}>
             <Plus className="mr-2 h-4 w-4" />
             Add article
           </Button>
         </div>
-
         <div className="rounded-md border bg-white">
           <Table>
             <TableHeader>
               <TableRow>
                 <TableHead>
+                  #
+                </TableHead>
+                <TableHead>
                   Article
                 </TableHead>
-
                 <TableHead>
                   Category
                 </TableHead>
-
                 <TableHead>
                   Reading Time
                 </TableHead>
-
                 <TableHead>
                   Published
                 </TableHead>
-
                 <TableHead>
                   Featured
                 </TableHead>
-
                 <TableHead>
                   Comments
                 </TableHead>
-
                 <TableHead className="text-right">
                   Actions
                 </TableHead>
               </TableRow>
             </TableHeader>
-
             <TableBody>
               {loadingArticles ? (
                 <TableRow>
@@ -1254,7 +1039,6 @@ export default function ArticlePage() {
                   >
                     <div className="flex items-center justify-center gap-2">
                       <Loader2 className="h-5 w-5 animate-spin" />
-
                       <span>
                         Loading articles...
                       </span>
@@ -1271,39 +1055,37 @@ export default function ArticlePage() {
                       <p className="text-muted-foreground">
                         No articles created yet.
                       </p>
-
                       <Button
                         size="sm"
                         onClick={handleCreateArticle}
                       >
                         <Plus className="mr-2 h-4 w-4" />
-
                         Create your first article
                       </Button>
                     </div>
                   </TableCell>
                 </TableRow>
               ) : (
-                articles.map((article) => {
+                articles.map((article, index) => {
                   const articleId =
                     article.id ??
                     article._id ??
                     "";
-
                   return (
                     <TableRow key={articleId}>
+                      <TableCell>
+                        <span>{index+1}</span>
+                      </TableCell>
                       <TableCell>
                         <div className="flex max-w-[320px] flex-col">
                           <span className="truncate font-medium">
                             {article.title}
                           </span>
-
                           <span className="truncate text-xs text-muted-foreground">
                             /{article.slug}
                           </span>
                         </div>
                       </TableCell>
-
                       <TableCell>
                         <span className="capitalize">
                           {article.category?.replace(
@@ -1312,13 +1094,11 @@ export default function ArticlePage() {
                           )}
                         </span>
                       </TableCell>
-
                       <TableCell>
                         {article.readingTime
                           ? `${article.readingTime} min`
                           : "-"}
                       </TableCell>
-
                       <TableCell>
                         <span
                           className={
@@ -1332,7 +1112,6 @@ export default function ArticlePage() {
                             : "No"}
                         </span>
                       </TableCell>
-
                       <TableCell>
                         <span
                           className={
@@ -1346,7 +1125,6 @@ export default function ArticlePage() {
                             : "No"}
                         </span>
                       </TableCell>
-
                       <TableCell>
                         <span
                           className={
@@ -1360,7 +1138,6 @@ export default function ArticlePage() {
                             : "Disabled"}
                         </span>
                       </TableCell>
-
                       <TableCell>
                         <div className="flex justify-end gap-2">
                           <Button
@@ -1373,7 +1150,6 @@ export default function ArticlePage() {
                           >
                             <Pencil className="h-4 w-4" />
                           </Button>
-
                           <Button
                             variant="destructive"
                             size="icon"
