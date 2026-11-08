@@ -7,9 +7,9 @@ import Link from "next/link";
 import { connectDB } from "@/lib/connectDb";
 import ProjectModel from "@/models/project.model";
 import { Project } from "@/types/content";
-import { absoluteUrl, safeJsonLd } from "@/lib/seo";
+// import { absoluteUrl, safeJsonLd } from "@/lib/seo";
 import PageTransition from "@/components/page-transition";
-import Script from "next/script";
+// import Script from "next/script";
 export const revalidate = 0;
 export const dynamic = "force-dynamic";
 const pacifico = Pacifico({
@@ -86,184 +86,61 @@ export default async function Home() {
   const featuredProjects = projects.filter(
     (project) => project.featured === true && project.published === true,
   );
-  const siteUrl = absoluteUrl("/");
-const heroImageUrl = new URL(
-  "/images/Codewithajoydas_Hero-page.png",
-  siteUrl,
-).toString();
-const aboutImageUrl = new URL(
-  "/images/Codewithajoydas_About-page.png",
-  siteUrl,
-).toString();
+  // const siteUrl = absoluteUrl("/");
+  // const heroImageUrl = new URL(
+  //   "/images/Codewithajoydas_Hero-page.png",
+  //   siteUrl,
+  // ).toString();
+  // const aboutImageUrl = new URL(
+  //   "/images/Codewithajoydas_About-page.png",
+  //   siteUrl,
+  // ).toString();
   return (
     <>
-<Script
-  id="about-page-structured-data"
-  type="application/ld+json"
-  dangerouslySetInnerHTML={safeJsonLd({
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "Person",
-        "@id": `${siteUrl}#person`,
-        name: "Ajoy Das",
-        url: siteUrl,
-        jobTitle: "Software Developer",
-        email: "ajoydas@codewithajoydas.in",
-        image: {
-          "@id": `${siteUrl}#hero-image`,
-        },
-        address: {
-          "@type": "PostalAddress",
-          addressRegion: "Assam",
-          addressCountry: "IN",
-        },
-        sameAs: [
-          "https://github.com/Codewithajoydas",
-          "https://www.instagram.com/codewithajoydas",
-          "https://www.facebook.com/profile.php?id=100090674957174",
-          "https://www.youtube.com/@codewithajoydas",
-        ],
-        knowsAbout: [
-          "Software Development",
-          "Web Development",
-          "JavaScript",
-          "TypeScript",
-          "React",
-          "Next.js",
-          "Node.js",
-          "Frontend Development",
-          "Backend Development",
-          "Full Stack Development",
-          "Database Design",
-          "API Development",
-        ],
-      },
-      {
-        "@type": "WebSite",
-        "@id": `${siteUrl}#website`,
-        url: siteUrl,
-        name: "Ajoy Das",
-        alternateName: "Codewithajoydas",
-        publisher: {
-          "@id": `${siteUrl}#person`,
-        },
-        creator: {
-          "@id": `${siteUrl}#person`,
-        },
-        inLanguage: "en-IN",
-      },
-      {
-        "@type": "WebPage",
-        "@id": `${siteUrl}#webpage`,
-        url: siteUrl,
-        name: "Ajoy Das | Software Developer",
-        description:
-          "Official portfolio of Ajoy Das, Software Developer. Explore software projects, developer tools, experiments, and engineering work.",
-        isPartOf: {
-          "@id": `${siteUrl}#website`,
-        },
-        about: {
-          "@id": `${siteUrl}#person`,
-        },
-        mainEntity: {
-          "@id": `${siteUrl}#person`,
-        },
-        primaryImageOfPage: {
-          "@id": `${siteUrl}#hero-image`,
-        },
-        image: [
-          {
-            "@id": `${siteUrl}#hero-image`,
-          },
-          {
-            "@id": `${siteUrl}#about-image`,
-          },
-        ],
-        inLanguage: "en-IN",
-      },
-      {
-        "@type": "ImageObject",
-        "@id": `${siteUrl}#hero-image`,
-        url: heroImageUrl,
-        contentUrl: heroImageUrl,
-        name: "Ajoy Das - Software Developer",
-        caption: "Ajoy Das, Software Developer",
-        representativeOfPage: true,
-      },
-      {
-        "@type": "ImageObject",
-        "@id": `${siteUrl}#about-image`,
-        url: aboutImageUrl,
-        contentUrl: aboutImageUrl,
-        name: "Ajoy Das - Development Skills",
-        caption: "Development and engineering skills",
-      },
-      ...(featuredProjects.length > 0
-        ? [
-            {
-              "@type": "ItemList",
-              "@id": `${siteUrl}#featured-projects`,
-              name: "Featured Projects by Ajoy Das",
-              description:
-                "A collection of featured software projects, applications, and developer tools.",
-              numberOfItems: featuredProjects.length,
-              itemListElement: featuredProjects.map(
-                (project, index) => ({
-                  "@type": "ListItem",
-                  position: index + 1,
-                  item: {
-                    "@id": `${absoluteUrl(
-                      `/projects/${project.slug}`,
-                    )}#project`,
-                  },
-                }),
-              ),
+      <script type="application/ld+json">
+        {JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          name: "Codewithajoydas",
+          alternateName: ["Ajoy Das Portfolio", "CWAD Portfolio"],
+          url: "https://www.codewithajoydas.in/",
+        })}
+      </script>
+      <script type="application/ld+json">
+       {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "@id": `https://www.codewithajoydas.in/#organization`,
+            name: "Codewithajoydas",
+            alternateName: "Ajoy Das",
+            url: "https://www.codewithajoydas.in",
+            description:
+              "Codewithajoydas is the personal developer brand of Ajoy Das, focused on software development, web applications, developer tools, programming resources, and technical experiments.",
+            logo: `https://www.codewithajoydas.in/icons/icon-512-maskable.png`,
+            email: "ajoydas@codewithajoydas.in",
+            telephone: "+91-6900611920",
+            founder: {
+              "@type": "Person",
+              name: "Ajoy Das",
+              url: "https://www.codewithajoydas.in",
             },
-            ...featuredProjects.flatMap((project) => {
-              const projectUrl = absoluteUrl(
-                `/projects/${project.slug}`,
-              );
-              const imageUrl = new URL(
-                project.thumbnail ||
-                  "/images/projects/project-placeholder.png",
-                siteUrl,
-              ).toString();
-              const imageId =
-                `${siteUrl}#project-image-${encodeURIComponent(
-                  project.slug,
-                )}`;
-              return [
-                {
-                  "@type": "ImageObject",
-                  "@id": imageId,
-                  url: imageUrl,
-                  contentUrl: imageUrl,
-                  name: `${project.name} - Project Thumbnail`,
-                  caption: `Preview of ${project.name}`,
-                },
-                {
-                  "@type": "CreativeWork",
-                  "@id": `${projectUrl}#project`,
-                  name: project.name,
-                  url: projectUrl,
-                  image: {
-                    "@id": imageId,
-                  },
-                  creator: {
-                    "@id": `${siteUrl}#person`,
-                  },
-                  author: {
-                    "@id": `${siteUrl}#person`,
-                  },
-                },
-              ];
-            }),
-          ]
-        : []),
-    ],
-  })}
-/>
+            sameAs: [
+              "https://github.com/Codewithajoydas",
+              "https://www.instagram.com/codewithajoydas",
+              "https://www.facebook.com/profile.php?id=100090674957174",
+              "https://www.youtube.com/@codewithajoydas",
+            ],
+            address: {
+              "@type": "PostalAddress",
+              addressLocality: "Nagaon",
+              addressRegion: "Assam",
+              postalCode: "782001",
+              addressCountry: "IN",
+            },
+          })
+        }
+      </script>
+
       <PageTransition>
         <main className="min-h-screen bg-white text-gray-900 transition-colors duration-300 dark:bg-zinc-950 dark:text-zinc-100">
           <section className="relative flex min-h-0 items-center overflow-hidden bg-linear-to-br from-blue-50 via-white to-white px-4 py-16 transition-colors duration-500 sm:px-6 sm:py-20 md:px-10 lg:min-h-screen lg:px-16 lg:py-24 dark:bg-gradient-to-br dark:from-blue-950 dark:via-zinc-950 dark:to-zinc-950">
@@ -480,7 +357,7 @@ const aboutImageUrl = new URL(
                   {howIThink.map((item) => (
                     <div
                       key={item.number}
-                      className="grid grid-cols-[2.5rem_minmax(0,1fr)] gap-x-4 gap-y-2 border-b border-gray-200 py-6 sm:grid-cols-[70px_190px_minmax(0,1fr)] sm:gap-4 sm:py-8 dark:border-zinc-800"
+                      className="grid  gap-x-4 gap-y-2 border-b border-gray-200 py-6 sm:grid-cols-[70px_190px_minmax(0,1fr)] sm:gap-4 sm:py-8 dark:border-zinc-800"
                     >
                       <span className="text-xs font-medium tracking-[0.2em] text-gray-400 dark:text-zinc-500">
                         {item.number}
@@ -539,4 +416,3 @@ const aboutImageUrl = new URL(
     </>
   );
 }
-

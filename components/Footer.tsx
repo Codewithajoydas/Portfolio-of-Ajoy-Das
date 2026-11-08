@@ -30,12 +30,15 @@ const navigation = [
       { label: "Projects", href: "/projects" },
       { label: "Skills", href: "/skills" },
       { label: "Experience", href: "/experience" },
+      { label: "Tech Stack", href: "/stack" },
+      { label: "Open Source", href: "/open-source" },
     ],
   },
   {
     title: "Discover",
     links: [
       { label: "About Me", href: "/about" },
+      { label: "Services", href: "/services" },
       { label: "Contact", href: "/contact" },
     ],
   },
@@ -104,7 +107,7 @@ export default function Footer() {
 
             {/* Social Links */}
             <div className="mt-7 flex items-center gap-3">
-              {socialLinks.map(({ label, href, icon: Icon}) => (
+              {socialLinks.map(({ label, href, icon: Icon }) => (
                 <Tooltip key={label}>
                   <TooltipTrigger>
                     <a

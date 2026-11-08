@@ -2,45 +2,35 @@ import { absoluteUrl } from "@/lib/seo";
 import { connectDB } from "@/lib/connectDb";
 import ArticleModel from "@/models/article.model";
 import type { Article } from "@/types/article/Article";
-
 export function safeString(value: unknown, fallback = ""): string {
   if (typeof value !== "string" || value.trim().length === 0) {
     return fallback;
   }
-
   return value.trim();
 }
-
 export function safeUrl(value: unknown): string | null {
   if (typeof value !== "string" || value.trim().length === 0) {
     return null;
   }
-
   try {
     const url = new URL(value.trim());
-
     if (url.protocol !== "http:" && url.protocol !== "https:") {
       return null;
     }
-
     return url.toString();
   } catch {
     return null;
   }
 }
-
 export function safeDate(value: unknown, fallback = ""): string {
   if (!value) {
     return fallback;
   }
-
   try {
     const date = new Date(value as string | number | Date);
-
     if (Number.isNaN(date.getTime())) {
       return fallback;
     }
-
     return date.toLocaleDateString("en-IN", {
       year: "numeric",
       month: "long",
@@ -50,49 +40,39 @@ export function safeDate(value: unknown, fallback = ""): string {
     return fallback;
   }
 }
-
 export function safeDateTime(value: unknown): string | undefined {
   if (!value) {
     return undefined;
   }
-
   try {
     const date = new Date(value as string | number | Date);
-
     if (Number.isNaN(date.getTime())) {
       return undefined;
     }
-
     return date.toISOString();
   } catch {
     return undefined;
   }
 }
-
 export function parseTags(value: unknown): string[] {
   if (typeof value !== "string" || value.trim().length === 0) {
     return [];
   }
-
   return value
     .split(",")
     .map((tag) => tag.trim())
     .filter((tag) => tag.length > 0);
 }
-
 export async function getArticleBySlug(slug: string): Promise<Article | null> {
   await connectDB();
-
   const articleDocument = await ArticleModel.findOne({
     slug,
     published: true,
   })
     .lean()
     .exec();
-
   return articleDocument ? (articleDocument as unknown as Article) : null;
 }
-
 export function getArticlePageMeta(article: Article, fallbackSlug: string) {
   const articleTitle = safeString(article.title, "Untitled Article");
   const finalSlug = safeString(article.slug, fallbackSlug);
@@ -110,14 +90,12 @@ export function getArticlePageMeta(article: Article, fallbackSlug: string) {
     article.readingTime > 0
       ? Math.floor(article.readingTime)
       : null;
-
   const articleUrl = absoluteUrl(`/articles/${finalSlug}`);
   const publishedTime = safeDateTime(article.createdAt);
   const modifiedTime = safeDateTime(article.updatedAt);
   const createdDate = safeDate(article.createdAt, "");
   const updatedDate = safeDate(article.updatedAt, "");
   const hasUpdatedDate = Boolean(updatedDate && createdDate && updatedDate !== createdDate);
-
   return {
     articleTitle,
     finalSlug,
@@ -139,10 +117,8 @@ export function getArticlePageMeta(article: Article, fallbackSlug: string) {
     hasUpdatedDate,
   };
 }
-
 export function buildArticleStructuredData(article: Article, meta: ReturnType<typeof getArticlePageMeta>) {
   const { articleTitle, articleUrl, category, excerpt, tags, readingTime, image, publishedTime, modifiedTime } = meta;
-
   return {
     "@context": "https://schema.org",
     "@graph": [
